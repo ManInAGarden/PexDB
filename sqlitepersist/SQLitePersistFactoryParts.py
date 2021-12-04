@@ -1,4 +1,5 @@
 import sqlite3 as sq3
+from sqlite3.dbapi2 import OperationalError
 import uuid
 import datetime
 
@@ -43,6 +44,9 @@ class SQFactory():
                 first = False
             else:
                 collst += "," + key + " " + self._get_dbtypename(val)
+
+            if key == "_id": #id is always the primary key and nothing else
+                collst += " PRIMARY KEY"
 
         collst += ")"
 
@@ -106,6 +110,87 @@ class SQFactory():
         curs.execute("insert into " + table + "(" + inscolnames + ") values (" + inscolquests + ")", valtuple)
 
     def _update(self, pinst : PBase):
+        pass
+
+    def find(self, cls, findpar = None, orderlist=None, limit=None):
+        """Find the data
+        
+        """
+        if findpar is None: #do a select * eventually respecting limit
+            return self._do_select(cls, findpar, orderlist, limit)
+        elif type(findpar) is dict:
+            return self._do_select(cls, findpar,  orderlist, limit)
+        elif issubclass(type(findpar), BaseType):
+            if findpar._id is None:
+                raise Exception("SqFactory.find() with an Mpbase derived instance only works when this instance contains an _id")
+
+            res = self.find_with_dict(cls, {"_id": findpar._id})
+            return self._first_or_default(res)
+        elif findpar is str:
+            res = self.find_with_dict(cls, {"_id": findpar})
+            return self._first_or_default(res)
+        else:
+            raise NotImplementedError("Unsupported type <{}> in findpar.".format(type(findpar)))
+
+    def _do_select(self, cls, findpar, orderlist, limit):
+        stmt = "SELECT * FROM {0}".format(cls._getclstablename())
+
+        if findpar is not None:
+            if len(findpar) > 0:
+                stmt += " WHERE " + self._create_where(findpar)
+                
+
+        if limit is not None and limit >0:
+            if findpar is None:
+                stmt += " WHERE ROWNUM < " + str(limit)
+            else:
+                stmt += " AND ROWNUM<" + str(limit)
+
+        if orderlist is not None:
+            pass
+
+        curs = self.conn.cursor()
+        try:
+            answ = curs.execute(stmt)
+        except OperationalError as oe:
+            print(stmt)
+            raise Exception(stmt + " " + str(oe))
+        return answ
+
+    def _backmap(self, ops):
+        mapping = {"$eq":"=", 
+            "$neq":"<>",
+            "$gt":">",
+            "$lt":"<",
+            "$gte":">=",
+            "&lte":"<="}
+        return mapping[ops]
+
+    def _get_rightrightpart(self, val):
+        t = type(val)
+        if t is uuid.UUID or t is str:
+            return "'" + str(val) + "'"
+
+    def _get_rightpart(self, rdict):
+        for key, value in rdict.items():
+            return self._backmap(key) + " " + self._get_rightrightpart(value)
+
+    def _create_where(self, findpar : dict):
+        """creates the where part of the db-statement by evaluating the findpar dictionary"""
+        answ = ""
+        first = True
+        for key, value in findpar.items():
+            if first:
+                first = False
+                answ = key + " " + self._get_rightpart(value)
+            else:
+                answ += "AND " + key + self._get_rightpart(value)
+
+
+        return answ
+
+    def _create_instance(self, cn):
+        #create an instance of the object with a cursor to a selected row as cn
         pass
 
     @classmethod

@@ -11,7 +11,54 @@ class DbType(Enum):
      BLOB = 4
      TIMESTAMP = 5
 
-class BaseType(object):
+class OperationStackElement(object):
+    def __init__(self, left, op, right):
+        self._left = left
+        self._right = right
+        self._op = op
+
+    def __and__(self, other):
+        return OperationStackElement(self, "&", other)
+
+    def __or__(self, other):
+        return OperationStackElement(self, "|", other)
+
+    def __eq__(self, other):
+        return OperationStackElement(self, "==", other)
+
+    def __neq__(self, other):
+        return OperationStackElement(self, "!=", other)
+
+    def __str__(self):
+        return "op " + str(self._left) + self._op + str(self._right)
+     
+class BaseComparableType(object):
+    def __init__(self):
+        pass
+
+    def __eq__(self, other):
+        return OperationStackElement(self, "==", other)
+
+    def __neq__(self, other):
+        return OperationStackElement(self, "!=", other)
+
+    def __lt__(self, other):
+        return OperationStackElement(self, "<", other)
+
+    def __le__(self, other):
+        return OperationStackElement(self, "<=", other)
+
+    def __gt__(self, other):
+        return OperationStackElement(self, ">", other)
+
+    def __ge__(self, other):
+        return OperationStackElement(self, ">=", other)
+
+class Val(BaseComparableType):
+    def __init__(self, value):
+        self._value = value
+
+class BaseVarType(BaseComparableType):
     _innertype = None #type in instance
     _outertype = None #type in database
     _subclasses = []
@@ -56,7 +103,7 @@ class BaseType(object):
         if not done:
             setattr(self, membername, None)
 
-class String(BaseType):
+class String(BaseVarType):
     _innertype = str
     _outertype = DbType.TEXT
     def __init__(self, **kwarg):
@@ -69,7 +116,7 @@ class String(BaseType):
             return str(dta)
         
 
-class UUid(BaseType):
+class UUid(BaseVarType):
     _innertype = uuid.uuid4
     _outertype = DbType.TEXT
 
@@ -85,7 +132,7 @@ class UUid(BaseType):
         else:
             raise Exception("Type <{0}> cannot be tranformed into a uuid".format(t.__name__))
 
-class Int(BaseType):
+class Int(BaseVarType):
     _innertype = int
     _outertype = DbType.INTEGER
 
@@ -101,7 +148,7 @@ class Int(BaseType):
         else:
             raise Exception("Type <{0}> cannot be tranformed into an int".format(t.__name__))
 
-class Float(BaseType):
+class Float(BaseVarType):
     _innertype = float
     _outertype = DbType.REAL
 
@@ -117,7 +164,7 @@ class Float(BaseType):
         else:
             raise Exception("Type <{0}> cannot be tranformed into a float".format(t.__name__))
 
-class Boolean(BaseType):
+class Boolean(BaseVarType):
     _innertype = bool
     _outertype = DbType.TEXT
 
@@ -141,7 +188,7 @@ class Boolean(BaseType):
         else:
             raise Exception("Type <{0}> cannot be tranformed into a bool".format(t.__name__))
 
-class DateTime(BaseType):
+class DateTime(BaseVarType):
     innertype = dt.datetime
     _outertype = DbType.TIMESTAMP
 
@@ -157,7 +204,7 @@ class DateTime(BaseType):
         else:
             raise Exception("Type <{0}> cannot be tranformed into a datetime".format(t.__name__))
 
-class Catalog(BaseType):
+class Catalog(BaseVarType):
     _innertype = str
     _outertype = DbType.TEXT
 
@@ -172,7 +219,7 @@ class Catalog(BaseType):
         return self._catalogtype
 
 
-class _EmbeddedObject(BaseType):
+class _EmbeddedObject(BaseVarType):
     _innertype = object
 
     def __init__(self, **kwargs):
@@ -284,7 +331,7 @@ class PBase(object):
             if issubclass(allclass, PBase):
                 members = vars(allclass)
                 for key, value in members.items():
-                    if key[0].isupper() and issubclass(value.__class__, BaseType):
+                    if key[0].isupper() and issubclass(value.__class__, BaseVarType):
                         if key=="Id":
                             mykey = "_id"
                         else:
@@ -293,6 +340,10 @@ class PBase(object):
                         classmemberdict[mykey] = ClassDictEntry(key, type(value), getattr(allclass, key))
         
         cls._classdict[cls] = classmemberdict
+
+    @classmethod
+    def _getclstablename(cls):
+        return cls.__name__.lower()
 
     @classmethod
     def get_collection_name(cls):
@@ -335,7 +386,7 @@ class PBase(object):
         return md.get_declaration()
 
 
-def getvarname(decl: BaseType):
+def getvarname(decl: BaseVarType):
     """get the name used for a field of a declaration 
 
        search is done by _varcode which every intstance of a field declaration gets automatically
@@ -347,7 +398,7 @@ def getvarname(decl: BaseType):
 
     return None
 
-def getsubedvarname(decl: BaseType):
+def getsubedvarname(decl: BaseVarType):
     """get the varname with dots when subnames are given or simply like getvarname when there are no subs
     """
 
