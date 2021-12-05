@@ -1,0 +1,10 @@
+{ 
+    "PersistClasses.Unit": 
+        [
+            {"abbreviation" : "mm", "name": "millimeter", "baseunit":"m", "factortobase" : 0.001},
+            {"abbreviation" : "mm/s", "name": "speed", "baseunit":"m/s", "factortobase" : 0.001},
+            {"abbreviation" : "°C", "name": "temperature", "baseunit":"°C", "factortobase" : 1},
+            {"abbreviation" : "mm^3", "name": "volume", "baseunit":"m^3/s", "factortobase" : 1E-9}
+        ]
+  
+}

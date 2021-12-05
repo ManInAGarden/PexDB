@@ -315,6 +315,8 @@ class ClassDictEntry(object):
         return "datamember: {} dectype{} declared {}".format(self._membername, self._dectype, self._declaration)
 
 class PBase(object):
+    """Base class for any persistant class
+       Derive from this and your class will be persistent"""
     _classdict = {}
     Id = UUid()
     Created = DateTime()
@@ -343,7 +345,7 @@ class PBase(object):
 
     @classmethod
     def _getclstablename(cls):
-        return cls.__name__.lower()
+        return cls.get_collection_name().lower()
 
     @classmethod
     def get_collection_name(cls):
@@ -386,6 +388,14 @@ class PBase(object):
         return md.get_declaration()
 
 
+class PCatalog(PBase):
+    """Basic class for Attributes defining a catalog"""
+    _collectionname = "catalog"
+    Type = String()
+    Code = String()
+    Value = String()
+    LangCode = String()
+
 def getvarname(decl: BaseVarType):
     """get the name used for a field of a declaration 
 
@@ -406,7 +416,3 @@ def getsubedvarname(decl: BaseVarType):
         return getvarname(decl)
     else:
         return getvarname(decl) + "." + getsubedvarname(decl._subdef)
-
-
-#def v(val):
-#    return Val(val)

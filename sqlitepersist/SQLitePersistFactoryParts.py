@@ -1,9 +1,9 @@
 import sqlite3 as sq3
-from sqlite3.dbapi2 import OperationalError
+from sqlite3.dbapi2 import Error, OperationalError
 import uuid
 import datetime
 
-from sqlitepersist.SQLitePersistBasicClasses import DbType, PBase
+from .SQLitePersistBasicClasses import *
 
 
 class SQFactory():
@@ -62,6 +62,73 @@ class SQFactory():
         exs = "DROP TABLE {0} ".format(tablename)
         print(exs)
         cursor.execute(exs)
+
+    def _deleteinst(self, pinst):
+        pass
+
+    def delete(self, dco):
+        """Delete the given persitent instance and do all the casscading deletes (if any). 
+        Make sure that neither all the deletes du execute or none by using transactions behind the
+        scenes"""
+        curs = self.conn.cursor()
+        try:
+            curs.execute("BEGIN")
+            try:
+                self._notransdeletecascaded(curs, dco)
+                curs.execute("COMMIT")
+            except sq3.Error as err:
+                curs.execute("ROLLBACK")
+                raise Error(str(err))
+        finally:
+            curs.close()
+        
+
+    def _notransdeletecascaded(self, curs, dco):
+        t = type(dco)
+
+        if not issubclass(t, PBase):
+            raise Exception("Type <{}> is not supported in MpFactory.delete()".format(t.__name__))
+
+        if dco._id is None: raise BaseException("No delete withoud an _id!")
+
+        membdict = dco._get_my_memberdict()
+        for membkey, membval in membdict.items():
+            decl = membval._declaration
+            declt = type(decl)
+            if issubclass(declt, JoinedEmbeddedObject) and decl.get_cascadedelete():
+                self.resolve(dco, membkey)
+                loco = getattr(dco, membkey)
+                if not loco is None:
+                    self._notransdeletecascaded(loco)
+
+            elif issubclass(declt, JoinedEmbeddedList) and decl.get_cascadedelete():
+                self.resolve(dco, membkey)
+                locos = getattr(dco, membkey)
+                for loco in locos:
+                    self._notransdeletecascaded(loco)
+
+        self._notransdelete(curs, dco)
+
+
+
+    def _notransdelete(self, curs, dco):
+        """Delete a data object from its collection 
+
+            dco : The data object to be deleted (_id has to be filled!)
+        """
+
+        t = type(dco)
+
+        if not issubclass(t, PBase):
+            raise Exception("Type <{}> is not supported in MpFactory.delete()".format(t.__name__))
+
+        if dco._id is None: raise BaseException("No delete withoud an _id!")
+        
+        delcls = type(dco)
+        tablename = delcls._getclstablename()
+        stmt = "DELETE FROM {0} WHERE _id='{1}'".format(tablename, str(dco._id))
+        curs.execute(stmt)
+
 
     def _get_dbtypename(self, val):
         ot = val.get_outertype()
@@ -171,27 +238,94 @@ class SQFactory():
         if t is uuid.UUID or t is str:
             return "'" + str(val) + "'"
 
-    def _get_rightpart(self, rdict):
-        for key, value in rdict.items():
-            return self._backmap(key) + " " + self._get_rightrightpart(value)
+    def _ismulti(self, s):
+        return s in ("$or", "$and")
+
+    def _isbinary(self, s):
+        return s in ("$lt", "$gt", "$eq", "$gte", "$lte")
+
+    def _getbinarypart(self, op : str, operands : list):
+        if len(operands) != 2:
+            raise Exception("getbinraypart needs exactly two operands!")
+
+        return "{0} {1} {2}".format(operands[0], self._backmap(op), self._get_rightrightpart(operands[1]))
+
+    def _getoperand(self, operand):
+        t = type(operand)
+        if t is str:
+            return "'{0}'".format(operand)
+        elif t is int:
+            return str(operand)
+        elif t is float:
+            return str(operand)
+        elif t is uuid.UUID:
+            return "'{0}'".format(operand)
+        elif t is dict:
+            return self._getoperanddict(operand)
+
+    def _getoperanddict(self, operand):
+        operandl = list(operand.items())
+        op = operandl[0][0]
+        right = operandl[0][1]
+        tr = type(right)
+        if self._ismulti(op):
+            return "(....)"
+        else:
+            rightl = list(right.items())
+            answ = "{0} {1} {2}".format(op, self._backmap(rightl[0][0]), self._getoperand(rightl[0][1]))
+        
+        return answ
+
+    def _getmultipart(self, op: str, operands : list):
+        first = True
+        for operand in operands:
+            if first:
+                first = False
+                answ = self._getoperand(operand)
+            else:
+                answ += " AND "
+                answ += self._getoperand(operand)
+
+        return answ
 
     def _create_where(self, findpar : dict):
         """creates the where part of the db-statement by evaluating the findpar dictionary"""
         answ = ""
-        first = True
-        for key, value in findpar.items():
-            if first:
-                first = False
-                answ = key + " " + self._get_rightpart(value)
-            else:
-                answ += "AND " + key + self._get_rightpart(value)
+        findparl = list(findpar.items())
+        if len(findparl) > 1:
+            raise Exception("findpar structure problem with top element")
+        
+        op = findparl[0][0]
+        if not type(op) is str:
+            raise Exception("no operator found in basic findpar dict")
 
+        oplist = findparl[0][1]
+        if not type(oplist) is list:
+            raise Exception("first layer value must be a dictionary containing the operands")
+
+        if self._ismulti(op):
+            answ = self._getmultipart(op, oplist)            
+        elif self._isbinary(op):
+            answ = self._getbinarypart(op, oplist)
 
         return answ
 
-    def _create_instance(self, cn):
-        #create an instance of the object with a cursor to a selected row as cn
-        pass
+
+    def _create_instance(self, cls : PBase, row):
+        """create an instance of the object with a cursor to a selected row as cn
+        """
+        inst = cls()
+        vd = inst._get_my_memberdict()
+
+        for key, value in vd.items():
+            if hasattr(inst, key) and getattr(inst, key) is not None:
+                continue
+            
+            dbdta = row[key]
+            decl = value._declaration
+            setattr(inst, key, decl.to_innertype(dbdta))
+
+        return inst
 
     @classmethod
     def adapt_uuid(cls, gid):

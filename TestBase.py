@@ -16,18 +16,21 @@ class TestBase(unittest.TestCase):
         #url = cls.conf.dbconnection.url
         fact = sqp.SQFactory("PexDb", "PexDbTest.sqlite")
         fact.lang = "DEU"
-        mock = mocking.Mocker(fact)
-        #mock.create_seeddata("catseeds.json")
-        cls.Mck = mock
         cls.Spf = fact
         
+        cls.Spf.try_createtable(Unit())
         cls.Spf.try_createtable(Printer())
         cls.Spf.try_createtable(Extruder())
+
+        cls.Mck = mocking.Mocker(fact)
+        cls.Mck.create_seeddata("./PexSeeds/units.json")
+
 
     @classmethod
     def tearDownClass(cls):
         cls.Spf.try_droptable(Printer())
         cls.Spf.try_droptable(Extruder())
+        cls.Spf.try_droptable(Unit())
 
 
     
