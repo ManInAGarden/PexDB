@@ -7,7 +7,8 @@ class OrderDirection(Enum):
     ASCENDING=0
     DESCENDING=1
 
-
+class NoneFoundException(Exception):
+    pass
 
 class OrderInfo(object):
     def __init__(self, field, direction : str):
@@ -76,50 +77,7 @@ class SQQueryIterator():
         return dco
 
 
-    def first_or_default(self, default):
-        """get first element of the iteration or a default value when nothing can be found
-
-           When no result can be found the default is returned
-           instead.
-
-           parameters
-           ----------
-
-           default: a default which will be returned instead of raising an exception in case no
-           results can be found
-
-           Returns
-           -------
-
-           The first element of the query result
-        """
-
-        if self._sqlcursor is None:
-            self._sqlcursor = self._sqpq.finddata()
-
-        cn = self._sqlcursor.__next__()
-        if len(self._datalist) <= 0:
-                return default
-
-        return self._datalist[0]
-
-    def first(self):
-        """get first element of the iterator
-
-           When no result can be found an exception is raised
-
-           Returns
-           -------
-
-           The first element of the query result
-        """
-        if self._datalist is None:
-            self._datalist = self._mpq.finddata()
-
-        if len(self._datalist) <= 0:
-            raise Exception("No results where found")
-
-        return self._datalist[0]
+    
 
 class SQQuery():
     opmapping = {"==":"$eq", 
@@ -168,8 +126,10 @@ class SQQuery():
 
            The first element of the query result
         """
-        it = iter(self)
-        return it.first_or_default(default)
+        try:
+            return self.first()
+        except NoneFoundException as nexc:
+            return default
 
     def first(self):
         """get first element of the query result
@@ -181,8 +141,16 @@ class SQQuery():
 
            The first element of the query result
         """
-        it = iter(self)
-        return it.first()
+        firstel = None
+        for el in self:
+            firstel = el
+            if firstel is not None:
+                break
+
+        if firstel is None:
+            raise NoneFoundException("No data found in database with first(), consider use of first_or_defauöt()")
+
+        return firstel
 
     def order_by(self, *args):
         """creates the order part in form a list of OrderInfos to be used when the db select-statement gets

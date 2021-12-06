@@ -1,5 +1,6 @@
 import importlib
 import json
+import datetime
 import sqlitepersist as sqp
 from PersistClasses import *
 
@@ -27,6 +28,24 @@ class Mocker(object):
         self._sqpf.flush(ext)
         return ext
 
+    def create_setting(self, parameterid=None, value=0.0):
+        setg = Setting(parameterid=parameterid, value=value)
+        self._sqpf.flush(setg)
+        return setg
+
+    def create_experiment(self, carriedoutdt = None, description="unit-test experiment"):
+        if carriedoutdt is None:
+            cod = datetime.datetime.now()
+        else:
+            cod = carriedoutdt
+
+        allparasq = sqp.SQQuery(self._sqpf, Parameter) #get all parameter definitions
+        for para in allparasq:
+            setg = self.create_setting(parameterid=para._id, value=10.0)
+
+        exp = Experiment(carriedoutdt=cod, description=description)
+        self._sqpf.flush(exp)
+
     
 class Seeder(object):
     def __init__(self, fact, filepath) -> None:
@@ -42,8 +61,57 @@ class Seeder(object):
             cls = self._getclass(datk)
             colname = cls.get_collection_name()
             for datmap in datlist:
-                s = cls(**datmap)
+                dm = self._doreplacements(datmap)
+                s = cls(**dm)
                 self._fact.flush(s)
+
+    def _doreplacements(self, datmap):
+        dm = dict()
+        
+        for datkey, datvalue in datmap.items():
+            if type(datvalue) is str and datvalue.startswith("${"):
+                dav = self._replace(datvalue)
+            else:
+                dav = datvalue
+
+            dm[datkey] = dav
+
+        return dm
+
+    def _replace(self, dav):
+        answ = ""
+
+        definition = dav.replace("${", "").replace("}","")
+        defparts = definition.split(":")
+
+        if defparts is None or len(defparts) != 3:
+            raise Exception("Seed data error in " + dav)
+
+        searchname = defparts[0]
+        srchvalue = defparts[1]
+        getfieldname = defparts[2]
+
+        lidx = searchname.rfind(".")
+        if lidx < 0:
+            raise Exception("Seed data error in {0}. No point found in definition to seperate field from class".format(dav))
+        
+        searchclassname = searchname[:lidx]
+        searchfielddefinname = searchname[lidx+1:]
+
+        cls = self._getclass(searchclassname)
+        fielddecl = sqp.PBase.get_memberdeclarationforcls(cls, searchfielddefinname)
+        q = sqp.SQQuery(self._fact, cls).where(fielddecl == srchvalue)
+        ct = 0
+        firstf = None
+        for fobj in q:
+            ct += 1
+            firstf = fobj
+
+        if ct != 1:
+            raise Exception("object not found or not unique in search of {0}.{1} = {2}".format(searchclassname, searchfielddefinname, str(srchvalue)))
+
+        answ = firstf.__getattribute__(getfieldname)
+        return answ
 
     def _getclass(self, clsname : str):
         if clsname is None or len(clsname)==0:

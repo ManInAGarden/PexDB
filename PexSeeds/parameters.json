@@ -1,0 +1,8 @@
+{ 
+    "PersistClasses.Parameter": 
+        [
+            {"abbreviation" : "OWS", "name": "outer wall speed", "unitid":"${PersistClasses.Unit.name:speed:_id}"},
+            {"abbreviation" : "NOZT", "name": "nozzletemp", "unitid":"${PersistClasses.Unit.name:temperature:_id}"}
+        ]
+  
+}

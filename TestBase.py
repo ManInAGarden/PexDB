@@ -9,7 +9,7 @@ class TestBase(unittest.TestCase):
     
     Spf : sqp.SQFactory = None #the persitence factory
     Mck : mocking.Mocker = None #the Mocker-Factory
-
+    PersTables = [Unit, Parameter, Printer, Extruder, Setting, Experiment]
     @classmethod
     def setUpClass(cls):
         #cls.conf = Properties("./PexDb.conf")
@@ -18,19 +18,21 @@ class TestBase(unittest.TestCase):
         fact.lang = "DEU"
         cls.Spf = fact
         
-        cls.Spf.try_createtable(Unit())
-        cls.Spf.try_createtable(Printer())
-        cls.Spf.try_createtable(Extruder())
+        for tablec in cls.PersTables:
+            cls.Spf.try_createtable(tablec)
 
         cls.Mck = mocking.Mocker(fact)
-        cls.Mck.create_seeddata("./PexSeeds/units.json")
+        try:
+            cls.Mck.create_seeddata("./PexSeeds/units.json")
+            cls.Mck.create_seeddata("./PexSeeds/parameters.json")
+        except Exception as exc:
+            print("Data seeding failed with {0}".format(str(exc)))
 
 
     @classmethod
     def tearDownClass(cls):
-        cls.Spf.try_droptable(Printer())
-        cls.Spf.try_droptable(Extruder())
-        cls.Spf.try_droptable(Unit())
+        for tablec in cls.PersTables:
+            cls.Spf.try_droptable(tablec)
 
 
     

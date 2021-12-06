@@ -354,6 +354,12 @@ class PBase(object):
         else:
             return cls.__name__
 
+    @classmethod
+    def get_memberdeclarationforcls(cls, membercls, membername):
+        cd = cls._classdict[membercls]
+        md = cd[membername]
+        return md.get_declaration()
+
 
     def __init__(self, **kwargs):
         self._valuesdict = {}

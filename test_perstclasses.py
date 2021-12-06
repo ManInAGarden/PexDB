@@ -1,3 +1,4 @@
+from datetime import datetime
 import unittest
 from PersistClasses import *
 from TestBase import *
@@ -28,8 +29,15 @@ class TestPrinterCrud(TestBase):
     def test_extruder_crud(self):
         #test create update delete for extruder entities
         extr = self.Mck.create_extruder(name="Qidi X-Plus HighTempAllMetal", abbreviation = "QIDIXPHTAM", maxtemperature=300, hascooler=False)
-        #extr = Extruder(name="Qidi X-Plus HighTempAllMetal", abbreviation = "QIDIXPHTAM", maxtemperature=300, hascooler=False)
-        self.Spf.flush(extr)
+
+    def test_experiment_crud(self):
+        #test create, update and delete for experiments
+        dtn = datetime.now()
+        exp = self.Mck.create_experiment(carriedoutdt=dtn)
+
+        expr = sqp.SQQuery(self.Spf, Experiment).where(Experiment.CarriedOutDt==dtn).first_or_default(None)
+        assert(expr is not None)
+        assert(expr.description==exp.description)
 
 if __name__ == '__main__':
     unittest.main()

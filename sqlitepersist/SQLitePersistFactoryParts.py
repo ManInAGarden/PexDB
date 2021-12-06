@@ -20,25 +20,31 @@ class SQFactory():
     def _gettablename(self, pinst):
         return pinst.__class__.__name__.lower()
 
-    def try_createtable(self, pinst):
+    def try_createtable(self, pclass):
         try:
-            self.createtable(pinst)
+            self.createtable(pclass)
         except:
             pass
 
-    def try_droptable(self, pinst):
+    def try_droptable(self, pinstclass):
         try:
-            self.droptable(pinst)
+            self.droptable(pinstclass)
         except:
             pass
 
-    def createtable(self, pinst):
-        pinstcls = pinst.__class__
+    def createtable(self, pinstcls):
+        pinst = pinstcls()
         tablename = pinstcls.__name__.lower()
         memd = pinstcls._classdict[pinstcls]
         collst = "("
         first = True
         for key, val in memd.items():
+            decl = val.get_declaration()
+            declt = type(decl)
+            #do not create columns for joined elements
+            if declt is JoinedEmbeddedObject or declt is JoinedEmbeddedList:
+                continue
+
             if first:
                 collst += key + " " + self._get_dbtypename(val)
                 first = False
@@ -55,7 +61,9 @@ class SQFactory():
         print(exs)
         cursor.execute(exs)
 
-    def droptable(self, pinst):
+    def droptable(self, pinstcls):
+        """drop a table which had been created for the given class"""
+        pinst = pinstcls()
         pinstcls = pinst.__class__
         tablename = pinstcls.__name__.lower()
         cursor = self.conn.cursor()
@@ -179,7 +187,7 @@ class SQFactory():
     def _update(self, pinst : PBase):
         pass
 
-    def find(self, cls, findpar = None, orderlist=None, limit=None):
+    def find(self, cls, findpar = None, orderlist=None, limit=0):
         """Find the data
         
         """
@@ -204,8 +212,9 @@ class SQFactory():
 
         if findpar is not None:
             if len(findpar) > 0:
-                stmt += " WHERE " + self._create_where(findpar)
-                
+                wc = self._create_where(findpar)
+                if not wc is None:
+                    stmt += " WHERE " + wc                    
 
         if limit is not None and limit >0:
             if findpar is None:
@@ -216,6 +225,7 @@ class SQFactory():
         if orderlist is not None:
             pass
 
+        print(stmt)
         curs = self.conn.cursor()
         try:
             answ = curs.execute(stmt)
@@ -262,6 +272,10 @@ class SQFactory():
             return "'{0}'".format(operand)
         elif t is dict:
             return self._getoperanddict(operand)
+        elif t is dt.datetime:
+            return "datetime('{0:04d}-{1:02d}-{2:02d}T{3:02d}:{4:02d}:{5:02d}.{6}')".format(operand.year, operand.month, operand.day, operand.hour, operand.minute, operand.second, operand.microsecond)
+        else:
+            raise Exception("unknown operand type {0} in _getoperand()".format(str(t)))
 
     def _getoperanddict(self, operand):
         operandl = list(operand.items())
@@ -300,6 +314,11 @@ class SQFactory():
             raise Exception("no operator found in basic findpar dict")
 
         oplist = findparl[0][1]
+
+        #handle the all-is-on-level-0 type here
+        if type(oplist) is dict:
+            return self._getoperanddict(findpar)
+
         if not type(oplist) is list:
             raise Exception("first layer value must be a dictionary containing the operands")
 
@@ -317,13 +336,24 @@ class SQFactory():
         inst = cls()
         vd = inst._get_my_memberdict()
 
+        jembs = []
+        jlists = []
         for key, value in vd.items():
             if hasattr(inst, key) and getattr(inst, key) is not None:
                 continue
             
-            dbdta = row[key]
             decl = value._declaration
-            setattr(inst, key, decl.to_innertype(dbdta))
+            declt = type(decl)
+            if declt is JoinedEmbeddedList:
+                jembs.append(decl)
+            elif declt is JoinedEmbeddedObject:
+                jlists.append(decl)
+            else:
+                dbdta = row[key]
+                try:
+                    setattr(inst, key, decl.to_innertype(dbdta))
+                except Exception as ex:
+                    raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, dbdta, str(ex)))
 
         return inst
 

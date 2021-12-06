@@ -30,17 +30,26 @@ class Extruder(AbbreviatedThing):
 
 class Unit(AbbreviatedThing):
     FactorToBase = sqp.Float()
-    BaseUnit = sqp.UUid()
+    BaseUnit = sqp.String()
 
 class Parameter(AbbreviatedThing):
-    Unit = sqp.String()
+    """definition for a parameter"""
+    UnitId = sqp.UUid()
+    Unit = sqp.JoinedEmbeddedObject(targettype=Unit, localid=UnitId, autfill=True)
 
-class ParameterSetting(sqp.PBase):
-    ParameterId = sqp.String()
-    ParameterName = sqp.JoinedEmbeddedObject(targettype=Parameter, localid=ParameterId, autofill=True)
+class Setting(sqp.PBase):
+    """a paramater setting in an experiment"""
+    ParameterId = sqp.UUid()
+    ExperimentId = sqp.UUid()
+    ParameterDefinition = sqp.JoinedEmbeddedObject(targettype=Parameter, localid=ParameterId, autofill=True)
     Value = sqp.String()
 
 class Experiment(sqp.PBase):
+    ExtruderId = sqp.UUid()
+    PrinterId = sqp.UUid()
+    ExtruderUsed = sqp.JoinedEmbeddedObject(targettype=Extruder, localid=ExtruderId, autofill=True)
+    PrinterUsed = sqp.JoinedEmbeddedObject(targettype=Printer, localid=PrinterId, autofill=True)
     CarriedOutDt = sqp.DateTime()
-    ParameterSettings = sqp.JoinedEmbeddedList(targettype=ParameterSetting, foreignid="_id")
+    Description = sqp.String()
+    Settings = sqp.JoinedEmbeddedList(targettype=Setting, foreignid=Setting.ExperimentId, cascadedelete=True)
     
