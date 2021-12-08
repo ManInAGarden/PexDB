@@ -16,9 +16,10 @@ class SQFactory():
         self.conn = sq3.connect(dbfilename, detect_types=sq3.PARSE_DECLTYPES | sq3.PARSE_COLNAMES)
         self.conn.row_factory = sq3.Row
         self.lang = "GBR"
+        self._catcache = {}
 
-    def _gettablename(self, pinst):
-        return pinst.__class__.__name__.lower()
+    def _gettablename(self, pinst : PBase):
+        return pinst.__class__._getclstablename()
 
     def try_createtable(self, pclass):
         try:
@@ -34,7 +35,7 @@ class SQFactory():
 
     def createtable(self, pinstcls):
         pinst = pinstcls()
-        tablename = pinstcls.__name__.lower()
+        tablename = pinstcls._getclstablename()
         memd = pinstcls._classdict[pinstcls]
         collst = "("
         first = True
@@ -63,13 +64,14 @@ class SQFactory():
 
     def droptable(self, pinstcls):
         """drop a table which had been created for the given class"""
-        pinst = pinstcls()
-        pinstcls = pinst.__class__
-        tablename = pinstcls.__name__.lower()
-        cursor = self.conn.cursor()
-        exs = "DROP TABLE {0} ".format(tablename)
-        print(exs)
-        cursor.execute(exs)
+        tablename = pinstcls._getclstablename()
+        try:
+            cursor = self.conn.cursor()
+            exs = "DROP TABLE {0} ".format(tablename)
+            print(exs)
+            cursor.execute(exs)
+        finally:
+            cursor.close()
 
     def _deleteinst(self, pinst):
         pass
@@ -146,27 +148,60 @@ class SQFactory():
             return ot.name
 
        
+    def getcat(self, cls : PCatalog, code : str):
+        """Get a full catalog entry of the given type and code. If the cat is language sensitive the code
+            will be searched in the current language of the factory
+        """
+        if cls.is_langsensitive():
+            lang = self.lang
+        else:
+            lang = "*?NOLANG?*"
+
+        cattype = cls._cattype
+
+        ck = self._createcachekey(lang, cattype, code)
+
+        if ck in self._catcache:
+            return self._catcache[ck]
+
+        ce = self._readcatentryfromdb(cls, cattype, lang, code)
+        self._catcache[ck] = ce
+        return ce
 
     def flush(self, pinst : PBase):
-        if pinst._id is None: #we need to insert
-            pinst._id = uuid.uuid4()
-            pinst.created = datetime.datetime.now()
-            pinst.lastupdate = datetime.datetime.now()
-            self._insert(pinst)
-        else: #we need to update
-            pinst.lastupdate = datetime.datetime.now()
-            self._update(pinst)
+        curs = self.conn.cursor()
+        try:
+            curs.execute("BEGIN")
+            try:
+                if pinst._id is None: #we need to insert
+                    pinst._id = uuid.uuid4()
+                    pinst.created = datetime.datetime.now()
+                    pinst.lastupdate = datetime.datetime.now()
+                    self._insert(curs, pinst)
+                else: #we need to update
+                    pinst.lastupdate = datetime.datetime.now()
+                    self._update(curs, pinst)
 
-        self.conn.commit()
+                curs.execute("COMMIT")
+            except sq3.Error as err:
+                curs.execute("ROLLBACK")
+                raise Error(str(err))
+        finally:
+            curs.close()
 
-    def _getvaluestuple(self, pinst):
+
+    def _getinsertvaluestuple(self, pinst):
         pinstcls = pinst.__class__
         memd = pinstcls._classdict[pinstcls]
         first = True
         valtuplst = []
         for key, val in memd.items():
             propvalue = pinst.__getattribute__(key)
+
             if propvalue is not None:
+                if issubclass(type(propvalue), PCatalog):
+                    propvalue = propvalue.type
+
                 valtuplst.append(propvalue)
                 if first:
                     first = False
@@ -177,15 +212,44 @@ class SQFactory():
                     cnames += ", " + key
         return tuple(valtuplst), cnames, cquests
 
-    def _insert(self, pinst : PBase):
+    def _getupdatevaluestuple(self, pinst):
+        """get a everything for the update statement omitting _id, created bur having lastupdate on the
+         current date and time
+         _id is last in valuestuple but not mentioned in csets!"""
+        pinstcls = pinst.__class__
+        memd = pinstcls._classdict[pinstcls]
+        first = True
+        valtuplst = []
+        for key, val in memd.items():
+            if key not in ("_id", "created"):
+                if key != "lastupdate":
+                    propvalue = pinst.__getattribute__(key)
+                else:
+                    propvalue = datetime.datetime.now()
+
+                if issubclass(type(propvalue), PCatalog):
+                    propvalue = propvalue.type
+                    
+                valtuplst.append(propvalue)
+                if first:
+                    first = False
+                    csets = key + "=?"
+                else:
+                    csets += ", " + key + "=?"
+
+        valtuplst.append(pinst._id)
+        return tuple(valtuplst), csets
+
+    def _insert(self, curs, pinst : PBase):
         table = self._gettablename(pinst)
-        curs = self.conn.cursor()
-        valtuple, inscolnames, inscolquests = self._getvaluestuple(pinst)
+        valtuple, inscolnames, inscolquests = self._getinsertvaluestuple(pinst)
+        curs.execute("INSERT INTO " + table + "(" + inscolnames + ") values (" + inscolquests + ")", valtuple)
 
-        curs.execute("insert into " + table + "(" + inscolnames + ") values (" + inscolquests + ")", valtuple)
-
-    def _update(self, pinst : PBase):
-        pass
+    def _update(self, curs, pinst : PBase):
+        tablename = self._gettablename(pinst)
+        valtuple, csets = self._getupdatevaluestuple(pinst)
+        stmt = "UPDATE {0} SET {1} WHERE _id=?".format(tablename, csets)
+        curs.execute(stmt, valtuple)
 
     def find(self, cls, findpar = None, orderlist=None, limit=0):
         """Find the data
@@ -269,7 +333,7 @@ class SQFactory():
         elif t is float:
             return str(operand)
         elif t is uuid.UUID:
-            return "'{0}'".format(operand)
+            return "'{0}'".format(operand.hex)
         elif t is dict:
             return self._getoperanddict(operand)
         elif t is dt.datetime:
@@ -330,8 +394,71 @@ class SQFactory():
         return answ
 
 
+    def _readcatentryfromdb(self, catcls, cattype : str, lang : str, catcode : str):
+        """read a single catlog entry from the database"""
+        if lang != "*?NOLANG?*":
+            stmt = "SELECT * FROM {0} where code=? and langcode=?".format(catcls._getclstablename())
+            parat = (catcode, lang)
+        else:
+            stmt = "SELECT * FROM {0} where code=?".format(catcls._getclstablename())
+            parat = (catcode,)
+        
+        curs = self.conn.cursor()
+        try:
+            rows = curs.execute(stmt, parat)
+            ct = 0
+            for row in rows:
+                answ = self._create_instance(catcls, row)
+                ct += 1
+                if ct > 1:
+                    raise Exception("Catalog code <{0}> is not unique in catalog-type <{1}> for class {2} in language <{3}>".format(catcode, 
+                            cattype,
+                            str(catcls), 
+                            lang))
+
+            if ct == 0:
+                raise Exception("Catalog code <{0}> not found in catalog-type <{1}> for class {2} in language <{3}>".format(catcode, 
+                            cattype,
+                            str(catcls), 
+                            lang))
+
+        finally:
+            curs.close()
+
+        return answ
+
+    def _createcachekey(self, lang, cattype, catcode):
+        return lang + "#" + cattype + "#" + catcode
+
+    def _get_fullcatentry(self, decl : ClassDictEntry, dbdta) -> PCatalog:
+        """interpret dbdata as a key to catlog entry of a type declared/given in decl
+            and return the full catalog-entry. Do minimize db-access the catalogentries are cached
+            internally.
+
+        """
+        if dbdta is None:
+            return None
+
+        catdef = decl.get_declaration()
+        catcls = decl.get_dectype()
+        catcode = str(dbdta)
+        cattype = catdef._cattype
+        if cattype.is_langsensitive():
+            lang = self.lang
+        else:
+            lang = "?NOLANG?"
+
+        cachekey = self._createcachekey(lang, cattype, catcode)
+        if cachekey in self._catcache:
+            answ = self._catcache[cachekey]
+        else:
+            answ = self._readcatentryfromdb(catcls, cattype, lang, catcode)
+            self._catcache[cachekey] = answ
+
+        return answ
+
     def _create_instance(self, cls : PBase, row):
-        """create an instance of the object with a cursor to a selected row as cn
+        """create an instance of the object with a cursor to a selected row as row
         """
         inst = cls()
         vd = inst._get_my_memberdict()
@@ -344,10 +471,16 @@ class SQFactory():
             
             decl = value._declaration
             declt = type(decl)
-            if declt is JoinedEmbeddedList:
-                jembs.append(decl)
-            elif declt is JoinedEmbeddedObject:
-                jlists.append(decl)
+            
+            if declt is JoinedEmbeddedObject:
+                if decl.get_autofill():
+                    jembs.append(decl)
+            elif declt is JoinedEmbeddedList:
+                if decl.get_autofill():
+                    jlists.append(decl)
+            elif declt is Catalog:
+                dbdta = row[key]
+                setattr(inst, key, self._get_fullcatentry(decl, dbdta))
             else:
                 dbdta = row[key]
                 try:
@@ -355,7 +488,109 @@ class SQFactory():
                 except Exception as ex:
                     raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, dbdta, str(ex)))
 
+        for jemb in jembs:
+            self._fill_embedded_object(inst, jemb)
+
+        for jlist in jlists:
+            self._fill_embedded_list(inst, jlist)
+
         return inst
+
+    def _fill_embedded_object(self, pinst : PBase, jdef : JoinedEmbeddedObject):
+        tgtfieldname = jdef.get_fieldname()
+        if tgtfieldname is None:
+            raise Exception("targetfield name cannot be derived during fill of a joined embedded object")
+
+        if pinst.__getattribute__(tgtfieldname) is not None:
+            return
+
+        tgtcls = jdef.get_targettype()
+        if tgtcls is None:
+            raise Exception("missing targettype in JonedEmbeddedObject during fill")
+
+        localidfielddef = jdef._localid
+        localidfieldname = localidfielddef.get_fieldname()
+        localid = pinst.__getattribute__(localidfieldname)
+        if localid is None:
+            return
+
+        #we cannot use QQuery here because that would produce circular imports
+        tablename = tgtcls._getclstablename()
+        stmt = "SELECT * from {0} where {1}=?".format(tablename, jdef._foreignid)
+        print(stmt)
+        curs = self.conn.cursor()
+        try:
+            rows = curs.execute(stmt, (localid,)) #self._getoperand(localid)
+            ct = 0
+            for row in rows:
+                ct += 1
+                firstrow = row
+
+            if ct == 0:
+                raise Exception("join of field {0} found no target".format(tgtfieldname))
+
+            if ct > 1:
+                raise Exception("join on field {0} found multiple targets".format(tgtfieldname))
+
+            tgtinst = self._create_instance(tgtcls, firstrow)
+            pinst.__setattr__(tgtfieldname, tgtinst)
+        finally:
+            curs.close()
+
+    def _fill_embedded_list(self, pinst : PBase, jdef : JoinedEmbeddedList):
+        tgtfieldname = jdef.get_fieldname()
+        if tgtfieldname is None:
+            raise Exception("targetfield name cannot be derived during fill of a joined embedded list")
+
+        if pinst.__getattribute__(tgtfieldname) is not None:
+            return
+
+        tgtcls = jdef.get_targettype()
+        if tgtcls is None:
+            raise Exception("missing targettype in JoinedEmbeddedList during fill")
+
+        if not type(jdef._localid):
+            localidfielddef = jdef._localid
+            localidfieldname = localidfielddef.get_fieldname()
+        else:
+            localidfieldname = jdef._localid
+
+        localid = pinst.__getattribute__(localidfieldname)
+        if localid is None:
+            pinst.__setattr__(tgtfieldname, [])
+            return
+
+        #we cannot use QQuery here because that would produce circular imports
+        tablename = tgtcls._getclstablename()
+        tgtforeignfieldname = jdef.get_foreign_keyname()
+        stmt = "SELECT * from {0} where {1}=?".format(tablename, tgtforeignfieldname)
+        print(stmt)
+        curs = self.conn.cursor()
+        try:
+            rows = curs.execute(stmt, (localid,)) #self._getoperand(localid)
+            ct = 0
+            scratchl = []
+            for row in rows:
+                tgtinst = self._create_instance(tgtcls, row)
+                scratchl.append(tgtinst)
+
+            pinst.__setattr__(tgtfieldname, scratchl)
+            
+        finally:
+            curs.close()
+
+    def fill_joins(self, pinst : PBase, *args):
+        """fill the joins on the instance class given by args
+        use like fact.filljoins(myinst, MyInstClass.Join01, MyInstClass.Join02, ...)"""
+
+        for arg in args:
+            targ = type(arg)
+            if targ is JoinedEmbeddedList:
+                self._fill_embedded_list(pinst, arg)
+            elif targ is JoinedEmbeddedObject:
+                self._fill_embedded_object(pinst, arg)
+            else:
+                raise Exception("argument {0} is no joined definition".format(str(arg)))
 
     @classmethod
     def adapt_uuid(cls, gid):

@@ -328,7 +328,7 @@ class PBase(object):
         if cls in cls._classdict.keys(): return
 
         classmemberdict = {}
-        allclasses = inspect.getmro(cls)
+        allclasses = inspect.getmro(cls) # get classes in method call order aka top derived class first
         for allclass in allclasses:
             if issubclass(allclass, PBase):
                 members = vars(allclass)
@@ -339,7 +339,8 @@ class PBase(object):
                         else:
                             mykey = key.lower()
 
-                        classmemberdict[mykey] = ClassDictEntry(key, type(value), getattr(allclass, key))
+                        if not mykey in classmemberdict.keys(): # do not overwrite overridden member infos
+                            classmemberdict[mykey] = ClassDictEntry(key, type(value), getattr(allclass, key))
         
         cls._classdict[cls] = classmemberdict
 
@@ -397,10 +398,16 @@ class PBase(object):
 class PCatalog(PBase):
     """Basic class for Attributes defining a catalog"""
     _collectionname = "catalog"
+    _cattype = None #overriden in each catalog derived from this class
+    _langsensitive = False # by default no language sensititivity, bur may be overriden by derived catalogs
     Type = String()
     Code = String()
     Value = String()
     LangCode = String()
+
+    @classmethod
+    def is_langsensitive(cls):
+        return cls._langsensitive
 
 def getvarname(decl: BaseVarType):
     """get the name used for a field of a declaration 

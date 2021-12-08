@@ -1,0 +1,13 @@
+{ 
+    "sqlitepersist.SQLitePersistBasicClasses.PCatalog": 
+        [
+            {"type" : "SLICERNAME_CURA", "code":"SPPRT", "value":"speed_print", "langcode":"DEU"},
+            {"type" : "SLICERNAME_CURA", "code":"MATFLOW", "value":"material_flow", "langcode":"DEU"},
+            {"type" : "SLICERNAME_CURA", "code":"MATFLOLVL0", "value":"material_flow_layer_0", "langcode":"DEU"},
+            {"type" : "SLICERNAME_CURA", "code":"MATPRTTEMP", "value":"material_print_temperature", "langcode":"DEU"},
+            {"type" : "SLICERNAME_CURA", "code":"SKMATFLOW", "value":"skin_material_flow", "langcode":"DEU"},
+            {"type" : "SLICERNAME_CURA", "code":"COAVOL", "value":"coasting_volume", "langcode":"DEU"}
+
+        ]
+  
+}

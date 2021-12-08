@@ -9,7 +9,8 @@ class TestBase(unittest.TestCase):
     
     Spf : sqp.SQFactory = None #the persitence factory
     Mck : mocking.Mocker = None #the Mocker-Factory
-    PersTables = [Unit, Parameter, Printer, Extruder, Setting, Experiment]
+    PersTables = [Unit, Parameter, Printer, Extruder, Setting, Experiment, sqp.PCatalog]
+    
     @classmethod
     def setUpClass(cls):
         #cls.conf = Properties("./PexDb.conf")
@@ -23,6 +24,7 @@ class TestBase(unittest.TestCase):
 
         cls.Mck = mocking.Mocker(fact)
         try:
+            cls.Mck.create_seeddata("./PexSeeds/catalogs.json")
             cls.Mck.create_seeddata("./PexSeeds/units.json")
             cls.Mck.create_seeddata("./PexSeeds/parameters.json")
         except Exception as exc:
@@ -31,6 +33,7 @@ class TestBase(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        q = 9 #breakpoint here to check db-contents before everything gets cleaned up after the test
         for tablec in cls.PersTables:
             cls.Spf.try_droptable(tablec)
 

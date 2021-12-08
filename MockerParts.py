@@ -28,8 +28,8 @@ class Mocker(object):
         self._sqpf.flush(ext)
         return ext
 
-    def create_setting(self, parameterid=None, value=0.0):
-        setg = Setting(parameterid=parameterid, value=value)
+    def create_setting(self, parameterid=None, value=0.0, experimentid=None):
+        setg = Setting(parameterid=parameterid, value=value, experimentid=experimentid)
         self._sqpf.flush(setg)
         return setg
 
@@ -39,12 +39,23 @@ class Mocker(object):
         else:
             cod = carriedoutdt
 
+        prin = self.create_printer(name="X-TEST", abbreviation="QXTST")
+        extr = self.create_extruder()
+        exp = Experiment(carriedoutdt=cod, 
+            description=description, 
+            extruderusedid=extr._id, 
+            printerusedid=prin._id)
+            
+        self._sqpf.flush(exp)
+        exp.settings = []
         allparasq = sqp.SQQuery(self._sqpf, Parameter) #get all parameter definitions
         for para in allparasq:
-            setg = self.create_setting(parameterid=para._id, value=10.0)
+            setg = self.create_setting(parameterid=para._id, value=10.0, experimentid=exp._id)
+            exp.settings.append(setg)
 
-        exp = Experiment(carriedoutdt=cod, description=description)
-        self._sqpf.flush(exp)
+        return exp
+
+       
 
     
 class Seeder(object):
