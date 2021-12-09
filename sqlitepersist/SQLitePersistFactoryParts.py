@@ -1,3 +1,4 @@
+
 import sqlite3 as sq3
 from sqlite3.dbapi2 import Error, OperationalError
 import uuid
@@ -21,11 +22,15 @@ class SQFactory():
     def _gettablename(self, pinst : PBase):
         return pinst.__class__._getclstablename()
 
-    def try_createtable(self, pclass):
+    def try_createtable(self, pclass) -> bool:
         try:
             self.createtable(pclass)
-        except:
-            pass
+            answ = True
+        except Exception as exc:
+            print(str(exc))
+            answ = False
+        
+        return answ
 
     def try_droptable(self, pinstclass):
         try:
@@ -609,6 +614,8 @@ class SQFactory():
             return None
         else:
             return uuid.UUID(hex=text.decode())
+
+
 
 
 
