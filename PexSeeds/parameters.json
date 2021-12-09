@@ -1,8 +1,10 @@
 { 
     "PersistClasses.Parameter": 
         [
-            {"abbreviation" : "PRISP", "name": "print speed", "unitid":"${PersistClasses.Unit.name:speed:_id}"},
-            {"abbreviation" : "PRINOZZTEMP", "name": "print temperatur", "unitid":"${PersistClasses.Unit.name:temperature:_id}"}
+            {"abbreviation" : "LAYERHEIGHT", "name": "layer height", "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"LAYER_HEIGHT"},
+            {"abbreviation" : "PRISP", "name": "print speed", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_PRINT"},
+            {"abbreviation" : "PRISPTOBO", "name": "print speed top bottom", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_TOPBOTTOM"},
+            {"abbreviation" : "PRINOZZTEMP", "name": "print temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_PRINT_TEMPERATURE"}
         ]
   
 }

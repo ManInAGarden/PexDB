@@ -70,18 +70,19 @@ class Seeder(object):
         
         for datk, datlist in data.items():
             cls = self._getclass(datk)
-            colname = cls.get_collection_name()
             for datmap in datlist:
-                dm = self._doreplacements(datmap)
+                dm = self._doreplacements(cls, datmap)
                 s = cls(**dm)
                 self._fact.flush(s)
 
-    def _doreplacements(self, datmap):
+    def _doreplacements(self, targetcls, datmap):
         dm = dict()
         
         for datkey, datvalue in datmap.items():
             if type(datvalue) is str and datvalue.startswith("${"):
                 dav = self._replace(datvalue)
+            elif targetcls.is_catalogmember(datkey):
+                dav = self._get_catalog(targetcls, datkey, datvalue)
             else:
                 dav = datvalue
 
@@ -134,3 +135,23 @@ class Seeder(object):
         module = importlib.import_module(modulename)
         return getattr(module, clsname)
 
+    def _get_catalog(self, targetcls, targetmember, codekey):
+        """get a real catalog value for the given key"""
+        if "#" in codekey:
+            parts = codekey.split("#")
+            if len(parts) != 2:
+                raise Exception("Codekey for catalog search contains more then one # in <{0}>. Use only a single # to separate langeuage from key like ENU#SOME_KEY.".format(codekey))
+            lang = parts[0]
+            code = parts[1]
+        else:
+            lang = None
+            code = codekey
+        
+        membdec = sqp.PBase.get_memberdeclarationforcls(targetcls, targetmember)
+        catacls = membdec.get_catalogtype()
+        answ = self._fact.getcat(catacls, code, lang)
+
+        if answ is None:
+            raise Exception("Catalog value for class <{0}> not found for seed-key <{1}> in seeding for class <{2}>".format(str(catacls), codekey, str(targetcls)))
+
+        return answ

@@ -60,11 +60,20 @@ class TestAllCrud(TestBase):
         assert(type(expr.settings) is list)
         assert(len(expr.settings) == len(exp.settings))
 
-    def test_catalog(self):
+    def test_parameter_crud(self):
         para = Parameter()
         para.name = "test"
-        para.curaname = self.Spf.getcat(CuraNameCat, "SPPRT")
+        para.curaname = self.Spf.getcat(CuraNameCat, "MATERIAL_PRINT_TEMPERATURE") #has been seeded before, so should exist here
         self.Spf.flush(para)
+
+        parar = sqp.SQQuery(self.Spf, Parameter).where(Parameter.Id==para._id).first_or_default(None)
+        assert(parar is not None)
+        assert(parar._id == para._id)
+        assert(parar.curaname is not None)
+        assert(type(parar.curaname) is CuraNameCat)
+        assert(parar.curaname.code == "MATERIAL_PRINT_TEMPERATURE")
+
+
 
 
 

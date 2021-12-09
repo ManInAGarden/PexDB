@@ -148,23 +148,29 @@ class SQFactory():
             return ot.name
 
        
-    def getcat(self, cls : PCatalog, code : str):
+    def getcat(self, cls : PCatalog, code : str, lang:str=None):
         """Get a full catalog entry of the given type and code. If the cat is language sensitive the code
             will be searched in the current language of the factory
+
+            lang can be override to enforce a language other then the current language of the factory for
+            language sensitive catalogs
         """
-        if cls.is_langsensitive():
-            lang = self.lang
+        if lang is None:
+            if cls.is_langsensitive():
+                mylang = self.lang
+            else:
+                mylang = "*?NOLANG?*"
         else:
-            lang = "*?NOLANG?*"
+            mylang = lang
 
         cattype = cls._cattype
 
-        ck = self._createcachekey(lang, cattype, code)
+        ck = self._createcachekey(mylang, cattype, code)
 
         if ck in self._catcache:
             return self._catcache[ck]
 
-        ce = self._readcatentryfromdb(cls, cattype, lang, code)
+        ce = self._readcatentryfromdb(cls, cattype, mylang, code)
         self._catcache[ck] = ce
         return ce
 
@@ -200,7 +206,7 @@ class SQFactory():
 
             if propvalue is not None:
                 if issubclass(type(propvalue), PCatalog):
-                    propvalue = propvalue.type
+                    propvalue = propvalue.code
 
                 valtuplst.append(propvalue)
                 if first:
@@ -228,7 +234,7 @@ class SQFactory():
                     propvalue = datetime.datetime.now()
 
                 if issubclass(type(propvalue), PCatalog):
-                    propvalue = propvalue.type
+                    propvalue = propvalue.code
                     
                 valtuplst.append(propvalue)
                 if first:
@@ -442,17 +448,18 @@ class SQFactory():
         catdef = decl.get_declaration()
         catcls = decl.get_dectype()
         catcode = str(dbdta)
-        cattype = catdef._cattype
-        if cattype.is_langsensitive():
+        catpersisttype = catdef._catalogtype
+        if catpersisttype.is_langsensitive():
             lang = self.lang
         else:
-            lang = "?NOLANG?"
+            lang = "*?NOLANG?*"
 
+        cattype = catpersisttype._cattype
         cachekey = self._createcachekey(lang, cattype, catcode)
         if cachekey in self._catcache:
             answ = self._catcache[cachekey]
         else:
-            answ = self._readcatentryfromdb(catcls, cattype, lang, catcode)
+            answ = self._readcatentryfromdb(catpersisttype, cattype, lang, catcode)
             self._catcache[cachekey] = answ
 
         return answ
@@ -480,7 +487,7 @@ class SQFactory():
                     jlists.append(decl)
             elif declt is Catalog:
                 dbdta = row[key]
-                setattr(inst, key, self._get_fullcatentry(decl, dbdta))
+                setattr(inst, key, self._get_fullcatentry(value, dbdta))
             else:
                 dbdta = row[key]
                 try:

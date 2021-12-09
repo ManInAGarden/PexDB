@@ -356,10 +356,17 @@ class PBase(object):
             return cls.__name__
 
     @classmethod
-    def get_memberdeclarationforcls(cls, membercls, membername):
+    def get_memberdeclarationforcls(cls, membercls, membername : str):
         cd = cls._classdict[membercls]
         md = cd[membername]
         return md.get_declaration()
+
+    @classmethod
+    def is_catalogmember(cls, membername):
+        cd = cls._classdict[cls]
+        md = cd[membername]
+        decl = md.get_declaration()
+        return issubclass(type(decl), Catalog)
 
 
     def __init__(self, **kwargs):
