@@ -1,0 +1,10 @@
+{ 
+    "PersistClasses.Extruder": 
+        [
+            {"abbreviation" : "QITE-XP-STD", "name": "Qidi X-Plus/X-Max-Standard", "producedby" : "QIDI Tech", "hascooler":true, "maxtemperature":250.0},
+            {"abbreviation" : "QITE-XP-HOT", "name": "Qidi X-Plus/X-Max-Hot", "producedby" : "QIDI Tech", "hascooler":false, "maxtemperature":300.0},
+            {"abbreviation" : "QITE-XP-HOTC", "name": "Qidi X-Plus/X-Max-Hot with Cooler", "producedby" : "myself", "hascooler":true, "maxtemperature":300.0},
+            {"abbreviation" : "ANET-A8P-STD", "name": "Anet A8P Standard", "producedby" : "Anet", "hascooler":true, "maxtemperature":250.0}
+        ]
+  
+}

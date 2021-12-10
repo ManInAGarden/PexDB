@@ -8,6 +8,9 @@ from .SQLitePersistBasicClasses import *
 
 
 class SQFactory():
+    
+    unwritable = [JoinedEmbeddedList, JoinedEmbeddedObject]
+
     def __init__(self, name, dbfilename):
         self._name = name
         self._dbfilename = dbfilename
@@ -46,9 +49,8 @@ class SQFactory():
         first = True
         for key, val in memd.items():
             decl = val.get_declaration()
-            declt = type(decl)
-            #do not create columns for joined elements
-            if declt is JoinedEmbeddedObject or declt is JoinedEmbeddedList:
+            #do not create columns for unwritable declarations like EmbeddedJoinedList....
+            if not decl.is_dbstorable(): 
                 continue
 
             if first:
@@ -209,18 +211,22 @@ class SQFactory():
         for key, val in memd.items():
             propvalue = pinst.__getattribute__(key)
 
+            
             if propvalue is not None:
-                if issubclass(type(propvalue), PCatalog):
-                    propvalue = propvalue.code
+                dt = val.get_declaration()
+                if dt.is_dbstorable():
+                    if issubclass(type(propvalue), PCatalog):
+                        propvalue = propvalue.code
 
-                valtuplst.append(propvalue)
-                if first:
-                    first = False
-                    cquests = "?"
-                    cnames = key
-                else:
-                    cquests += ", ?"
-                    cnames += ", " + key
+                    valtuplst.append(propvalue)
+                    if first:
+                        first = False
+                        cquests = "?"
+                        cnames = key
+                    else:
+                        cquests += ", ?"
+                        cnames += ", " + key
+
         return tuple(valtuplst), cnames, cquests
 
     def _getupdatevaluestuple(self, pinst):
@@ -232,21 +238,23 @@ class SQFactory():
         first = True
         valtuplst = []
         for key, val in memd.items():
-            if key not in ("_id", "created"):
-                if key != "lastupdate":
-                    propvalue = pinst.__getattribute__(key)
-                else:
-                    propvalue = datetime.datetime.now()
+            dt = val.get_declaration()
+            if dt.is_dbstorable():
+                if key not in ("_id", "created"):
+                    if key != "lastupdate":
+                        propvalue = pinst.__getattribute__(key)
+                    else:
+                        propvalue = datetime.datetime.now()
 
-                if issubclass(type(propvalue), PCatalog):
-                    propvalue = propvalue.code
-                    
-                valtuplst.append(propvalue)
-                if first:
-                    first = False
-                    csets = key + "=?"
-                else:
-                    csets += ", " + key + "=?"
+                    if issubclass(type(propvalue), PCatalog):
+                        propvalue = propvalue.code
+                        
+                    valtuplst.append(propvalue)
+                    if first:
+                        first = False
+                        csets = key + "=?"
+                    else:
+                        csets += ", " + key + "=?"
 
         valtuplst.append(pinst._id)
         return tuple(valtuplst), csets
@@ -266,21 +274,27 @@ class SQFactory():
         """Find the data
         
         """
-        if findpar is None: #do a select * eventually respecting limit
+        if findpar is None: #do a select * eventually respecting limit but with no where clause
             return self._do_select(cls, findpar, orderlist, limit)
         elif type(findpar) is dict:
             return self._do_select(cls, findpar,  orderlist, limit)
-        elif issubclass(type(findpar), BaseType):
+        elif issubclass(type(findpar), PBase): #we have an object which shuld be read agoin from the db
             if findpar._id is None:
                 raise Exception("SqFactory.find() with an Mpbase derived instance only works when this instance contains an _id")
 
             res = self.find_with_dict(cls, {"_id": findpar._id})
             return self._first_or_default(res)
-        elif findpar is str:
+        elif findpar is uuid.UUID: #we have an id to be searched for
             res = self.find_with_dict(cls, {"_id": findpar})
             return self._first_or_default(res)
         else:
             raise NotImplementedError("Unsupported type <{}> in findpar.".format(type(findpar)))
+
+    def _get_order_dir(self, od : OrderDirection) -> str:
+        if od == OrderDirection.ASCENDING:
+            return ""
+        elif od == OrderDirection.DESCENDING:
+            return " DESC"
 
     def _do_select(self, cls, findpar, orderlist, limit):
         stmt = "SELECT * FROM {0}".format(cls._getclstablename())
@@ -298,7 +312,15 @@ class SQFactory():
                 stmt += " AND ROWNUM<" + str(limit)
 
         if orderlist is not None:
-            pass
+            stmt += " ORDER BY "
+            first = True
+            for order in orderlist:
+                if first:
+                    first = False
+                    stmt += order[0] + self._get_order_dir(order[1])
+                else:
+                    stmt += ", " + order[0] + self._get_order_dir(order[1])
+
 
         print(stmt)
         curs = self.conn.cursor()
@@ -349,6 +371,8 @@ class SQFactory():
             return self._getoperanddict(operand)
         elif t is dt.datetime:
             return "datetime('{0:04d}-{1:02d}-{2:02d}T{3:02d}:{4:02d}:{5:02d}.{6}')".format(operand.year, operand.month, operand.day, operand.hour, operand.minute, operand.second, operand.microsecond)
+        elif t is bool:
+            return operand
         else:
             raise Exception("unknown operand type {0} in _getoperand()".format(str(t)))
 

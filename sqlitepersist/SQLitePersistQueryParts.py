@@ -1,11 +1,7 @@
 from .SQLitePersistFactoryParts import *
 from .SQLitePersistBasicClasses import *
 
-from enum import Enum
 
-class OrderDirection(Enum):
-    ASCENDING=0
-    DESCENDING=1
 
 class NoneFoundException(Exception):
     pass

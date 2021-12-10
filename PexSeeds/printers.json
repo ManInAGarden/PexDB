@@ -1,0 +1,11 @@
+{ 
+    "PersistClasses.Printer": 
+        [
+            {"abbreviation" : "QITE-XP", "name": "X-Plus", "producedby" : "QIDI Tech", "firmware" : "Chitu"},
+            {"abbreviation" : "QITE-XM", "name": "X-Max", "producedby" : "QIDI Tech", "firmware" : "Chitu"},
+
+            {"abbreviation" : "ANET-A8P", "name": "A8 Plus", "producedby" : "Anet", "firmware" : "Marlin"}
+
+        ]
+  
+}

@@ -11,6 +11,10 @@ class DbType(Enum):
      BLOB = 4
      TIMESTAMP = 5
 
+class OrderDirection(Enum):
+    ASCENDING=0
+    DESCENDING=1
+
 class OperationStackElement(object):
     def __init__(self, left, op, right):
         self._left = left
@@ -86,6 +90,9 @@ class BaseVarType(BaseComparableType):
         vname = getvarname(self)
         self._myfieldname = vname
         return vname
+
+    def is_dbstorable(self):
+        return True
 
     def _getpara(self, kwargs, name, default=None, excstr=None):
         membername = "_" + name
@@ -226,6 +233,10 @@ class _EmbeddedObject(BaseVarType):
         super().__init__(**kwargs)
         self._getpara(kwargs, "targettype", excstr="EmbeddedObject needs a targettype!!")
         self._getpara(kwargs, "autofill", default=True)
+
+    def is_dbstorable(self):
+        #not directly storable in the database
+        return False
 
     def get_targettype(self):
         return self._targettype

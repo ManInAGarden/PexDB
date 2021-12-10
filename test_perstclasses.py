@@ -48,6 +48,8 @@ class TestAllCrud(TestBase):
         assert(expr.description==exp.description)
         assert(expr.printerusedid == exp.printerusedid)
         assert(expr.extruderusedid == exp.extruderusedid)
+        assert(expr.isarchived == exp.isarchived)
+
         #check for autofill embeds
         assert(expr.extruderused is not None)
         assert(type(expr.extruderused) is Extruder)
@@ -73,7 +75,18 @@ class TestAllCrud(TestBase):
         assert(type(parar.curaname) is CuraNameCat)
         assert(parar.curaname.code == "MATERIAL_PRINT_TEMPERATURE")
 
+    def test_order_by(self):
+        dtn1 = dt.datetime(2020, 12, 6, 9, 30, 0)
+        exp = self.Mck.create_experiment(carriedoutdt=dtn1, description="OBTST")
+        
+        dtn2 = dt.datetime(2020, 12, 5, 9, 30, 0)
+        exp = self.Mck.create_experiment(carriedoutdt=dtn2, description="OBTST")
 
+        q = sqp.SQQuery(self.Spf, Experiment).where(Experiment.Description=="OBTST").order_by(Experiment.CarriedOutDt)
+        oldcd = dt.datetime(1900, 1,1)
+        for rexp in q:
+            assert(oldcd < rexp.carriedoutdt)
+            oldcd = rexp.carriedoutdt
 
 
 

@@ -4,6 +4,9 @@ class AbbreviatedThing(sqp.PBase):
     Abbreviation = sqp.String()
     Name = sqp.String()
 
+    def __str__(self):
+        return "{0}/{1}".format(self.abbreviation, self.name)
+
 class Printer(AbbreviatedThing):
     """a 3d printer"""
     ProducedBy = sqp.String()
@@ -12,6 +15,7 @@ class Printer(AbbreviatedThing):
     MonthOfBuild = sqp.Int()
     Firmware = sqp.String()
     FirmwareVersion = sqp.String()
+    IsActive = sqp.Boolean(default=True)
 
 class ModificationTarget(sqp.PCatalog):
     _cattype = "MODTARG"
@@ -29,8 +33,9 @@ class Modification(sqp.PBase):
 class Extruder(AbbreviatedThing):
     """an extruder"""
     ProducedBy = sqp.String()
-    MaxTemperature = sqp.Int()
-    HasCooler = sqp.Boolean()
+    MaxTemperature = sqp.Int(default=250)
+    HasCooler = sqp.Boolean(default=True)
+    IsActive = sqp.Boolean(default=True)
 
 class Unit(AbbreviatedThing):
     FactorToBase = sqp.Float()
@@ -41,6 +46,7 @@ class Parameter(AbbreviatedThing):
     UnitId = sqp.UUid()
     Unit = sqp.JoinedEmbeddedObject(targettype=Unit, localid=UnitId, autfill=True)
     CuraName = sqp.Catalog(catalogtype=CuraNameCat)
+    IsActive = sqp.Boolean(default=True)
 
 class Setting(sqp.PBase):
     """a paramater setting in an experiment"""
@@ -55,6 +61,7 @@ class Experiment(sqp.PBase):
     ExtruderUsed = sqp.JoinedEmbeddedObject(targettype=Extruder, localid=ExtruderUsedId, autofill=True)
     PrinterUsed = sqp.JoinedEmbeddedObject(targettype=Printer, localid=PrinterUsedId, autofill=True)
     CarriedOutDt = sqp.DateTime()
+    IsArchived = sqp.Boolean(default=False)
     Description = sqp.String()
     Settings = sqp.JoinedEmbeddedList(targettype=Setting, foreignid=Setting.ExperimentId, cascadedelete=True)
     
