@@ -1,10 +1,15 @@
 { 
     "PersistClasses.Parameter": 
         [
-            {"abbreviation" : "LAYERHEIGHT", "name": "layer height", "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"LAYER_HEIGHT"},
-            {"abbreviation" : "PRISP", "name": "print speed", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_PRINT"},
-            {"abbreviation" : "PRISPTOBO", "name": "print speed top bottom", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_TOPBOTTOM"},
-            {"abbreviation" : "PRINOZZTEMP", "name": "print temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_PRINT_TEMPERATURE"}
+            {"abbreviation" : "COASTINGENAB", "name": "enable coasting", "unitid": null, "curaname":"COASTING_ENABLE", "disptype":"BOOLEAN"},
+            {"abbreviation" : "COASTINGMINVOL", "name": "coasting minimal volume", "unitid":"${PersistClasses.Unit.name:millimeter volume:_id}", "curaname":"COASTING_MIN_VOLUME", "disptype":"FLOAT"},
+            {"abbreviation" : "COASTINGVOL", "name": "coasting volume", "unitid":"${PersistClasses.Unit.name:millimeter volume:_id}", "curaname":"COASTING_VOLUME", "disptype":"FLOAT"},
+            {"abbreviation" : "LAYERHEIGHT", "name": "layer height", "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"LAYER_HEIGHT", "disptype":"FLOAT"},
+            {"abbreviation" : "PRISP", "name": "print speed", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_PRINT", "disptype":"FLOAT"},
+            {"abbreviation" : "PRISPTOBO", "name": "print speed top bottom", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_TOPBOTTOM", "disptype":"FLOAT"},
+            {"abbreviation" : "PRINOZZTEMP", "name": "print temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_PRINT_TEMPERATURE", "disptype":"FLOAT"},
+            {"abbreviation" : "MATBEDTEMP", "name": "bed temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_BED_TEMPERATURE", "disptype":"FLOAT"}
+
         ]
   
 }

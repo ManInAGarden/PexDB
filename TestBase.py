@@ -9,24 +9,23 @@ class TestBase(unittest.TestCase):
     
     Spf : sqp.SQFactory = None #the persitence factory
     Mck : mocking.Mocker = None #the Mocker-Factory
-    PersTables = [Unit, Parameter, Printer, Extruder, Setting, Experiment, sqp.PCatalog]
+    PersTables = [sqp.PCatalog, Unit, Parameter, Printer, Extruder, Setting, Experiment]
     
     @classmethod
     def setUpClass(cls):
-        #cls.conf = Properties("./PexDb.conf")
-        #url = cls.conf.dbconnection.url
         fact = sqp.SQFactory("PexDb", "PexDbTest.sqlite")
         fact.lang = "DEU"
         cls.Spf = fact
+        fact.set_db_dbglevel("./sqpdebug.log", "DATAFILL") # use "STMTS for statements only or NONE for no sqlite-debugging at all"
         
         for tablec in cls.PersTables:
             cls.Spf.try_createtable(tablec)
 
         cls.Mck = mocking.Mocker(fact)
         try:
-            cls.Mck.create_seeddata("./PexSeeds/catalogs.json")
-            cls.Mck.create_seeddata("./PexSeeds/units.json")
-            cls.Mck.create_seeddata("./PexSeeds/parameters.json")
+            sqp.SQPSeeder(fact, "./PexSeeds/catalogs.json").create_seeddata()
+            sqp.SQPSeeder(fact, "./PexSeeds/units.json").create_seeddata()
+            sqp.SQPSeeder(fact, "./PexSeeds/parameters.json").create_seeddata()
         except Exception as exc:
             print("Data seeding failed with {0}".format(str(exc)))
 

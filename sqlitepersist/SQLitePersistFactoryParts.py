@@ -2,9 +2,10 @@
 import sqlite3 as sq3
 from sqlite3.dbapi2 import Error, OperationalError
 import uuid
-import datetime
+import datetime as dt
 
 from .SQLitePersistBasicClasses import *
+from .SQLitePPersistLogging import *
 
 
 class SQFactory():
@@ -21,6 +22,7 @@ class SQFactory():
         self.conn.row_factory = sq3.Row
         self.lang = "GBR"
         self._catcache = {}
+        self._logger = SQPLogger("./doesntmatter", DbgStmtLevel.NONE) #switch off debugging by default
 
     def _gettablename(self, pinst : PBase):
         return pinst.__class__._getclstablename()
@@ -30,10 +32,25 @@ class SQFactory():
             self.createtable(pclass)
             answ = True
         except Exception as exc:
-            print(str(exc))
+            self._logger.log_stmt(str(exc))
             answ = False
         
         return answ
+
+    def set_db_dbglevel(self, filepath : str, levelstr : str):
+        if type(levelstr) is str:
+            lowlev = levelstr.lower()
+            if lowlev == "none":
+                level = DbgStmtLevel.NONE
+            elif lowlev == "stmts":
+                level = DbgStmtLevel.STMTS
+            elif lowlev == "datafill":
+                level = DbgStmtLevel.DATAFILL
+            else:
+                raise Exception("unknown debuglevel <{0}>".format(levelstr))
+            self._logger = SQPLogger(filepath, level)
+        else:
+            raise Exception("unexpected parametertype for database debug level. Use str here")
 
     def try_droptable(self, pinstclass):
         try:
@@ -65,9 +82,15 @@ class SQFactory():
         collst += ")"
 
         cursor = self.conn.cursor()
-        exs = "CREATE TABLE {0} {1}".format(tablename, collst)
-        print(exs)
-        cursor.execute(exs)
+        try:
+            exs = "CREATE TABLE {0} {1}".format(tablename, collst)
+            self._logger.log_stmt("EXEC: {0}", exs)
+            cursor.execute(exs)
+        except Exception as exc:
+            self._logger.log_stmt("ERROR: {0}", str(exc))
+            raise exc
+        finally:
+            cursor.close()
 
     def droptable(self, pinstcls):
         """drop a table which had been created for the given class"""
@@ -75,8 +98,10 @@ class SQFactory():
         try:
             cursor = self.conn.cursor()
             exs = "DROP TABLE {0} ".format(tablename)
-            print(exs)
+            self._logger.log_stmt("EXEC: {0}", exs)
             cursor.execute(exs)
+        except Exception as exc:
+            self._logger.log_stmt("ERROR: {0}", str(exc))
         finally:
             cursor.close()
 
@@ -144,6 +169,7 @@ class SQFactory():
         delcls = type(dco)
         tablename = delcls._getclstablename()
         stmt = "DELETE FROM {0} WHERE _id='{1}'".format(tablename, str(dco._id))
+        self._logger.log_stmt("EXEC: {0}", stmt)
         curs.execute(stmt)
 
 
@@ -188,11 +214,11 @@ class SQFactory():
             try:
                 if pinst._id is None: #we need to insert
                     pinst._id = uuid.uuid4()
-                    pinst.created = datetime.datetime.now()
-                    pinst.lastupdate = datetime.datetime.now()
+                    pinst.created = dt.datetime.now()
+                    pinst.lastupdate = dt.datetime.now()
                     self._insert(curs, pinst)
                 else: #we need to update
-                    pinst.lastupdate = datetime.datetime.now()
+                    pinst.lastupdate = dt.datetime.now()
                     self._update(curs, pinst)
 
                 curs.execute("COMMIT")
@@ -238,13 +264,13 @@ class SQFactory():
         first = True
         valtuplst = []
         for key, val in memd.items():
-            dt = val.get_declaration()
-            if dt.is_dbstorable():
+            data = val.get_declaration()
+            if data.is_dbstorable():
                 if key not in ("_id", "created"):
                     if key != "lastupdate":
                         propvalue = pinst.__getattribute__(key)
                     else:
-                        propvalue = datetime.datetime.now()
+                        propvalue = dt.datetime.now()
 
                     if issubclass(type(propvalue), PCatalog):
                         propvalue = propvalue.code
@@ -321,14 +347,16 @@ class SQFactory():
                 else:
                     stmt += ", " + order[0] + self._get_order_dir(order[1])
 
-
-        print(stmt)
+        self._logger.log_stmt("EXEC: {0}", stmt)
         curs = self.conn.cursor()
         try:
             answ = curs.execute(stmt)
         except OperationalError as oe:
-            print(stmt)
+            self._logger.log_stmt("ERROR: {0}", str(oe))
             raise Exception(stmt + " " + str(oe))
+        #finally:
+        #    curs.close()
+
         return answ
 
     def _backmap(self, ops):
@@ -440,18 +468,21 @@ class SQFactory():
         
         curs = self.conn.cursor()
         try:
+            self._logger.log_stmt("EXEC: {0}", stmt)
             rows = curs.execute(stmt, parat)
             ct = 0
             for row in rows:
                 answ = self._create_instance(catcls, row)
                 ct += 1
                 if ct > 1:
+                    self._logger.log_stmt("ERROR: Catalog Code <{0}> not unique", catcode)
                     raise Exception("Catalog code <{0}> is not unique in catalog-type <{1}> for class {2} in language <{3}>".format(catcode, 
                             cattype,
                             str(catcls), 
                             lang))
 
             if ct == 0:
+                self._logger.log_stmt("ERROR: Catalog Code <{0}> not found", catcode)
                 raise Exception("Catalog code <{0}> not found in catalog-type <{1}> for class {2} in language <{3}>".format(catcode, 
                             cattype,
                             str(catcls), 
@@ -502,26 +533,28 @@ class SQFactory():
         jembs = []
         jlists = []
         for key, value in vd.items():
-            if hasattr(inst, key) and getattr(inst, key) is not None:
-                continue
+            #if hasattr(inst, key) and getattr(inst, key) is not None:
+            #    continue
             
             decl = value._declaration
             declt = type(decl)
             
             if declt is JoinedEmbeddedObject:
-                if decl.get_autofill():
+                if (not hasattr(inst, key) or getattr(inst, key) is None) and decl.get_autofill():
                     jembs.append(decl)
             elif declt is JoinedEmbeddedList:
-                if decl.get_autofill():
+                if (not hasattr(inst, key) or getattr(inst, key) is None) and decl.get_autofill():
                     jlists.append(decl)
             elif declt is Catalog:
                 dbdta = row[key]
                 setattr(inst, key, self._get_fullcatentry(value, dbdta))
             else:
                 dbdta = row[key]
+                self._logger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, dbdta))
                 try:
                     setattr(inst, key, decl.to_innertype(dbdta))
                 except Exception as ex:
+                    self._logger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
                     raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, dbdta, str(ex)))
 
         for jemb in jembs:
@@ -553,7 +586,7 @@ class SQFactory():
         #we cannot use QQuery here because that would produce circular imports
         tablename = tgtcls._getclstablename()
         stmt = "SELECT * from {0} where {1}=?".format(tablename, jdef._foreignid)
-        print(stmt)
+        self._logger.log_stmt("EXEC: {0}", stmt)
         curs = self.conn.cursor()
         try:
             rows = curs.execute(stmt, (localid,)) #self._getoperand(localid)
@@ -600,7 +633,7 @@ class SQFactory():
         tablename = tgtcls._getclstablename()
         tgtforeignfieldname = jdef.get_foreign_keyname()
         stmt = "SELECT * from {0} where {1}=?".format(tablename, tgtforeignfieldname)
-        print(stmt)
+        self._logger.log_stmt("EXEC: {0}", stmt)
         curs = self.conn.cursor()
         try:
             rows = curs.execute(stmt, (localid,)) #self._getoperand(localid)

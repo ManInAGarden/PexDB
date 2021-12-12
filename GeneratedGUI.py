@@ -62,11 +62,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.m_experimentPG = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.TAB_TRAVERSAL)
 		self.m_carriedoutdtPGI = self.m_experimentPG.Append( pg.DateProperty( _(u"Datum"), _(u"Datum") ) )
 		self.m_descriptionPGI = self.m_experimentPG.Append( pg.LongStringProperty( _(u"Beschreibung"), _(u"Beschreibung") ) )
-		self.m_printerPGI = self.m_experimentPG.Append( pg.MultiChoiceProperty( _(u"Drucker"), _(u"Drucker") ) )
-		self.m_extruderPGI = self.m_experimentPG.Append( pg.MultiChoiceProperty( _(u"Extruder"), _(u"Extruder") ) )
-		self.m_propertyGridItem13 = self.m_experimentPG.Append( pg.StringProperty( _(u"Name"), _(u"Name") ) )
-		self.m_settingsPGI = self.m_experimentPG.Append( pg.PropertyCategory( _(u"Einstellungen"), _(u"Einstellungen") ) )
-		self.m_nozzleTempPGI = self.m_experimentPG.Append( pg.FloatProperty( _(u"Düsentemperatur"), _(u"Düsentemperatur") ) )
+		self.m_printerPGI = self.m_experimentPG.Append( pg.EnumProperty( _(u"Drucker"), _(u"Drucker") ) )
+		self.m_extruderPGI = self.m_experimentPG.Append( pg.EnumProperty( _(u"Extruder"), _(u"Extruder") ) )
+		self.m_settingsPGI = self.m_experimentPG.Append( pg.PropertyCategory( _(u"Druckeinstellungen"), _(u"Druckeinstellungen") ) )
 		main_gsizer.Add( self.m_experimentPG, 0, wx.ALL|wx.EXPAND, 5 )
 
 
@@ -79,6 +77,8 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.quit_PexViewer, id = self.quit_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
+		self.m_experimentPG.Bind( wx.EVT_KILL_FOCUS, self.killFocus )
+		self.m_experimentPG.Bind( wx.EVT_SET_FOCUS, self.setFocus )
 
 	def __del__( self ):
 		pass
@@ -92,6 +92,12 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def experimentDWLC_selchanged( self, event ):
+		event.Skip()
+
+	def killFocus( self, event ):
+		event.Skip()
+
+	def setFocus( self, event ):
 		event.Skip()
 
 

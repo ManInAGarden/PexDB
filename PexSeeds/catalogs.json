@@ -5,30 +5,46 @@
             {"type" : "SLICERNAME_CURA", "code":"COASTING_MIN_VOLUME", "value":"coasting_min_volume", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COASTING_VOLUME", "value":"coasting_volume", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COASTING_SPEED", "value":"coasting_speed", "langcode":"ENU"},
-
             {"type" : "SLICERNAME_CURA", "code":"COOLING_CHAMBER", "value":"cooling_chamber", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_ENABLED", "value":"cool_fan_enabled", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_FULL_AT_HEIGHT", "value":"cool_fan_full_at_height", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_FULL_LAYER", "value":"cool_fan_full_layer", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_SPEED_MAX", "value":"cool_fan_speed_max", "langcode":"ENU"},
-            {"type" : "SLICERNAME_CURA", "code":"COOL_MIN_SPEED", "value":"cool_min_speed", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_SPEED_MIN", "value":"cool_fan_speed_min", "langcode":"ENU"},
 
             {"type" : "SLICERNAME_CURA", "code":"INFILL_LINE_WIDTH", "value":"infill_line_width", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"INFILL_SPARSE_DENSITY", "value":"infill_sparse_density", "langcode":"ENU"},
             
             {"type" : "SLICERNAME_CURA", "code":"LAYER_HEIGHT", "value":"layer_height", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"LAYER_HEIGHT_0", "value":"layer_height_0", "langcode":"ENU"},
             
+            {"type" : "SLICERNAME_CURA", "code":"MATERIAL_BED_TEMPERATURE", "value":"material_bed_temperature", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"MATERIAL_BED_TEMPERATURE_LAYER_0", "value":"material_bed_temperature_layer_0", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"MATERIAL_FLOW", "value":"material_flow", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"MATERIAL_FLOW_LAYER_0", "value":"material_flow_layer_0", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"MATERIAL_PRINT_TEMPERATURE", "value":"material_print_temperature", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"MATERIAL_PRINT_TEMPERATURE_LAYER_0", "value":"material_print_temperature_layer_0", "langcode":"ENU"},
             
             {"type" : "SLICERNAME_CURA", "code":"PRIME_TOWER_ENABLE", "value":"prime_tower_enable", "langcode":"ENU"},
 
+            {"type" : "SLICERNAME_CURA", "code":"RETRACT_AT_LAYER_CHANGE", "value":"retract_at_layer_change", "langcode":"ENU"},
+            
+            {"type" : "SLICERNAME_CURA", "code":"SKIN_MATERIAL_FLOW", "value":"skin_material_flow", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"SKIN_OVERLAP", "value":"skin_overlap", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"SPEED_PRINT", "value":"speed_print", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"SPEED_TOPBOTTOM", "value":"speed_topbottom", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"SPEED_WALL", "value":"speed_wall", "langcode":"ENU"},
             
-            {"type" : "SLICERNAME_CURA", "code":"TOP_THICKNESS", "value":"top_thickness", "langcode":"ENU"}
+            {"type" : "SLICERNAME_CURA", "code":"TOP_BOTTOM_PATTERN", "value":"top_bottom_pattern", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"TOP_LAYERS", "value":"top_layers", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"TOP_THICKNESS", "value":"top_thickness", "langcode":"ENU"},
 
+            {"type" : "SLICERNAME_CURA", "code":"XY_OFFSET", "value":"xy_offset", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"XY_OFFSET_LAYER_0", "value":"xy_offset_layer_0", "langcode":"ENU"},
+            
+            {"type" : "SLICERNAME_CURA", "code":"Z_SEAM_TYPE", "value":"z_seam_type", "langcode":"ENU"}
+
+            
         ]
   
 }

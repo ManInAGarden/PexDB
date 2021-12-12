@@ -288,6 +288,8 @@
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
                         <property name="window_style"></property>
+                        <event name="OnKillFocus">killFocus</event>
+                        <event name="OnSetFocus">setFocus</event>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
                             <property name="label">Datum</property>
@@ -307,14 +309,14 @@
                             <property name="label">Drucker</property>
                             <property name="name">m_printerPGI</property>
                             <property name="permission">protected</property>
-                            <property name="type">MultiChoice</property>
+                            <property name="type">Enum</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
                             <property name="label">Extruder</property>
                             <property name="name">m_extruderPGI</property>
                             <property name="permission">protected</property>
-                            <property name="type">MultiChoice</property>
+                            <property name="type">Enum</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
@@ -322,13 +324,6 @@
                             <property name="name">m_settingsPGI</property>
                             <property name="permission">protected</property>
                             <property name="type">Category</property>
-                        </object>
-                        <object class="propGridItem" expanded="1">
-                            <property name="help"></property>
-                            <property name="label">Düsentemperatur</property>
-                            <property name="name">m_nozzleTempPGI</property>
-                            <property name="permission">protected</property>
-                            <property name="type">Float</property>
                         </object>
                     </object>
                 </object>

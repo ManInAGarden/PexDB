@@ -2,6 +2,7 @@
 
 from datetime import datetime
 import wx
+import wx.propgrid as pg
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
 import sqlitepersist as sqp
@@ -23,21 +24,64 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		dbfilename = self._configuration.get_value("database", "filename")
 		self._fact = sqp.SQFactory("PexDb", dbfilename)
 		doinits = self._configuration.get_value("database", "tryinits")
+		self._fact.set_db_dbglevel(self._configuration.get_value("database", "dbgfilename"),
+			self._configuration.get_value("database", "dbglevel"))
 		if doinits:
 			self._initandseeddb()
 
-	def repair_pg_names(self):
+
+	def repair_exp_properties(self):
+		"""repair things for the property items that were not generated sufficiently"""
+		#repair the names
 		self.m_carriedoutdtPGI.SetName("carriedoutdt")
+		self.m_carriedoutdtPGI.SetAttribute("DateFormat", "%Y.%d.%m %H:%M:%S")
+
 		self.m_descriptionPGI.SetName("description")
 		self.m_printerPGI.SetName("printer")
 		self.m_extruderPGI.SetName("extruder")
+
+		#fill the choices
+		prchoices = []
+		for prid, pr in self._printers.items():
+			prchoices.append(str(pr))
+
+		prprop = self.m_experimentPG.GetProperty("printer")
+		prprop.SetChoices(pg.PGChoices(prchoices))
+
+		extchoices = []
+		for prid, pr in self._extruders.items():
+			extchoices.append(str(pr))
+
+		prprop = self.m_experimentPG.GetProperty("extruder")
+		prprop.SetChoices(pg.PGChoices(extchoices))
+		
 		
 	def init_gui(self):
+		self._printers = self._get_all_printers()
+		self._extruders = self._get_all_extruders()
+
 		self._prefprinter = self._get_preferred_printer()
 		self._prefextruder = self._get_preferred_extruder()
-		self.repair_pg_names()
+
+		self.repair_exp_properties()
 		self._experiments = self.get_experiments()
 		self.refresh_dash()
+
+	def _get_all_printers(self):
+		q = sqp.SQQuery(self._fact, Printer)
+		answ = {}
+		for pr in q:
+			answ[pr._id] = pr
+
+		return answ
+
+	def _get_all_extruders(self):
+		q = sqp.SQQuery(self._fact, Extruder)
+		answ = {}
+		for extr in q:
+			answ[extr._id] = extr
+
+		return answ
 
 	def _get_preferred_printer(self):
 		abbr = self._configuration.get_value("preferences", "stdprinter")
@@ -118,7 +162,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		exp.settings = []
 		actparaq = sqp.SQQuery(self._fact, Parameter).where(Parameter.IsActive==True)
 		for acts in actparaq:
-			setg = Setting(parameterid=acts._id, experimentid=exp._id)
+			setg = Setting(parameterid=acts._id, experimentid=exp._id, parameterdefinition=acts)
 			self._fact.flush(setg)
 			exp.settings.append(setg)
 
@@ -135,15 +179,58 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self.refresh_expview(selexp)
 
 	def refresh_expview(self, exp):
+		self._currentexperiment = exp
 		membs = ["description", "carriedoutdt"]
 		for memb in membs:
-			self.m_experimentPG.ChangePropertyValue(memb, exp.__getattribute__(memb))
+			self.m_experimentPG.SetPropertyValue(memb, exp.__getattribute__(memb))
 
 		if exp.printerused is not None:
-			self.m_experimentPG.ChangePropertyValue("printer", str(exp.printerused))
+			self.m_experimentPG.SetPropertyValue("printer", str(exp.printerused))
 
 		if exp.extruderused is not None:
-			self.m_experimentPG.ChangePropertyValue("extruder", str(exp.extruderused))
+			self.m_experimentPG.SetPropertyValue("extruder", str(exp.extruderused))
+
+		for se in exp.settings:
+			v = se.value
+			pd = se.parameterdefinition
+			n = pd.abbreviation
+			l = pd.name
+
+			try:
+				self.m_experimentPG.DeleteProperty(n)
+			except Exception:
+				pass
+
+			if pd.disptype=="FLOAT":
+				if pd.unit is not None:
+					l += " [{0}]".format(pd.unit.abbreviation)
+				if v is None:
+					v = 0.0
+				fp = pg.FloatProperty(l, n, v)
+				fp.SetAttribute("Precision", 3)
+				self.m_experimentPG.Append(fp)
+			elif pd.disptype=="BOOLEAN":
+				if v is None:
+					v = False
+				bp = pg.BoolProperty(l, n, v)
+				bp.SetAttribute("UseCheckbox", 1)
+				self.m_experimentPG.Append(bp)
+
+	def killFocus( self, event ):
+		lim = event.EventObject.LastItem
+		val = lim.GetValue()
+		pi = self.m_experimentPG.GetIterator(pg.PG_ITERATE_DEFAULT)
+		while not pi.AtEnd():
+			prop = pi.GetProperty()
+			pname =prop.GetName()
+			val = prop.GetValue()
+
+			pi.Next()
+
+	def setFocus( self, event ):
+		print("set focus")
+
+
 
 
 if __name__ == '__main__':

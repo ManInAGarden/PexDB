@@ -47,6 +47,7 @@ class Parameter(AbbreviatedThing):
     Unit = sqp.JoinedEmbeddedObject(targettype=Unit, localid=UnitId, autfill=True)
     CuraName = sqp.Catalog(catalogtype=CuraNameCat)
     IsActive = sqp.Boolean(default=True)
+    DispType = sqp.String(default="FLOAT")
 
 class Setting(sqp.PBase):
     """a paramater setting in an experiment"""
