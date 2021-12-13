@@ -5,6 +5,7 @@ import wx
 import wx.propgrid as pg
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
+from WxGuiMapper import WxGuiMapperExperiment
 import sqlitepersist as sqp
 from PersistClasses import *
 
@@ -30,31 +31,34 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self._initandseeddb()
 
 
-	def repair_exp_properties(self):
-		"""repair things for the property items that were not generated sufficiently"""
-		#repair the names
-		self.m_carriedoutdtPGI.SetName("carriedoutdt")
-		self.m_carriedoutdtPGI.SetAttribute("DateFormat", "%Y.%d.%m %H:%M:%S")
+	# def repair_exp_properties(self):
+	# 	"""repair things for the property items that were not generated sufficiently"""
+	# 	#repair the names
+	# 	self.m_carriedoutdtPGI.SetName("carriedoutdt")
+	# 	self.m_carriedoutdtPGI.SetAttribute("DateFormat", "%Y.%d.%m %H:%M:%S")
 
-		self.m_descriptionPGI.SetName("description")
-		self.m_printerPGI.SetName("printer")
-		self.m_extruderPGI.SetName("extruder")
+	# 	self.m_descriptionPGI.SetName("description")
+	# 	self.m_printerPGI.SetName("printerused")
+	# 	self.m_extruderPGI.SetName("extruderused")
 
-		#fill the choices
-		prchoices = []
-		for prid, pr in self._printers.items():
-			prchoices.append(str(pr))
+	# 	#fill the choices
+	# 	prchoices = []
+	# 	for pr in self._printers:
+	# 		prchoices.append(str(pr))
 
-		prprop = self.m_experimentPG.GetProperty("printer")
-		prprop.SetChoices(pg.PGChoices(prchoices))
+	# 	prprop = self.m_experimentPG.GetProperty("printerused")
+	# 	prprop.SetChoices(pg.PGChoices(prchoices))
 
-		extchoices = []
-		for prid, pr in self._extruders.items():
-			extchoices.append(str(pr))
+	# 	extchoices = []
+	# 	for pr in self._extruders:
+	# 		extchoices.append(str(pr))
 
-		prprop = self.m_experimentPG.GetProperty("extruder")
-		prprop.SetChoices(pg.PGChoices(extchoices))
+	# 	prprop = self.m_experimentPG.GetProperty("extruderused")
+	# 	prprop.SetChoices(pg.PGChoices(extchoices))
 		
+	def create_exp_gui(self):
+		self._expgui = WxGuiMapperExperiment(self._fact, self.m_experimentPG)
+	
 		
 	def init_gui(self):
 		self._printers = self._get_all_printers()
@@ -63,23 +67,20 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self._prefprinter = self._get_preferred_printer()
 		self._prefextruder = self._get_preferred_extruder()
 
-		self.repair_exp_properties()
+		self.create_exp_gui()
 		self._experiments = self.get_experiments()
 		self.refresh_dash()
 
+	
 	def _get_all_printers(self):
 		q = sqp.SQQuery(self._fact, Printer)
-		answ = {}
-		for pr in q:
-			answ[pr._id] = pr
+		answ = list(q)
 
 		return answ
 
 	def _get_all_extruders(self):
 		q = sqp.SQQuery(self._fact, Extruder)
-		answ = {}
-		for extr in q:
-			answ[extr._id] = extr
+		answ = list(q)
 
 		return answ
 
@@ -169,63 +170,74 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self._experiments.append(exp)
 		self.refresh_dash()
 
-	def experimentDWLC_selchanged( self, event ):
+	def experimentDWLC_selchanged( self, event):
 		"""The user selected a row in the list of experiments"""
 		idx = self.m_experimentsDataViewListCtrl.GetSelectedRow()
 		if idx == wx.NOT_FOUND:
 			return
 
 		selexp = self._experiments[idx]
-		self.refresh_expview(selexp)
+		self.refresh_expview(selexp, self._expgui)
+		self._currentexperiment = selexp
 
-	def refresh_expview(self, exp):
-		self._currentexperiment = exp
-		membs = ["description", "carriedoutdt"]
-		for memb in membs:
-			self.m_experimentPG.SetPropertyValue(memb, exp.__getattribute__(memb))
+	def refresh_expview(self, exp, expgui : WxGuiMapperExperiment):
+		"""refresh the experiment data on the gui with the data of the given experiment"""
 
-		if exp.printerused is not None:
-			self.m_experimentPG.SetPropertyValue("printer", str(exp.printerused))
+		#flatten the experiment data to da key, value dict
+		vd = {}
+		vd["description"] = exp.description
+		vd["carriedoutdt"] = exp.carriedoutdt
+		vd["extruderused"] = exp.extruderused
+		vd["printerused"] = exp.printerused
+		for setg in exp.settings:
+			vd[setg.parameterdefinition.name] = setg.value
 
-		if exp.extruderused is not None:
-			self.m_experimentPG.SetPropertyValue("extruder", str(exp.extruderused))
+		expgui.object2gui(vd, self.m_experimentPG)
+			
 
-		for se in exp.settings:
-			v = se.value
-			pd = se.parameterdefinition
-			n = pd.abbreviation
-			l = pd.name
+	def get_changed_exp(self, exppg : pg.PropertyGrid, exp: Experiment):
+		valdict = self._expgui.gui2object(exppg)
 
-			try:
-				self.m_experimentPG.DeleteProperty(n)
-			except Exception:
-				pass
-
-			if pd.disptype=="FLOAT":
-				if pd.unit is not None:
-					l += " [{0}]".format(pd.unit.abbreviation)
-				if v is None:
-					v = 0.0
-				fp = pg.FloatProperty(l, n, v)
-				fp.SetAttribute("Precision", 3)
-				self.m_experimentPG.Append(fp)
-			elif pd.disptype=="BOOLEAN":
-				if v is None:
-					v = False
-				bp = pg.BoolProperty(l, n, v)
-				bp.SetAttribute("UseCheckbox", 1)
-				self.m_experimentPG.Append(bp)
-
-	def killFocus( self, event ):
-		lim = event.EventObject.LastItem
-		val = lim.GetValue()
+		exp.carriedoutdt = valdict["carriedoutdt"]
+		exp.description = valdict["description"]
+		exp.printerused = valdict["printerused"]
+		exp.extruderused = valdict["extruderused"]
+		exp.printerusedid = valdict["printerusedid"]
+		exp.extruderusedid = valdict["extruderusedid"]
+		""" directexp =  ["carriedoutdt", "description"]
+		directexpobj = {
+				"printerused": {"list": self._printers, "id":"printerusedid"}, 
+				"extruderused": {"list":self._extruders,"id":"extruderusedid"}
+			}
+		
 		pi = self.m_experimentPG.GetIterator(pg.PG_ITERATE_DEFAULT)
+		answ = exp
 		while not pi.AtEnd():
 			prop = pi.GetProperty()
 			pname =prop.GetName()
+			
 			val = prop.GetValue()
 
-			pi.Next()
+			if pname in directexp:
+				answ.__setattr__(pname, val)
+			elif pname in directexpobj.keys(): #embedded object via enum property item
+				if val >= 0:
+					lst = directexpobj[pname]["list"]
+					idfld = directexpobj[pname]["id"]
+					if val < len(lst):
+						embval = lst[val]
+						answ.__setattr__(pname, embval)
+						answ.__setattr__(idfld, embval._id)
+
+					
+
+			
+			pi.Next() """
+
+
+	def killFocus( self, event ):
+		self.get_changed_exp(self.m_experimentPG, self._currentexperiment)
+		self._fact.flush(self._currentexperiment)
 
 	def setFocus( self, event ):
 		print("set focus")

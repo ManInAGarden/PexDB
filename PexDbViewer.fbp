@@ -245,7 +245,7 @@
                         <property name="best_size"></property>
                         <property name="bg"></property>
                         <property name="bitmap"></property>
-                        <property name="caption"></property>
+                        <property name="caption">Experiment</property>
                         <property name="caption_visible">1</property>
                         <property name="center_pane">0</property>
                         <property name="close_button">1</property>
@@ -290,41 +290,6 @@
                         <property name="window_style"></property>
                         <event name="OnKillFocus">killFocus</event>
                         <event name="OnSetFocus">setFocus</event>
-                        <object class="propGridItem" expanded="1">
-                            <property name="help"></property>
-                            <property name="label">Datum</property>
-                            <property name="name">m_carriedoutdtPGI</property>
-                            <property name="permission">protected</property>
-                            <property name="type">Date</property>
-                        </object>
-                        <object class="propGridItem" expanded="1">
-                            <property name="help"></property>
-                            <property name="label">Beschreibung</property>
-                            <property name="name">m_descriptionPGI</property>
-                            <property name="permission">protected</property>
-                            <property name="type">LongString</property>
-                        </object>
-                        <object class="propGridItem" expanded="1">
-                            <property name="help"></property>
-                            <property name="label">Drucker</property>
-                            <property name="name">m_printerPGI</property>
-                            <property name="permission">protected</property>
-                            <property name="type">Enum</property>
-                        </object>
-                        <object class="propGridItem" expanded="1">
-                            <property name="help"></property>
-                            <property name="label">Extruder</property>
-                            <property name="name">m_extruderPGI</property>
-                            <property name="permission">protected</property>
-                            <property name="type">Enum</property>
-                        </object>
-                        <object class="propGridItem" expanded="1">
-                            <property name="help"></property>
-                            <property name="label">Druckeinstellungen</property>
-                            <property name="name">m_settingsPGI</property>
-                            <property name="permission">protected</property>
-                            <property name="type">Category</property>
-                        </object>
                     </object>
                 </object>
             </object>

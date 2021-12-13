@@ -60,11 +60,6 @@ class PexViewerMainFrame ( wx.Frame ):
 		main_gsizer.Add( self.m_experimentsDataViewListCtrl, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.m_experimentPG = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.TAB_TRAVERSAL)
-		self.m_carriedoutdtPGI = self.m_experimentPG.Append( pg.DateProperty( _(u"Datum"), _(u"Datum") ) )
-		self.m_descriptionPGI = self.m_experimentPG.Append( pg.LongStringProperty( _(u"Beschreibung"), _(u"Beschreibung") ) )
-		self.m_printerPGI = self.m_experimentPG.Append( pg.EnumProperty( _(u"Drucker"), _(u"Drucker") ) )
-		self.m_extruderPGI = self.m_experimentPG.Append( pg.EnumProperty( _(u"Extruder"), _(u"Extruder") ) )
-		self.m_settingsPGI = self.m_experimentPG.Append( pg.PropertyCategory( _(u"Druckeinstellungen"), _(u"Druckeinstellungen") ) )
 		main_gsizer.Add( self.m_experimentPG, 0, wx.ALL|wx.EXPAND, 5 )
 
 
