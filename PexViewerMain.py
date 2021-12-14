@@ -204,46 +204,23 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		exp.extruderused = valdict["extruderused"]
 		exp.printerusedid = valdict["printerusedid"]
 		exp.extruderusedid = valdict["extruderusedid"]
-		""" directexp =  ["carriedoutdt", "description"]
-		directexpobj = {
-				"printerused": {"list": self._printers, "id":"printerusedid"}, 
-				"extruderused": {"list":self._extruders,"id":"extruderusedid"}
-			}
+
+		#now handle alle the settings of the experiment
+
+		for setg in exp.settings:
+			key = setg.parameterdefinition.name
+			setg.value = valdict[key]
 		
-		pi = self.m_experimentPG.GetIterator(pg.PG_ITERATE_DEFAULT)
-		answ = exp
-		while not pi.AtEnd():
-			prop = pi.GetProperty()
-			pname =prop.GetName()
-			
-			val = prop.GetValue()
-
-			if pname in directexp:
-				answ.__setattr__(pname, val)
-			elif pname in directexpobj.keys(): #embedded object via enum property item
-				if val >= 0:
-					lst = directexpobj[pname]["list"]
-					idfld = directexpobj[pname]["id"]
-					if val < len(lst):
-						embval = lst[val]
-						answ.__setattr__(pname, embval)
-						answ.__setattr__(idfld, embval._id)
-
-					
-
-			
-			pi.Next() """
 
 
-	def killFocus( self, event ):
+	def propgridChanged( self, event ):
+		"""handles PropertyGridChanged event"""
 		self.get_changed_exp(self.m_experimentPG, self._currentexperiment)
 		self._fact.flush(self._currentexperiment)
+		for setg in self._currentexperiment.settings:
+			self._fact.flush(setg)
 
-	def setFocus( self, event ):
-		print("set focus")
-
-
-
+		self.refresh_dash()
 
 if __name__ == '__main__':
 	app = wx.App()

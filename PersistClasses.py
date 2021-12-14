@@ -49,12 +49,25 @@ class Parameter(AbbreviatedThing):
     IsActive = sqp.Boolean(default=True)
     DispType = sqp.String(default="FLOAT")
 
+class MRDefinition(Parameter):
+    """definition for a measrurement/rating"""
+    MinValue = sqp.Float()
+    MaxValue = sqp.Float()
+    Accuracy = sqp.Float()
+
 class Setting(sqp.PBase):
     """a paramater setting in an experiment"""
     ParameterId = sqp.UUid()
     ExperimentId = sqp.UUid()
     ParameterDefinition = sqp.JoinedEmbeddedObject(targettype=Parameter, localid=ParameterId, autofill=True)
     Value = sqp.String()
+
+class MeasRating(sqp.PBase):
+    MRDefId = sqp.UUid()
+    ExperimentId = sqp.UUid()
+    MRDef = sqp.JoinedEmbeddedObject(targettype=MRDefinition, localid=MRDefId, autofill=True)
+    Value = sqp.String()
+
 
 class Experiment(sqp.PBase):
     ExtruderUsedId = sqp.UUid()

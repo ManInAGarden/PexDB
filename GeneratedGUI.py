@@ -60,6 +60,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		main_gsizer.Add( self.m_experimentsDataViewListCtrl, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.m_experimentPG = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.TAB_TRAVERSAL)
+		self.m_experimentPG.SetExtraStyle( wx.propgrid.PG_EX_AUTO_UNSPECIFIED_VALUES )
 		main_gsizer.Add( self.m_experimentPG, 0, wx.ALL|wx.EXPAND, 5 )
 
 
@@ -72,8 +73,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.quit_PexViewer, id = self.quit_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
-		self.m_experimentPG.Bind( wx.EVT_KILL_FOCUS, self.killFocus )
-		self.m_experimentPG.Bind( wx.EVT_SET_FOCUS, self.setFocus )
+		self.m_experimentPG.Bind( pg.EVT_PG_CHANGED, self.propgridChanged )
 
 	def __del__( self ):
 		pass
@@ -89,10 +89,7 @@ class PexViewerMainFrame ( wx.Frame ):
 	def experimentDWLC_selchanged( self, event ):
 		event.Skip()
 
-	def killFocus( self, event ):
-		event.Skip()
-
-	def setFocus( self, event ):
+	def propgridChanged( self, event ):
 		event.Skip()
 
 

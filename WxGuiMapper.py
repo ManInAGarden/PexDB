@@ -16,13 +16,15 @@ class WxGuiMapperInfo(object):
             pgitemlabel = None, 
             pgitemname = None, 
             pgitemtype = None,
-            fetchexpr = None):
+            fetchexpr = None,
+            unitstr = None):
         
         self._fieldname = fieldname
         self._fieldcls = fieldcls
         self._idfieldname = idfieldname
         self._fetchexpr = fetchexpr
-        self._choicedata = None
+        self._choicedta = None
+        self._unitstr = unitstr
         
         if pgitemname is None:
             self._pgitemname = fieldname
@@ -41,7 +43,12 @@ class WxGuiMapperInfo(object):
 
     def create_prop_item(self):
         if self.pgitemtype is pg.FloatProperty:
-            pitem = pg.FloatProperty(self.pgitemlabel, self.pgitemname)
+            if not self.unitstr is None:
+                label = "{0} [{1}]".format(self.pgitemlabel, self.unitstr)
+            else:
+                label = self.pgitemlabel
+
+            pitem = pg.FloatProperty(label, self.pgitemname)
             pitem.SetAttribute("Precision", 3)
             pitem.SetAutoUnspecified()
         elif self.pgitemtype is pg.StringProperty:
@@ -89,14 +96,14 @@ class WxGuiMapperInfo(object):
         
         return datetime(wxdt.year, wxdt.month, wxdt.day, wxdt.hour, wxdt.minute, wxdt.second, wxdt.millisecond)
 
-    def getfromenum(self, obj):
-        if obj is None:
+    def getfromenum(self, idx : int):
+        if idx is None or idx<0:
             return None
         
-        if self._choicedata is None:
+        if self._choicedta is None:
             return None
 
-        return self._choicedata[obj]
+        return self._choicedta[idx]
 
     def getvalue(self, propgrid):
         pitm = propgrid.GetProperty(self.pgitemname)
@@ -109,7 +116,7 @@ class WxGuiMapperInfo(object):
         elif self.pgitemtype is pg.FloatProperty:
             val = pitm.GetValue()
         elif self.pgitemtype is pg.EnumProperty:
-            val = self.getfromenum(pitm.GetValue())
+            val = self.getfromenum(pitm.GetChoiceSelection())
         elif self.pgitemtype is pg.PropertyCategory:
             return None
         else:
@@ -175,6 +182,14 @@ class WxGuiMapperInfo(object):
     def fetchexpr(self, value):
         self._fetchexpr = value
 
+    @property
+    def unitstr(self):
+        return self._unitstr
+
+    @unitstr.setter
+    def unitstr(self, value):
+        self._unitstr = value
+
     
 
 
@@ -230,16 +245,22 @@ class WxGuiMapperExperiment(WxGuiMapper):
         self.add(WxGuiMapperInfo(fieldname="carriedoutdt", pgitemlabel="Ausführungsdatum", pgitemtype=pg.DateProperty))
         self.add(WxGuiMapperInfo(fieldname="description", pgitemlabel="Beschreibung"))
         self.add(WxGuiMapperInfo(fieldname="printerused", pgitemtype=pg.EnumProperty, fieldcls=Printer, idfieldname="printerusedid", pgitemlabel="Drucker", fetchexpr=Printer.IsActive==True))
-        self.add(WxGuiMapperInfo(fieldname="extruderused", pgitemtype=pg.EnumProperty, fieldcls=Printer, idfieldname="extruderusedid",pgitemlabel="Extruder", fetchexpr=Extruder.IsActive==True))
+        self.add(WxGuiMapperInfo(fieldname="extruderused", pgitemtype=pg.EnumProperty, fieldcls=Extruder, idfieldname="extruderusedid",pgitemlabel="Extruder", fetchexpr=Extruder.IsActive==True))
         self.add(WxGuiMapperInfo(fieldname="settings_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Einstellungen"))
 
-        paraq = sqp.SQQuery(fact, Parameter).where(Parameter.IsActive==True).select(lambda para : (para.name, para.disptype))
+        paraq = sqp.SQQuery(fact, Parameter).where(Parameter.IsActive==True).select(lambda para : (para.name, para.disptype, para.unit))
 
         for parat in paraq:
+            if parat[2] is not None:
+                un = parat[2].abbreviation
+            else:
+                un = None
             if parat[1] == "FLOAT":
-                self.add(WxGuiMapperInfo(fieldname=parat[0], pgitemtype=pg.FloatProperty))
+                self.add(WxGuiMapperInfo(fieldname=parat[0], pgitemtype=pg.FloatProperty, unitstr=un))
             elif parat[1] == "BOOLEAN":
-                self.add(WxGuiMapperInfo(fieldname=parat[0], pgitemtype=pg.BoolProperty))
+                self.add(WxGuiMapperInfo(fieldname=parat[0], pgitemtype=pg.BoolProperty, unitstr=un))
+
+                
 
         self.createprops(parentpropgrid)
 
@@ -257,7 +278,10 @@ class WxGuiMapperExperiment(WxGuiMapper):
         for key, itemdecl in self._mapping.items():
             answ[key] = itemdecl.getvalue(propgrid)
             if itemdecl.fieldcls is not None and issubclass(itemdecl.fieldcls, PBase):
-                answ[itemdecl.idfieldname] = answ[key]._id
+                if answ[key] is not None:
+                    answ[itemdecl.idfieldname] = answ[key]._id
+                else:
+                    answ[itemdecl.idfieldname] = None
 
         return answ
 
