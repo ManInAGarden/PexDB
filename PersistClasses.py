@@ -41,31 +41,37 @@ class Unit(AbbreviatedThing):
     FactorToBase = sqp.Float()
     BaseUnit = sqp.String()
 
-class Parameter(AbbreviatedThing):
-    """definition for a parameter"""
+class _NamedValue(AbbreviatedThing):
+    """a stored value of some kind with a unit, a GUI display type. Can be deactivated if
+    not in use any more but data are stored which use it
+    do not instatiate directly but use the derived classes
+    """
     UnitId = sqp.UUid()
     Unit = sqp.JoinedEmbeddedObject(targettype=Unit, localid=UnitId, autfill=True)
-    CuraName = sqp.Catalog(catalogtype=CuraNameCat)
     IsActive = sqp.Boolean(default=True)
     DispType = sqp.String(default="FLOAT")
 
-class MRDefinition(Parameter):
-    """definition for a measrurement/rating"""
-    MinValue = sqp.Float()
-    MaxValue = sqp.Float()
-    Accuracy = sqp.Float()
+class FactorDefinition(_NamedValue):
+    """definition for a factor - i.e. a parameter in the sclicing process"""
+    CuraName = sqp.Catalog(catalogtype=CuraNameCat)
+    
 
-class Setting(sqp.PBase):
-    """a paramater setting in an experiment"""
-    ParameterId = sqp.UUid()
+class ResultDefinition(_NamedValue):
+    """definition for a result - a measrurement/rating"""
+    pass
+
+class FactorValue(sqp.PBase):
+    """a paramater setting in an experiment - a factor"""
+    FactorDefinitionId = sqp.UUid()
     ExperimentId = sqp.UUid()
-    ParameterDefinition = sqp.JoinedEmbeddedObject(targettype=Parameter, localid=ParameterId, autofill=True)
+    FactorDefinition = sqp.JoinedEmbeddedObject(targettype=FactorDefinition, localid=FactorDefinitionId, autofill=True)
     Value = sqp.String()
 
-class MeasRating(sqp.PBase):
-    MRDefId = sqp.UUid()
+class ResultValue(sqp.PBase):
+    """The result of an experiment - a rating or a measrure"""
+    ResultDefId = sqp.UUid()
     ExperimentId = sqp.UUid()
-    MRDef = sqp.JoinedEmbeddedObject(targettype=MRDefinition, localid=MRDefId, autofill=True)
+    ResultDefinition = sqp.JoinedEmbeddedObject(targettype=ResultDefinition, localid=ResultDefId, autofill=True)
     Value = sqp.String()
 
 
@@ -77,5 +83,5 @@ class Experiment(sqp.PBase):
     CarriedOutDt = sqp.DateTime()
     IsArchived = sqp.Boolean(default=False)
     Description = sqp.String()
-    Settings = sqp.JoinedEmbeddedList(targettype=Setting, foreignid=Setting.ExperimentId, cascadedelete=True)
+    Factors = sqp.JoinedEmbeddedList(targettype=FactorValue, foreignid=FactorValue.ExperimentId, cascadedelete=True)
     

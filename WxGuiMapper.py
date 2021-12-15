@@ -240,27 +240,28 @@ class WxGuiMapper(object):
             propgrid.Append(pgi)
 
 class WxGuiMapperExperiment(WxGuiMapper):
+    """definition for the GUI of the experiment data editor"""
     def __init__(self, fact : sqp.SQFactory, parentpropgrid):
         super().__init__(fact)
         self.add(WxGuiMapperInfo(fieldname="carriedoutdt", pgitemlabel="Ausführungsdatum", pgitemtype=pg.DateProperty))
         self.add(WxGuiMapperInfo(fieldname="description", pgitemlabel="Beschreibung"))
         self.add(WxGuiMapperInfo(fieldname="printerused", pgitemtype=pg.EnumProperty, fieldcls=Printer, idfieldname="printerusedid", pgitemlabel="Drucker", fetchexpr=Printer.IsActive==True))
         self.add(WxGuiMapperInfo(fieldname="extruderused", pgitemtype=pg.EnumProperty, fieldcls=Extruder, idfieldname="extruderusedid",pgitemlabel="Extruder", fetchexpr=Extruder.IsActive==True))
-        self.add(WxGuiMapperInfo(fieldname="settings_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Einstellungen"))
+        self.add(WxGuiMapperInfo(fieldname="factors_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Faktoren"))
 
-        paraq = sqp.SQQuery(fact, Parameter).where(Parameter.IsActive==True).select(lambda para : (para.name, para.disptype, para.unit))
+        fdef_q = sqp.SQQuery(fact, FactorDefinition).where(FactorDefinition.IsActive==True).select(lambda para : (para.name, para.disptype, para.unit))
 
-        for parat in paraq:
-            if parat[2] is not None:
-                un = parat[2].abbreviation
+        for para in fdef_q:
+            if para[2] is not None:
+                un = para[2].abbreviation
             else:
                 un = None
-            if parat[1] == "FLOAT":
-                self.add(WxGuiMapperInfo(fieldname=parat[0], pgitemtype=pg.FloatProperty, unitstr=un))
-            elif parat[1] == "BOOLEAN":
-                self.add(WxGuiMapperInfo(fieldname=parat[0], pgitemtype=pg.BoolProperty, unitstr=un))
+            if para[1] == "FLOAT":
+                self.add(WxGuiMapperInfo(fieldname=para[0], pgitemtype=pg.FloatProperty, unitstr=un))
+            elif para[1] == "BOOLEAN":
+                self.add(WxGuiMapperInfo(fieldname=para[0], pgitemtype=pg.BoolProperty, unitstr=un))
 
-                
+        self.add(WxGuiMapperInfo(fieldname="results_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Ergebnisse"))
 
         self.createprops(parentpropgrid)
 

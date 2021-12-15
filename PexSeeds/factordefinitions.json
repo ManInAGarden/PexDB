@@ -1,5 +1,5 @@
 { 
-    "PersistClasses.Parameter": 
+    "PersistClasses.FactorDefinition": 
         [
             {"abbreviation" : "COASTINGENAB", "name": "enable coasting", "unitid": null, "curaname":"COASTING_ENABLE", "disptype":"BOOLEAN"},
             {"abbreviation" : "COASTINGMINVOL", "name": "coasting minimal volume", "unitid":"${PersistClasses.Unit.name:millimeter volume:_id}", "curaname":"COASTING_MIN_VOLUME", "disptype":"FLOAT"},

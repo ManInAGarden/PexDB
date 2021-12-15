@@ -27,7 +27,7 @@ class Mocker(object):
         return ext
 
     def create_setting(self, parameterid=None, value=0.0, experimentid=None, parameterdefinition=None):
-        setg = Setting(parameterid=parameterid, 
+        setg = FactorValue(parameterid=parameterid, 
             value=value, 
             experimentid=experimentid, 
             parameterdefinition=parameterdefinition)
@@ -49,7 +49,7 @@ class Mocker(object):
             
         self._sqpf.flush(exp)
         exp.settings = []
-        allparasq = sqp.SQQuery(self._sqpf, Parameter) #get all parameter definitions
+        allparasq = sqp.SQQuery(self._sqpf, FactorDefinition) #get all parameter definitions
         for para in allparasq:
             setg = self.create_setting(parameterid=para._id, value=10.0, experimentid=exp._id, parameterdefinition=para)
             exp.settings.append(setg)

@@ -104,13 +104,13 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		q = sqp.SQQuery(self._fact, Experiment).where(Experiment.IsArchived == False).order_by(Experiment.CarriedOutDt)
 		experiments = []
 		for exp in q:
-			self._fact.fill_joins(exp, Experiment.Settings)
+			self._fact.fill_joins(exp, Experiment.Factors)
 			experiments.append(exp)
 
 		return experiments
 
 	def _initandseeddb(self):
-		pclasses = [sqp.PCatalog, Unit, Experiment, Printer, Extruder, Parameter, Setting]
+		pclasses = [sqp.PCatalog, Unit, Experiment, Printer, Extruder, FactorDefinition, FactorValue]
 		createds = []
 		for pclass in pclasses:
 			done = self._fact.try_createtable(pclass)
@@ -125,8 +125,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/units.json")
 			sdr.create_seeddata()
 
-		if Parameter in createds:
-			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/parameters.json")
+		if FactorDefinition in createds:
+			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/factordefinitions.json")
 			sdr.create_seeddata()
 
 		if Printer in createds:
@@ -160,12 +160,12 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self._fact.flush(exp)
 
 		#create new settings for the experiment from all the active parameters
-		exp.settings = []
-		actparaq = sqp.SQQuery(self._fact, Parameter).where(Parameter.IsActive==True)
-		for acts in actparaq:
-			setg = Setting(parameterid=acts._id, experimentid=exp._id, parameterdefinition=acts)
-			self._fact.flush(setg)
-			exp.settings.append(setg)
+		exp.factors = []
+		factdef_q = sqp.SQQuery(self._fact, FactorDefinition).where(FactorDefinition.IsActive==True)
+		for fdef in factdef_q:
+			fval = FactorValue(factordefinitionid=fdef._id, experimentid=exp._id, factordefinition=fdef)
+			self._fact.flush(fval)
+			exp.factors.append(fval)
 
 		self._experiments.append(exp)
 		self.refresh_dash()
@@ -189,8 +189,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		vd["carriedoutdt"] = exp.carriedoutdt
 		vd["extruderused"] = exp.extruderused
 		vd["printerused"] = exp.printerused
-		for setg in exp.settings:
-			vd[setg.parameterdefinition.name] = setg.value
+		for setg in exp.factors:
+			vd[setg.factordefinition.name] = setg.value
 
 		expgui.object2gui(vd, self.m_experimentPG)
 			
@@ -207,8 +207,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		#now handle alle the settings of the experiment
 
-		for setg in exp.settings:
-			key = setg.parameterdefinition.name
+		for setg in exp.factors:
+			key = setg.factordefinition.name
 			setg.value = valdict[key]
 		
 
@@ -217,7 +217,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		"""handles PropertyGridChanged event"""
 		self.get_changed_exp(self.m_experimentPG, self._currentexperiment)
 		self._fact.flush(self._currentexperiment)
-		for setg in self._currentexperiment.settings:
+		for setg in self._currentexperiment.factors:
 			self._fact.flush(setg)
 
 		self.refresh_dash()

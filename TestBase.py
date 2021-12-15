@@ -9,7 +9,7 @@ class TestBase(unittest.TestCase):
     
     Spf : sqp.SQFactory = None #the persitence factory
     Mck : mocking.Mocker = None #the Mocker-Factory
-    PersTables = [sqp.PCatalog, Unit, Parameter, Printer, Extruder, Setting, Experiment]
+    PersTables = [sqp.PCatalog, Unit, FactorDefinition, Printer, Extruder, FactorValue, Experiment]
     
     @classmethod
     def setUpClass(cls):
