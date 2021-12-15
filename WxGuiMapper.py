@@ -63,7 +63,7 @@ class WxGuiMapperInfo(object):
         elif self.pgitemtype is pg.BoolProperty:
             pitem = pg.BoolProperty(self.pgitemlabel, self.pgitemname)
             pitem.SetAttribute("UseCheckbox", 1)
-            pitem.SetAutoUnspecified()
+            #pitem.SetAutoUnspecified()
         elif self.pgitemtype is pg.EnumProperty:
             pitem = pg.EnumProperty(self.pgitemlabel, self.pgitemname)
             pitem.SetAutoUnspecified()

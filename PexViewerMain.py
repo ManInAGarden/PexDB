@@ -222,6 +222,45 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		self.refresh_dash()
 
+
+	def delete_experiment_menuItemOnMenuSelection( self, event ):
+		idx = self.m_experimentsDataViewListCtrl.GetSelectedRow()
+		if idx >= 0:
+			delex = self._experiments[idx]
+			self._fact.delete(delex)
+			self._experiments.remove(delex)
+			self.refresh_dash()
+
+	def exp_deepcopy(self, exp):
+		"""deep copy an experiment"""
+		aexp = Experiment(description=exp.description,
+			carriedoutdt=exp.carriedoutdt, 
+			printerusedid=exp.printerusedid,
+			extruderusedid=exp.extruderusedid,
+			printerused=exp.printerused,
+			extruderused=exp.extruderused)
+		
+		self._fact.flush(aexp)
+		aexp.factors = []
+		for factval in exp.factors:
+			nfact = FactorValue(experimentid=aexp._id,
+				factordefinitionid=factval.factordefinitionid,
+				factordefinition=factval.factordefinition,
+				value = factval.value)
+			aexp.factors.append(nfact)
+			self._fact.flush(nfact)
+
+		return aexp #return the deeply cloned experiment
+
+	def dupicate_experiment_menuitemOnMenuSelection( self, event ):
+		idx = self.m_experimentsDataViewListCtrl.GetSelectedRow()
+		if idx >= 0:
+			fexp = self._experiments[idx]
+			sexp = self.exp_deepcopy(fexp)
+			self._experiments.append(sexp)
+			self.refresh_dash()
+
+
 if __name__ == '__main__':
 	app = wx.App()
 	frm = PexViewerMain(None)

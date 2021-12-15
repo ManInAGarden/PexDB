@@ -8,8 +8,9 @@
             {"abbreviation" : "PRISP", "name": "print speed", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_PRINT", "disptype":"FLOAT"},
             {"abbreviation" : "PRISPTOBO", "name": "print speed top bottom", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_TOPBOTTOM", "disptype":"FLOAT"},
             {"abbreviation" : "PRINOZZTEMP", "name": "print temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_PRINT_TEMPERATURE", "disptype":"FLOAT"},
-            {"abbreviation" : "MATBEDTEMP", "name": "bed temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_BED_TEMPERATURE", "disptype":"FLOAT"}
-
+            {"abbreviation" : "MATBEDTEMP", "name": "bed temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_BED_TEMPERATURE", "disptype":"FLOAT"},
+            {"abbreviation" : "MATFLOW", "name": "material flow", "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"MATERIAL_FLOW", "disptype":"FLOAT"},
+            {"abbreviation" : "MATFLOWLAY0", "name": "top level material flow", "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"MATERIAL_FLOW_LAYER_0", "disptype":"FLOAT"}
         ]
   
 }

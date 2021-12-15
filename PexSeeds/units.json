@@ -5,7 +5,8 @@
             {"abbreviation" : "mm/s", "name": "millimeter speed", "baseunit":"m/s", "factortobase" : 0.001},
             {"abbreviation" : "°C", "name": "temperature Celsius", "baseunit":"°C", "factortobase" : 1},
             {"abbreviation" : "mm^3", "name": "millimeter volume", "baseunit":"m^3", "factortobase" : 1E-9},
-            {"abbreviation" : "mm^3/s", "name": "millimeter volume speed", "baseunit":"m^3/s", "factortobase" : 1E-9}
+            {"abbreviation" : "mm^3/s", "name": "millimeter volume speed", "baseunit":"m^3/s", "factortobase" : 1E-9},
+            {"abbreviation" : "%", "name": "percent", "baseunit":"%", "factortobase" : 1.0}
         ]
   
 }

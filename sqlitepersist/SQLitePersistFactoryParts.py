@@ -105,8 +105,8 @@ class SQFactory():
         finally:
             cursor.close()
 
-    def _deleteinst(self, pinst):
-        pass
+    # def _deleteinst(self, pinst):
+    #     pass
 
     def delete(self, dco):
         """Delete the given persitent instance and do all the casscading deletes (if any). 
@@ -118,9 +118,11 @@ class SQFactory():
             try:
                 self._notransdeletecascaded(curs, dco)
                 curs.execute("COMMIT")
-            except sq3.Error as err:
+                self._logger.log_stmt("COMMITED {0}".format("delte cascade"))
+            except Exception as err:
                 curs.execute("ROLLBACK")
-                raise Error(str(err))
+                self._logger.log_stmt("ERR {0} - rollback executed".format(str(err)))
+                raise Exception(str(err))
         finally:
             curs.close()
         
@@ -138,16 +140,16 @@ class SQFactory():
             decl = membval._declaration
             declt = type(decl)
             if issubclass(declt, JoinedEmbeddedObject) and decl.get_cascadedelete():
-                self.resolve(dco, membkey)
+                self.fill_joins(dco, decl)
                 loco = getattr(dco, membkey)
                 if not loco is None:
-                    self._notransdeletecascaded(loco)
+                    self._notransdeletecascaded(curs, loco)
 
             elif issubclass(declt, JoinedEmbeddedList) and decl.get_cascadedelete():
-                self.resolve(dco, membkey)
+                self.fill_joins(dco, decl)
                 locos = getattr(dco, membkey)
                 for loco in locos:
-                    self._notransdeletecascaded(loco)
+                    self._notransdeletecascaded(curs, loco)
 
         self._notransdelete(curs, dco)
 
@@ -168,9 +170,9 @@ class SQFactory():
         
         delcls = type(dco)
         tablename = delcls._getclstablename()
-        stmt = "DELETE FROM {0} WHERE _id='{1}'".format(tablename, str(dco._id))
+        stmt = "DELETE FROM {0} WHERE _id=?".format(tablename)
         self._logger.log_stmt("EXEC: {0}", stmt)
-        curs.execute(stmt)
+        curs.execute(stmt, (dco._id,))
 
 
     def _get_dbtypename(self, val):

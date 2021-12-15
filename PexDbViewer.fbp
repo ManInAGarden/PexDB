@@ -101,8 +101,8 @@
                 <property name="window_extra_style"></property>
                 <property name="window_name"></property>
                 <property name="window_style"></property>
-                <object class="wxMenu" expanded="0">
-                    <property name="label">Datei</property>
+                <object class="wxMenu" expanded="1">
+                    <property name="label">File</property>
                     <property name="name">file_menu</property>
                     <property name="permission">protected</property>
                     <object class="wxMenuItem" expanded="0">
@@ -112,7 +112,7 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Beenden</property>
+                        <property name="label">Quit program</property>
                         <property name="name">quit_menuitem</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
@@ -121,8 +121,8 @@
                     </object>
                 </object>
                 <object class="wxMenu" expanded="1">
-                    <property name="label">Bearbeiten</property>
-                    <property name="name">edit_menu</property>
+                    <property name="label">Experimente</property>
+                    <property name="name">experiment_menu</property>
                     <property name="permission">protected</property>
                     <object class="wxMenuItem" expanded="0">
                         <property name="bitmap"></property>
@@ -131,12 +131,93 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Neues Experiment</property>
+                        <property name="label">New experiment</property>
                         <property name="name">newExperiment_menuitem</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection">create_new_experiment</event>
+                    </object>
+                    <object class="separator" expanded="1">
+                        <property name="name">m_separator1</property>
+                        <property name="permission">none</property>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Duplicate Experiment</property>
+                        <property name="name">dupicate_experiment_menuitem</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">dupicate_experiment_menuitemOnMenuSelection</event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Delete experiment</property>
+                        <property name="name">delte_experiment_menuItem</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">delete_experiment_menuItemOnMenuSelection</event>
+                    </object>
+                </object>
+                <object class="wxMenu" expanded="1">
+                    <property name="label">Faktoren</property>
+                    <property name="name">factors_menu</property>
+                    <property name="permission">protected</property>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Edit factor definitions</property>
+                        <property name="name">m_edit_factors_menuitem</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Re-seed factors</property>
+                        <property name="name">reseed_factors_menuItem</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                    </object>
+                </object>
+                <object class="wxMenu" expanded="1">
+                    <property name="label">Results</property>
+                    <property name="name">result_menu</property>
+                    <property name="permission">protected</property>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Edit result definitions</property>
+                        <property name="name">edit_result_definitions_menuItem</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
                     </object>
                 </object>
                 <object class="wxMenu" expanded="0">
@@ -204,6 +285,7 @@
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
                         <property name="window_style"></property>
+                        <event name="OnDataViewListCtrlItemContextMenu">m_experimentsDataViewListCtrlOnDataViewListCtrlItemContextMenu</event>
                         <event name="OnDataViewListCtrlSelectionChanged">experimentDWLC_selchanged</event>
                         <object class="dataViewListColumn" expanded="1">
                             <property name="align">wxALIGN_LEFT</property>
@@ -291,6 +373,11 @@
                         <event name="OnPropertyGridChanged">propgridChanged</event>
                     </object>
                 </object>
+            </object>
+            <object class="wxMenu" expanded="1">
+                <property name="label">MyMenu</property>
+                <property name="name">m_menu6</property>
+                <property name="permission">protected</property>
             </object>
         </object>
     </object>
