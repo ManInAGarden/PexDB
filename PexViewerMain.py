@@ -5,7 +5,8 @@ import wx
 import wx.propgrid as pg
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
-from WxGuiMapper import WxGuiMapperExperiment
+from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
+from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
 
@@ -30,31 +31,6 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		if doinits:
 			self._initandseeddb()
 
-
-	# def repair_exp_properties(self):
-	# 	"""repair things for the property items that were not generated sufficiently"""
-	# 	#repair the names
-	# 	self.m_carriedoutdtPGI.SetName("carriedoutdt")
-	# 	self.m_carriedoutdtPGI.SetAttribute("DateFormat", "%Y.%d.%m %H:%M:%S")
-
-	# 	self.m_descriptionPGI.SetName("description")
-	# 	self.m_printerPGI.SetName("printerused")
-	# 	self.m_extruderPGI.SetName("extruderused")
-
-	# 	#fill the choices
-	# 	prchoices = []
-	# 	for pr in self._printers:
-	# 		prchoices.append(str(pr))
-
-	# 	prprop = self.m_experimentPG.GetProperty("printerused")
-	# 	prprop.SetChoices(pg.PGChoices(prchoices))
-
-	# 	extchoices = []
-	# 	for pr in self._extruders:
-	# 		extchoices.append(str(pr))
-
-	# 	prprop = self.m_experimentPG.GetProperty("extruderused")
-	# 	prprop.SetChoices(pg.PGChoices(extchoices))
 		
 	def create_exp_gui(self):
 		self._expgui = WxGuiMapperExperiment(self._fact, self.m_experimentPG)
@@ -260,6 +236,10 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self._experiments.append(sexp)
 			self.refresh_dash()
 
+	def m_edit_factors_menuitemOnMenuSelection(self, event):
+		"""use clicked on edit factors menu item"""
+		dia = PexDbViewerEditFactorDefinitions(self, self._fact)
+		dia.ShowModal()
 
 if __name__ == '__main__':
 	app = wx.App()

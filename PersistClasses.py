@@ -24,6 +24,9 @@ class CuraNameCat(sqp.PCatalog):
     _cattype = "SLICERNAME_CURA"
     Type = sqp.String(default="SLICERNAME_CURA") #override type default
 
+    def __str__(self):
+        return self.value
+
 class Modification(sqp.PBase):
     """a modification applied to a printer or to an extruder"""
     ParentId = sqp.UUid()
@@ -40,6 +43,9 @@ class Extruder(AbbreviatedThing):
 class Unit(AbbreviatedThing):
     FactorToBase = sqp.Float()
     BaseUnit = sqp.String()
+
+    def __str__(self):
+        return self.abbreviation
 
 class _NamedValue(AbbreviatedThing):
     """a stored value of some kind with a unit, a GUI display type. Can be deactivated if

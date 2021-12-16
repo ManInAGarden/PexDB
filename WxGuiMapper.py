@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Any
 
-from wx.core import wxdate2pydate
+import wx
+
 import sqlitepersist as sqp
 from PersistClasses import *
 import wx.propgrid as pg
@@ -17,7 +17,8 @@ class WxGuiMapperInfo(object):
             pgitemname = None, 
             pgitemtype = None,
             fetchexpr = None,
-            unitstr = None):
+            unitstr = None,
+            staticchoices = None):
         
         self._fieldname = fieldname
         self._fieldcls = fieldcls
@@ -25,6 +26,7 @@ class WxGuiMapperInfo(object):
         self._fetchexpr = fetchexpr
         self._choicedta = None
         self._unitstr = unitstr
+        self._staticchoices = staticchoices
         
         if pgitemname is None:
             self._pgitemname = fieldname
@@ -190,10 +192,17 @@ class WxGuiMapperInfo(object):
     def unitstr(self, value):
         self._unitstr = value
 
+    @property
+    def staticchoices(self):
+        return self._staticchoices
+
+    @staticchoices.setter
+    def staticchoices(self, value):
+        self._staticchoices = value
+
     
-
-
 class WxGuiMapper(object):
+    """inherit from this with your own class to create your GUI based on property grids"""
     def __init__(self, fact):
         self._mapping = {}
         self._fact = fact
@@ -219,12 +228,17 @@ class WxGuiMapper(object):
     def object2gui(self, obj : dict, propgrid) -> None:
         raise Exception("ovveride me!")
 
-    def createprops(self, propgrid):
+    def createprops(self, propgrid : pg.PropertyGrid):
+
         for key, guiinf in self._mapping.items():
             pgi = guiinf.create_prop_item()
 
-            if guiinf.pgitemtype is pg.EnumProperty and guiinf.fetchexpr is not None and guiinf.fieldcls is not None:
-                q = sqp.SQQuery(self._fact, guiinf.fieldcls).where(guiinf.fetchexpr)
+            if guiinf.pgitemtype is pg.EnumProperty and guiinf.fieldcls is not None:
+                if guiinf.fetchexpr is not None:
+                    q = sqp.SQQuery(self._fact, guiinf.fieldcls).where(guiinf.fetchexpr)
+                else:
+                    q = sqp.SQQuery(self._fact, guiinf.fieldcls).where()
+
                 guiinf._choicedta = []
                 dispchoices = []
                 for obj in q:
@@ -232,6 +246,8 @@ class WxGuiMapper(object):
                     dispchoices.append(str(obj))
 
                 pgi.SetChoices(pg.PGChoices(dispchoices))
+            elif guiinf.pgitemtype is pg.EnumProperty and guiinf.staticchoices is not None and len(guiinf.staticchoices)>0:
+                pgi.SetChoices(pg.PGChoices(guiinf.staticchoices))                    
             try: #try to delete existing property
                 self.propgrid.DeleteProperty(guiinf.pgitemname)
             except Exception:
@@ -239,50 +255,5 @@ class WxGuiMapper(object):
                     
             propgrid.Append(pgi)
 
-class WxGuiMapperExperiment(WxGuiMapper):
-    """definition for the GUI of the experiment data editor"""
-    def __init__(self, fact : sqp.SQFactory, parentpropgrid):
-        super().__init__(fact)
-        self.add(WxGuiMapperInfo(fieldname="carriedoutdt", pgitemlabel="Ausführungsdatum", pgitemtype=pg.DateProperty))
-        self.add(WxGuiMapperInfo(fieldname="description", pgitemlabel="Beschreibung"))
-        self.add(WxGuiMapperInfo(fieldname="printerused", pgitemtype=pg.EnumProperty, fieldcls=Printer, idfieldname="printerusedid", pgitemlabel="Drucker", fetchexpr=Printer.IsActive==True))
-        self.add(WxGuiMapperInfo(fieldname="extruderused", pgitemtype=pg.EnumProperty, fieldcls=Extruder, idfieldname="extruderusedid",pgitemlabel="Extruder", fetchexpr=Extruder.IsActive==True))
-        self.add(WxGuiMapperInfo(fieldname="factors_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Faktoren"))
 
-        fdef_q = sqp.SQQuery(fact, FactorDefinition).where(FactorDefinition.IsActive==True).select(lambda para : (para.name, para.disptype, para.unit))
-
-        for para in fdef_q:
-            if para[2] is not None:
-                un = para[2].abbreviation
-            else:
-                un = None
-            if para[1] == "FLOAT":
-                self.add(WxGuiMapperInfo(fieldname=para[0], pgitemtype=pg.FloatProperty, unitstr=un))
-            elif para[1] == "BOOLEAN":
-                self.add(WxGuiMapperInfo(fieldname=para[0], pgitemtype=pg.BoolProperty, unitstr=un))
-
-        self.add(WxGuiMapperInfo(fieldname="results_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Ergebnisse"))
-
-        self.createprops(parentpropgrid)
-
-    def object2gui(self, obj, propgrid):
-        """expect obj to be key,value dict and set the values of the property grid items accordingly"""
-        for key, value in obj.items():
-            guidecl = self[key] #we are a dict too knwoing all the definitions for the propgriditems
-            guidecl.setvalue(propgrid, value)
-
-    def gui2object(self, propgrid) -> dict:
-        """return the data from the property grid as key, value pairs where the key is the
-        known fieldname and the values have been changed to their original types"""
-        answ = {}
-
-        for key, itemdecl in self._mapping.items():
-            answ[key] = itemdecl.getvalue(propgrid)
-            if itemdecl.fieldcls is not None and issubclass(itemdecl.fieldcls, PBase):
-                if answ[key] is not None:
-                    answ[itemdecl.idfieldname] = answ[key]._id
-                else:
-                    answ[itemdecl.idfieldname] = None
-
-        return answ
 

@@ -7,5 +7,14 @@
         "test_*.py"
     ],
     "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true
+    "python.testing.unittestEnabled": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "PexDb",
+            "database": "${workspaceFolder:PexDB}/PexDb.sqlite"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
 }
