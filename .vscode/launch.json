@@ -10,6 +10,20 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: PexViewer",
+            "type": "python",
+            "request": "launch",
+            "program": "PexViewerMain.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Unittest",
+            "type": "python",
+            "request": "launch",
+            "program": "test_perstclasses.py",
+            "console": "integratedTerminal"
         }
     ]
 }

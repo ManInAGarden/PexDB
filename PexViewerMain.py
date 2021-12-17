@@ -34,7 +34,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		
 	def create_exp_gui(self):
 		self._expgui = WxGuiMapperExperiment(self._fact, self.m_experimentPG)
-	
+		self.m_experimentPG.Enable(False) #disable in case we have no data
+		self._expgui.emtyallitems(self.m_experimentPG)
 		
 	def init_gui(self):
 		self._printers = self._get_all_printers()
@@ -72,9 +73,24 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	
 	def refresh_dash(self):
 		self.m_experimentsDataViewListCtrl.DeleteAllItems()
+		ct = 0
 		for exp in self._experiments:
 			visr = [str(exp.carriedoutdt), exp.description]
 			self.m_experimentsDataViewListCtrl.AppendItem(visr)
+
+			ct += 1
+
+		if ct > 0:
+			self.m_experimentPG.Enable()
+			self.m_experimentsDataViewListCtrl.SelectRow(0)
+			#selection change does not get called, so we have to this here
+			#well - the selection did not change actually
+			selexp = self._experiments[0]
+			self.refresh_expview(selexp, self._expgui)
+			self._currentexperiment = selexp
+		else:
+			self._expgui.emtyallitems(self.m_experimentPG)
+			self.m_experimentPG.Enable(False)
 		
 	def get_experiments(self):
 		q = sqp.SQQuery(self._fact, Experiment).where(Experiment.IsArchived == False).order_by(Experiment.CarriedOutDt)
@@ -155,6 +171,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		selexp = self._experiments[idx]
 		self.refresh_expview(selexp, self._expgui)
 		self._currentexperiment = selexp
+		self.m_experimentPG.Enable() #enable prop grid which should be filled with editable data now
 
 	def refresh_expview(self, exp, expgui : WxGuiMapperExperiment):
 		"""refresh the experiment data on the gui with the data of the given experiment"""
@@ -166,10 +183,39 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		vd["extruderused"] = exp.extruderused
 		vd["printerused"] = exp.printerused
 		for setg in exp.factors:
-			vd[setg.factordefinition.name] = setg.value
+			vd[setg.factordefinition.name] = self.get_typed_factor_value(setg.value, setg.factordefinition.disptype)
 
 		expgui.object2gui(vd, self.m_experimentPG)
 			
+	def get_typed_factor_value(self, vals : str, disptype : str):
+		#factors are always stored as strings in the db, so we have to change them to the correct type here
+
+		if vals is None:
+			return None
+
+		if disptype == "BOOLEAN":
+			return vals == "1" or vals.lower()=="true"
+		elif disptype == "FLOAT":
+			return float(vals)
+		else:
+			raise Exception("unsupported displaytyp <{0}>".format(disptype))
+
+
+	def get_store_str(self, val):
+		#factor values are stored as strings in the database so we have to change them back.
+		if val is None:
+			return None
+
+		vt = type(val)
+		if vt is bool:
+			if val is True:
+				return "1"
+			else:
+				return "0"
+		elif vt is float:
+			return str(val)
+		else:
+			raise Exception("unsupported type in get_store_str()")
 
 	def get_changed_exp(self, exppg : pg.PropertyGrid, exp: Experiment):
 		valdict = self._expgui.gui2object(exppg)
@@ -185,7 +231,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		for setg in exp.factors:
 			key = setg.factordefinition.name
-			setg.value = valdict[key]
+			setg.value = self.get_store_str(valdict[key])
 		
 
 

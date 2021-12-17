@@ -86,11 +86,11 @@ class WxGuiMapperInfo(object):
 
         pitm.SetValue(sval)
 
-    def getasbool(self, obj):
-        if obj is None:
-            return None
+    # def getasbool(self, obj):
+    #     if obj is None:
+    #         return None
 
-        return obj==1
+    #     return obj==1
 
     def getasdatetime(self, wxdt):
         if wxdt is None:
@@ -112,7 +112,7 @@ class WxGuiMapperInfo(object):
         if self.pgitemtype is pg.StringProperty:
             val = pitm.GetValueAsString()
         elif self.pgitemtype is pg.BoolProperty:
-            val = self.getasbool(pitm.GetValue())
+            val = pitm.GetValue()
         elif self.pgitemtype is pg.DateProperty:
             val = self.getasdatetime(pitm.GetValue())
         elif self.pgitemtype is pg.FloatProperty:
@@ -125,6 +125,10 @@ class WxGuiMapperInfo(object):
             raise Exception("unhandled property item type <{0}>".format(self.pgitemtype))
 
         return val
+
+    def set_emty(self, pgrd : pg.PropertyGrid):
+        pgrd.SetPropertyValue(self.pgitemname, None)
+    
 
     @property
     def fieldname(self):
@@ -228,6 +232,12 @@ class WxGuiMapper(object):
     def object2gui(self, obj : dict, propgrid) -> None:
         raise Exception("ovveride me!")
 
+		
+    def emtyallitems(self, pgrd):
+        """emties all the properties to symbolise that no data are in the propgrid"""
+        for key, guuinf in self._mapping.items():
+            guuinf.set_emty(pgrd)
+
     def createprops(self, propgrid : pg.PropertyGrid):
 
         for key, guiinf in self._mapping.items():
@@ -247,7 +257,8 @@ class WxGuiMapper(object):
 
                 pgi.SetChoices(pg.PGChoices(dispchoices))
             elif guiinf.pgitemtype is pg.EnumProperty and guiinf.staticchoices is not None and len(guiinf.staticchoices)>0:
-                pgi.SetChoices(pg.PGChoices(guiinf.staticchoices))                    
+                pgi.SetChoices(pg.PGChoices(guiinf.staticchoices))
+                guiinf._choicedta = guiinf.staticchoices
             try: #try to delete existing property
                 self.propgrid.DeleteProperty(guiinf.pgitemname)
             except Exception:

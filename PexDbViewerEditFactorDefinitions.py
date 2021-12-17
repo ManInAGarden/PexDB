@@ -17,6 +17,7 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 		self._fact = sqpfactory
 		self._factor_defs = []
 		self._currentfdef = None
+		self._currentactive = True
 
 	# Handlers for EditFactorDefinitions events.
 	def EditFactorDefinitionsOnShow( self, event ):
@@ -26,12 +27,22 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 			return
 
 		self._factgui = pgum.WxGuiMapperFactorDefintion(self._fact, self.m_factorDtaPG)
+		self.get_dbdta2gui(True)
 
-		fact_q = sqp.SQQuery(self._fact, FactorDefinition).where(FactorDefinition.IsActive==True)
+	def get_dbdta2gui(self, active = True):
+		self._factgui.emtyallitems(self.m_factorDtaPG)
+		self.m_factorDtaPG.Enable(False) #deisable the prop grid, will be enabled in case a factor gets selected by the user
+
+		self.m_factorDefsLC.DeleteAllItems()
+		self.m_factorDefsLC.DeleteAllColumns()
+
+		fact_q = sqp.SQQuery(self._fact, FactorDefinition).where(FactorDefinition.IsActive==active).order_by(FactorDefinition.Name)
+
 		self.m_factorDefsLC.InsertColumn(0, "abbreviation")
 		self.m_factorDefsLC.InsertColumn(1, "name")
 		self.m_factorDefsLC.InsertColumn(2, "active")
 		ct = 0
+		self._factor_defs.clear()
 		for fact in fact_q:
 			self._factor_defs.append(fact)
 			lidx = self.m_factorDefsLC.InsertItem(self.m_factorDefsLC.GetItemCount(), fact.abbreviation)
@@ -39,6 +50,11 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 			self.m_factorDefsLC.SetItem(lidx, 1, fact.name)
 			self.m_factorDefsLC.SetItem(lidx, 2, str(fact.isactive))
 			ct += 1
+
+		self._currentactive = active #store this to enable toggling
+		#if we got any factors - select the fist one
+		if ct > 0:
+			self.m_factorDefsLC.Select(0)
 
 	def _get_as_item(self, fact, id) -> wx.ListItem:
 		li = wx.ListItem()
@@ -52,6 +68,7 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 		if selidx < 0:
 			return
 
+		self.m_factorDtaPG.Enable() #enable the property grid because a factor was selected to be edited
 		myidx = self.m_factorDefsLC.GetItemData(selidx)
 		selfactdef = self._factor_defs[myidx]
 		self._currentfdef = selfactdef
@@ -64,7 +81,7 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 
 	def m_factorDtaPGOnPropertyGridChanged( self, event ):
 		vald = self._factgui.gui2object(self.m_factorDtaPG)
-		fetchthese = ["name", "abbreviation", "disptype", "unit", "isactive", "curaname"]
+		fetchthese = ["name", "abbreviation", "disptype", "unit", "unitid", "isactive", "curaname"]
 		for name in fetchthese:
 			self._currentfdef.__setattr__(name, vald[name])
 
@@ -73,3 +90,13 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 
 	def m_closeBUOnButtonClick( self, event ):
 		self.Close()
+
+	def m_newBUOnButtonClick( self, event ):
+		newFact = FactorDefinition(name="new factor definition", abbreviation="_NEWFACT")
+		self._fact.flush(newFact)
+		self.get_dbdta2gui(active=True)
+
+	def m_show_inactiveBUOnButtonClick( self, event ):
+		#toggle active/inactive 
+
+		self.get_dbdta2gui(active = not self._currentactive)

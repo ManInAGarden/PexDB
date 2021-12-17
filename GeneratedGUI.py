@@ -83,7 +83,6 @@ class PexViewerMainFrame ( wx.Frame ):
 		main_gsizer.Add( self.m_experimentsDataViewListCtrl, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.m_experimentPG = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.TAB_TRAVERSAL)
-		self.m_experimentPG.SetExtraStyle( wx.propgrid.PG_EX_AUTO_UNSPECIFIED_VALUES )
 		main_gsizer.Add( self.m_experimentPG, 0, wx.ALL|wx.EXPAND, 5 )
 
 
@@ -145,7 +144,7 @@ class PexViewerMainFrame ( wx.Frame ):
 class EditFactorDefinitions ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit factor definitions"), pos = wx.DefaultPosition, size = wx.Size( 609,368 ), style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit factor definitions"), pos = wx.DefaultPosition, size = wx.Size( 659,387 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -166,7 +165,7 @@ class EditFactorDefinitions ( wx.Dialog ):
 		bSizer11 = wx.BoxSizer( wx.VERTICAL )
 
 		self.m_factorDefsLC = wx.ListCtrl( self.m_panel11, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT|wx.LC_SINGLE_SEL|wx.LC_SORT_ASCENDING )
-		bSizer11.Add( self.m_factorDefsLC, 1, wx.ALL, 5 )
+		bSizer11.Add( self.m_factorDefsLC, 1, wx.ALL|wx.EXPAND, 5 )
 
 
 		self.m_panel11.SetSizer( bSizer11 )
@@ -175,7 +174,7 @@ class EditFactorDefinitions ( wx.Dialog ):
 		self.m_panel8 = wx.Panel( self.m_splitter21, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer6 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_factorDtaPG = pg.PropertyGrid(self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE)
+		self.m_factorDtaPG = pg.PropertyGrid(self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.TAB_TRAVERSAL)
 		bSizer6.Add( self.m_factorDtaPG, 1, wx.ALL|wx.EXPAND, 5 )
 
 
@@ -197,7 +196,7 @@ class EditFactorDefinitions ( wx.Dialog ):
 
 		bSizer4.Add( self.m_newBU, 0, wx.ALL, 5 )
 
-		self.m_show_inactiveBU = wx.Button( self, wx.ID_ANY, _(u"show inactive"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_show_inactiveBU = wx.Button( self, wx.ID_ANY, _(u"toggle active/inactive"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_show_inactiveBU.SetToolTip( _(u"also show inactive factor definitions") )
 
 		bSizer4.Add( self.m_show_inactiveBU, 0, wx.ALL, 5 )
@@ -222,6 +221,8 @@ class EditFactorDefinitions ( wx.Dialog ):
 		self.m_factorDefsLC.Bind( wx.EVT_LIST_ITEM_SELECTED, self.m_factorDefsLCOnListItemSelected )
 		self.m_factorDtaPG.Bind( pg.EVT_PG_CHANGED, self.m_factorDtaPGOnPropertyGridChanged )
 		self.m_closeBU.Bind( wx.EVT_BUTTON, self.m_closeBUOnButtonClick )
+		self.m_newBU.Bind( wx.EVT_BUTTON, self.m_newBUOnButtonClick )
+		self.m_show_inactiveBU.Bind( wx.EVT_BUTTON, self.m_show_inactiveBUOnButtonClick )
 		self.m_show_inactiveBU.Bind( wx.EVT_LEFT_DCLICK, self.m_show_inactiveBUOnLeftDClick )
 
 	def __del__( self ):
@@ -239,6 +240,12 @@ class EditFactorDefinitions ( wx.Dialog ):
 		event.Skip()
 
 	def m_closeBUOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_newBUOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_show_inactiveBUOnButtonClick( self, event ):
 		event.Skip()
 
 	def m_show_inactiveBUOnLeftDClick( self, event ):
