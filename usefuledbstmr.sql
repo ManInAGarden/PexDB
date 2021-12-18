@@ -7,11 +7,16 @@ select * from unit;
 
 select * from experiment;
 
+select * from catalog;
+
 select
-    fd.name,
     fv.value
 from 
     factorvalue fv, 
     factordefinition fd
 where
     fv.factordefinitionid==fd._id;
+
+.schema resultdefinition
+
+.tables

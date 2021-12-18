@@ -1,3 +1,4 @@
+from enum import unique
 import sqlitepersist as sqp
 
 class AbbreviatedThing(sqp.PBase):
@@ -78,7 +79,7 @@ class ResultValue(sqp.PBase):
     ResultDefId = sqp.UUid()
     ExperimentId = sqp.UUid()
     ResultDefinition = sqp.JoinedEmbeddedObject(targettype=ResultDefinition, localid=ResultDefId, autofill=True)
-    Value = sqp.String()
+    Value = sqp.Float()
 
 
 class Experiment(sqp.PBase):

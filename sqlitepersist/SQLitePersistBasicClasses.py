@@ -1,7 +1,7 @@
 import datetime as dt
 import uuid
 import inspect
-from enum import Enum
+from enum import Enum, unique
 
 class DbType(Enum):
      NULL = 0 
@@ -74,6 +74,7 @@ class BaseVarType(BaseComparableType):
         self._varcode = uuid.uuid4()
         self._getpara(kwarg, "default")
         self._getpara(kwarg, "defaultgenerator")
+        self._getpara(kwarg, "uniquegrp")
         
     def get_default(self):
         if self._defaultgenerator is None:
@@ -418,10 +419,10 @@ class PCatalog(PBase):
     _collectionname = "catalog"
     _cattype = None #overriden in each catalog derived from this class
     _langsensitive = False # by default no language sensititivity, bur may be overriden by derived catalogs
-    Type = String()
-    Code = String()
+    Type = String(uniquegrp="_CAT_UNI_01")
+    Code = String(uniquegrp="_CAT_UNI_01")
     Value = String()
-    LangCode = String()
+    LangCode = String(uniquegrp="_CAT_UNI_01")
 
     @classmethod
     def is_langsensitive(cls):

@@ -6,6 +6,7 @@ import wx.propgrid as pg
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
 from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
+from PexDbViewerEditResultDefinitions import PexDbViewerEditResultDefinitions
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
@@ -102,7 +103,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		return experiments
 
 	def _initandseeddb(self):
-		pclasses = [sqp.PCatalog, Unit, Experiment, Printer, Extruder, FactorDefinition, FactorValue]
+		pclasses = [sqp.PCatalog, Unit, Experiment, Printer, Extruder, FactorDefinition, FactorValue, ResultDefinition, ResultValue]
 		createds = []
 		for pclass in pclasses:
 			done = self._fact.try_createtable(pclass)
@@ -128,7 +129,11 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		if Extruder in createds:
 			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/extruders.json")
 			sdr.create_seeddata()
-	
+
+		if ResultDefinition in createds:
+			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/resultdefinitions.json")
+			sdr.create_seeddata()
+
 	# Handlers for PexViewerMainFrame events.
 	def quit_PexViewer( self, event ):
 		"""The user selected the menu item "close PexDbViewer"
@@ -283,8 +288,13 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self.refresh_dash()
 
 	def m_edit_factors_menuitemOnMenuSelection(self, event):
-		"""use clicked on edit factors menu item"""
+		"""user clicked on edit factors menu item"""
 		dia = PexDbViewerEditFactorDefinitions(self, self._fact)
+		dia.ShowModal()
+
+	def edit_result_definitions( self, event ):
+		"""user clicked on edit result defs menu item"""
+		dia = PexDbViewerEditResultDefinitions(self, self._fact)
 		dia.ShowModal()
 
 if __name__ == '__main__':

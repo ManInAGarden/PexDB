@@ -87,3 +87,37 @@ class WxGuiMapperFactorDefintion(WxGuiMapper):
                     answ[itemdecl.idfieldname] = None
 
         return answ
+
+
+class WxGuiMapperResultDefintion(WxGuiMapper):
+    """definition for the GUI of the result defintions data editor
+    """
+    def __init__(self, fact : sqp.SQFactory, parentpropgrid):
+        super().__init__(fact)
+        self.add(WxGuiMapperInfo(fieldname="abbreviation", pgitemlabel="Abbreviation", pgitemtype=pg.StringProperty))
+        self.add(WxGuiMapperInfo(fieldname="name", pgitemlabel="Name", pgitemtype=pg.StringProperty))
+        self.add(WxGuiMapperInfo(fieldname="unit", pgitemtype=pg.EnumProperty, fieldcls=Unit, idfieldname="unitid", pgitemlabel="Unit"))
+        self.add(WxGuiMapperInfo(fieldname="isactive", pgitemtype=pg.BoolProperty, pgitemlabel="Is active"))
+
+        self.createprops(parentpropgrid)
+
+    def object2gui(self, obj, propgrid):
+        """expect obj to be key,value dict and set the values of the property grid items accordingly"""
+        for key, value in obj.items():
+            guidecl = self[key] #we are a dict too knwoing all the definitions for the propgriditems
+            guidecl.setvalue(propgrid, value)
+
+    def gui2object(self, propgrid) -> dict:
+        """return the data from the property grid as key, value pairs where the key is the
+        known fieldname and the values have been changed to their original types"""
+        answ = {}
+
+        for key, itemdecl in self._mapping.items():
+            answ[key] = itemdecl.getvalue(propgrid)
+            if itemdecl.fieldcls is not None and issubclass(itemdecl.fieldcls, PBase):
+                if answ[key] is not None:
+                    answ[itemdecl.idfieldname] = answ[key]._id
+                else:
+                    answ[itemdecl.idfieldname] = None
+
+        return answ

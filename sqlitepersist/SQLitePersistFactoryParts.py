@@ -1,6 +1,7 @@
 
 import sqlite3 as sq3
 from sqlite3.dbapi2 import Error, OperationalError
+from typing import Type
 import uuid
 import datetime as dt
 
@@ -58,10 +59,27 @@ class SQFactory():
         except:
             pass
 
+    def _get_uniquegrps(self, cls : Type) -> dict:
+        answ = {}
+        cd = cls._classdict[cls]
+        for key, val in cd.items():
+            decl = val.get_declaration()
+            grpname = decl.__getattribute__("_uniquegrp")
+            if grpname is None:
+                continue
+
+            if grpname not in answ:
+                answ[grpname] = [key] #start a list containing keys which are in the group
+            else:
+                answ[grpname].append(key) #append key to the already existing key-tuple
+
+        return answ
+
     def createtable(self, pinstcls):
         pinst = pinstcls()
         tablename = pinstcls._getclstablename()
         memd = pinstcls._classdict[pinstcls]
+        unigrps = self._get_uniquegrps(pinstcls)
         collst = "("
         first = True
         for key, val in memd.items():
@@ -78,6 +96,18 @@ class SQFactory():
 
             if key == "_id": #id is always the primary key and nothing else
                 collst += " PRIMARY KEY"
+
+        for name, columns in unigrps.items():
+            collst += ", CONSTRAINT {0} UNIQUE(".format(name)
+            first = True
+            for col in columns:
+                if first:
+                    collst += col
+                    first = False
+                else:
+                    collst += ", " + col
+
+            collst += ")"
 
         collst += ")"
 

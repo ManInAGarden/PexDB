@@ -259,8 +259,9 @@ class WxGuiMapper(object):
             elif guiinf.pgitemtype is pg.EnumProperty and guiinf.staticchoices is not None and len(guiinf.staticchoices)>0:
                 pgi.SetChoices(pg.PGChoices(guiinf.staticchoices))
                 guiinf._choicedta = guiinf.staticchoices
+            
             try: #try to delete existing property
-                self.propgrid.DeleteProperty(guiinf.pgitemname)
+                propgrid.DeleteProperty(guiinf.pgitemname)
             except Exception:
                 pass
                     

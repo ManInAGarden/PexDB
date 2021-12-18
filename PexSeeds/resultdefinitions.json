@@ -1,0 +1,6 @@
+{"PersistClasses.ResultDefinition": 
+[
+    {"abbreviation" : "TENACITY", "name": "tenacity", "unitid": "${PersistClasses.Unit.name:newton per square millimeter:_id}"},
+    {"abbreviation" : "SURFQUAL", "name": "surface quality"}
+]
+}
