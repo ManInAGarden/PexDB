@@ -26,10 +26,20 @@ class PexViewerMainFrame ( wx.Frame ):
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
-		self.m_statusBar1 = self.CreateStatusBar( 1, wx.STB_SIZEGRIP, wx.ID_ANY )
 		self.m_menubar1 = wx.MenuBar( 0 )
 		self.file_menu = wx.Menu()
-		self.quit_menuitem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Quit program"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.openproject_menuItem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Open project"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.file_menu.Append( self.openproject_menuItem )
+
+		self.editproject_menuItem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Edit project"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.file_menu.Append( self.editproject_menuItem )
+
+		self.newproj_menutitem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"New project"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.file_menu.Append( self.newproj_menutitem )
+
+		self.file_menu.AppendSeparator()
+
+		self.quit_menuitem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Quit program")+ u"\t" + u"CTRL+Q", wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.Append( self.quit_menuitem )
 
 		self.m_menubar1.Append( self.file_menu, _(u"File") )
@@ -55,7 +65,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.reseed_factors_menuItem = wx.MenuItem( self.factors_menu, wx.ID_ANY, _(u"Re-seed factors"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.factors_menu.Append( self.reseed_factors_menuItem )
 
-		self.m_menubar1.Append( self.factors_menu, _(u"Faktoren") )
+		self.m_menubar1.Append( self.factors_menu, _(u"Factors") )
 
 		self.result_menu = wx.Menu()
 		self.edit_result_definitions_menuItem = wx.MenuItem( self.result_menu, wx.ID_ANY, _(u"Edit result definitions"), wx.EmptyString, wx.ITEM_NORMAL )
@@ -64,13 +74,13 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.m_menubar1.Append( self.result_menu, _(u"Results") )
 
 		self.help_menu = wx.Menu()
-		self.help_menuItem = wx.MenuItem( self.help_menu, wx.ID_ANY, _(u"Hilfe"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.help_menuItem = wx.MenuItem( self.help_menu, wx.ID_ANY, _(u"Help"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.help_menu.Append( self.help_menuItem )
 
-		self.about_menuitem = wx.MenuItem( self.help_menu, wx.ID_ANY, _(u"Über PexViewer"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.about_menuitem = wx.MenuItem( self.help_menu, wx.ID_ANY, _(u"About PexViewer"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.help_menu.Append( self.about_menuitem )
 
-		self.m_menubar1.Append( self.help_menu, _(u"Hilfe") )
+		self.m_menubar1.Append( self.help_menu, _(u"Help") )
 
 		self.SetMenuBar( self.m_menubar1 )
 
@@ -91,10 +101,12 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.m_menu6 = wx.Menu()
 		self.Bind( wx.EVT_RIGHT_DOWN, self.PexViewerMainFrameOnContextMenu )
 
+		self.m_mainSBA = self.CreateStatusBar( 2, wx.STB_SIZEGRIP, wx.ID_ANY )
 
 		self.Centre( wx.BOTH )
 
 		# Connect Events
+		self.Bind( wx.EVT_MENU, self.newproj_menutitemOnMenuSelection, id = self.newproj_menutitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.quit_PexViewer, id = self.quit_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.dupicate_experiment_menuitemOnMenuSelection, id = self.dupicate_experiment_menuitem.GetId() )
@@ -109,6 +121,9 @@ class PexViewerMainFrame ( wx.Frame ):
 
 
 	# Virtual event handlers, override them in your derived class
+	def newproj_menutitemOnMenuSelection( self, event ):
+		event.Skip()
+
 	def quit_PexViewer( self, event ):
 		event.Skip()
 

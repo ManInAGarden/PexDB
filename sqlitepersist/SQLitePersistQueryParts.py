@@ -7,7 +7,7 @@ class NoneFoundException(Exception):
     pass
 
 class OrderInfo(object):
-    def __init__(self, field, direction : str):
+    def __init__(self, field, direction : OrderDirection):
         self.field = field
         self.orderdir = direction
 
@@ -157,7 +157,7 @@ class SQQuery():
             tolm = type(arg)
 
             if issubclass(tolm, BaseVarType):
-                oi = OrderInfo(arg, "asc")
+                oi = OrderInfo(arg, OrderDirection.ASCENDING)
             elif tolm is OrderInfo:
                 oi = arg
 
@@ -202,17 +202,10 @@ class SQQuery():
 
         return answ
 
-    def _getorder(self, olm):
+    def _getorder(self, olm : OrderInfo):
         field = olm.field
-        if olm.orderdir == "asc":
-            dir = OrderDirection.ASCENDING
-        elif olm.orderdir == "desc":
-            dir = OrderDirection.DESCENDING
-        else:
-            raise Exception("Unknown ordering direction <{}> in _getorder()".format(olm._order))
-
         fieldname = getvarname(field)
-        return (fieldname, dir)
+        return (fieldname, olm.orderdir)
 
         
 

@@ -10,6 +10,7 @@ from PexDbViewerEditResultDefinitions import PexDbViewerEditResultDefinitions
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
+from sqlitepersist.SQLitePersistBasicClasses import OrderDirection
 
 # Implementing PexViewerMainFrame
 class PexViewerMain( gg.PexViewerMainFrame ):
@@ -29,15 +30,30 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		doinits = self._configuration.get_value("database", "tryinits")
 		self._fact.set_db_dbglevel(self._configuration.get_value("database", "dbgfilename"),
 			self._configuration.get_value("database", "dbglevel"))
+		
 		if doinits:
 			self._initandseeddb()
 
+		self._currentproject = self._get_current_proj()
+
 		
+	def _get_current_proj(self):
+		"""get the youngest not archive project"""
+		proj = sqp.SQQuery(self._fact, Project).where(Project.IsArchived==False).order_by(sqp.OrderInfo(Project.Created, OrderDirection.DESCENDING)).first_or_default(None)
+
+		if proj is None:
+			raise Exception("strangely no project was found to be used as an initial/default project")
+
+		return proj
+
 	def create_exp_gui(self):
 		self._expgui = WxGuiMapperExperiment(self._fact, self.m_experimentPG)
 		self.m_experimentPG.Enable(False) #disable in case we have no data
 		self._expgui.emtyallitems(self.m_experimentPG)
 		
+	def displayprojinsb(self):
+		self.m_mainSBA.SetStatusText("Project: {0}".format(self._currentproject.name), 1)
+
 	def init_gui(self):
 		self._printers = self._get_all_printers()
 		self._extruders = self._get_all_extruders()
@@ -45,6 +61,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self._prefprinter = self._get_preferred_printer()
 		self._prefextruder = self._get_preferred_extruder()
 
+		self.m_mainSBA.SetStatusText("DB: {0}".format(self._fact._dbfilename), 0)
+		self.displayprojinsb()
 		self.create_exp_gui()
 		self._experiments = self.get_experiments()
 		self.refresh_dash()
@@ -103,7 +121,17 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		return experiments
 
 	def _initandseeddb(self):
-		pclasses = [sqp.PCatalog, Unit, Experiment, Printer, Extruder, FactorDefinition, FactorValue, ResultDefinition, ResultValue]
+		pclasses = [sqp.PCatalog, 
+			Unit, 
+			Project,
+			Experiment, 
+			Printer, 
+			Extruder, 
+			FactorDefinition, 
+			FactorValue, 
+			ResultDefinition, 
+			ResultValue]
+
 		createds = []
 		for pclass in pclasses:
 			done = self._fact.try_createtable(pclass)
@@ -134,6 +162,10 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/resultdefinitions.json")
 			sdr.create_seeddata()
 
+		if Project in createds:
+			newproj = Project(name="std", status=self._fact.getcat(ProjectStatusCat, "INIT"))
+			self._fact.flush(newproj)
+
 	# Handlers for PexViewerMainFrame events.
 	def quit_PexViewer( self, event ):
 		"""The user selected the menu item "close PexDbViewer"
@@ -143,8 +175,14 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def create_new_experiment( self, event ):
 		"""The user selected the menuitem "create new experiment"
 		"""
+		if self._currentproject is None:
+			raise Exception("We have no current project! Experiment cannot be created!")
+
 		exp = Experiment(carriedoutdt=datetime.now(), 
 			description="Neues Experiment")
+		
+		exp.projectid = self._currentproject._id
+		self.project = self._currentproject
 		
 		if self._prefextruder is not None:
 			exp.extruderused = self._prefextruder
@@ -292,10 +330,15 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		dia = PexDbViewerEditFactorDefinitions(self, self._fact)
 		dia.ShowModal()
 
-	def edit_result_definitions( self, event ):
+	def edit_result_definitions(self, event):
 		"""user clicked on edit result defs menu item"""
 		dia = PexDbViewerEditResultDefinitions(self, self._fact)
 		dia.ShowModal()
+
+	def newproj_menutitemOnMenuSelection( self, event ):
+		self._currentproject = Project(name="New project")
+		self._fact.flush(self._currentproject)
+		self.displayprojinsb()
 
 if __name__ == '__main__':
 	app = wx.App()

@@ -9,6 +9,8 @@ select * from experiment;
 
 select * from catalog;
 
+select * from project;
+
 select
     fv.value
 from 

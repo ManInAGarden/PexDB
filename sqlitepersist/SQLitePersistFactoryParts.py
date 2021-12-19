@@ -349,10 +349,12 @@ class SQFactory():
             raise NotImplementedError("Unsupported type <{}> in findpar.".format(type(findpar)))
 
     def _get_order_dir(self, od : OrderDirection) -> str:
-        if od == OrderDirection.ASCENDING:
+        if od is OrderDirection.ASCENDING:
             return ""
-        elif od == OrderDirection.DESCENDING:
+        elif od is OrderDirection.DESCENDING:
             return " DESC"
+        else:
+            raise Exception("unknpwn order direction!")
 
     def _do_select(self, cls, findpar, orderlist, limit):
         stmt = "SELECT * FROM {0}".format(cls._getclstablename())

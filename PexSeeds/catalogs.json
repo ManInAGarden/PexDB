@@ -1,6 +1,13 @@
 { 
     "sqlitepersist.SQLitePersistBasicClasses.PCatalog": 
         [
+            {"type": "STATUS_PROJECT", "code":"INIT", "value":"initialised", "langcode":"GBR"},
+            {"type": "STATUS_PROJECT", "code":"INIT", "value":"initialisiert", "langcode":"DEU"},
+            {"type": "STATUS_PROJECT", "code":"EXP", "value":"running", "langcode":"GBR"},
+            {"type": "STATUS_PROJECT", "code":"EXP", "value":"laufend", "langcode":"DEU"},
+            {"type": "STATUS_PROJECT", "code":"EVAL", "value":"evaluation", "langcode":"GBR"},
+            {"type": "STATUS_PROJECT", "code":"EVAL", "value":"in Auswertung", "langcode":"DEU"},
+
             {"type" : "SLICERNAME_CURA", "code":"COASTING_ENABLE", "value":"coasting_enable", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COASTING_MIN_VOLUME", "value":"coasting_min_volume", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COASTING_VOLUME", "value":"coasting_volume", "langcode":"ENU"},

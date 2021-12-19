@@ -424,6 +424,9 @@ class PCatalog(PBase):
     Value = String()
     LangCode = String(uniquegrp="_CAT_UNI_01")
 
+    def __str__(self):
+        return "{}.{}.{}.{}".format(self.type, self.langcode, self.code, self.value)
+        
     @classmethod
     def is_langsensitive(cls):
         return cls._langsensitive

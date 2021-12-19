@@ -28,6 +28,15 @@ class CuraNameCat(sqp.PCatalog):
     def __str__(self):
         return self.value
 
+class ProjectStatusCat(sqp.PCatalog):
+    _cattype = "STATUS_PROJECT"
+    _langsensitive = True
+    Type = sqp.String(default="STATUS_PROJECT") #override type default
+
+    def __str__(self):
+        return self.value
+
+
 class Modification(sqp.PBase):
     """a modification applied to a printer or to an extruder"""
     ParentId = sqp.UUid()
@@ -75,16 +84,22 @@ class FactorValue(sqp.PBase):
     Value = sqp.String()
 
 class ResultValue(sqp.PBase):
-    """The result of an experiment - a rating or a measrure"""
+    """The result of an experiment - a rating or a measure"""
     ResultDefId = sqp.UUid()
     ExperimentId = sqp.UUid()
     ResultDefinition = sqp.JoinedEmbeddedObject(targettype=ResultDefinition, localid=ResultDefId, autofill=True)
     Value = sqp.Float()
 
+class Project(sqp.PBase):
+    Name = sqp.String()
+    Status = sqp.Catalog(catalogtype=ProjectStatusCat)
+    IsArchived = sqp.Boolean(default=False)
 
 class Experiment(sqp.PBase):
+    ProjectId = sqp.UUid()
     ExtruderUsedId = sqp.UUid()
     PrinterUsedId = sqp.UUid()
+    Project = sqp.JoinedEmbeddedObject(targettype=Project, localid=ProjectId, autofill=True)
     ExtruderUsed = sqp.JoinedEmbeddedObject(targettype=Extruder, localid=ExtruderUsedId, autofill=True)
     PrinterUsed = sqp.JoinedEmbeddedObject(targettype=Printer, localid=PrinterUsedId, autofill=True)
     CarriedOutDt = sqp.DateTime()
