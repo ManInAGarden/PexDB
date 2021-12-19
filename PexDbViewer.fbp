@@ -107,6 +107,7 @@
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">editproject_menuItemOnMenuSelection</event>
                     </object>
                     <object class="wxMenuItem" expanded="1">
                         <property name="bitmap"></property>
@@ -1657,7 +1658,7 @@
             <property name="minimum_size"></property>
             <property name="name">EditProjectDialog</property>
             <property name="pos"></property>
-            <property name="size"></property>
+            <property name="size">220,162</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE</property>
             <property name="subclass">; ; forward_declare</property>
             <property name="title">Edit project</property>
@@ -1666,17 +1667,18 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
+            <event name="OnShow">EditProjectDialogOnShow</event>
             <object class="wxGridBagSizer" expanded="1">
                 <property name="empty_cell_size"></property>
                 <property name="flexible_direction">wxBOTH</property>
                 <property name="growablecols">1</property>
                 <property name="growablerows"></property>
-                <property name="hgap">0</property>
+                <property name="hgap">3</property>
                 <property name="minimum_size"></property>
                 <property name="name">gbSizer3</property>
                 <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_SPECIFIED</property>
                 <property name="permission">none</property>
-                <property name="vgap">0</property>
+                <property name="vgap">3</property>
                 <object class="gbsizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="colspan">1</property>
@@ -1879,7 +1881,7 @@
                     <property name="flag">wxALL</property>
                     <property name="row">1</property>
                     <property name="rowspan">1</property>
-                    <object class="wxChoice" expanded="1">
+                    <object class="wxComboBox" expanded="1">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
@@ -1915,7 +1917,7 @@
                         <property name="minimize_button">0</property>
                         <property name="minimum_size"></property>
                         <property name="moveable">1</property>
-                        <property name="name">m_choice1</property>
+                        <property name="name">m_projectstatusCOB</property>
                         <property name="pane_border">1</property>
                         <property name="pane_position"></property>
                         <property name="pane_size"></property>
@@ -1923,7 +1925,7 @@
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
                         <property name="resize">Resizable</property>
-                        <property name="selection">0</property>
+                        <property name="selection">-1</property>
                         <property name="show">1</property>
                         <property name="size"></property>
                         <property name="style"></property>
@@ -1934,6 +1936,7 @@
                         <property name="validator_style">wxFILTER_NONE</property>
                         <property name="validator_type">wxDefaultValidator</property>
                         <property name="validator_variable"></property>
+                        <property name="value">Combo!</property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
                         <property name="window_style"></property>
@@ -2047,7 +2050,7 @@
                         <property name="minimize_button">0</property>
                         <property name="minimum_size"></property>
                         <property name="moveable">1</property>
-                        <property name="name">m_checkBox1</property>
+                        <property name="name">m_isArchivedCBX</property>
                         <property name="pane_border">1</property>
                         <property name="pane_position"></property>
                         <property name="pane_size"></property>
@@ -2074,7 +2077,7 @@
                     <property name="border">5</property>
                     <property name="colspan">2</property>
                     <property name="column">0</property>
-                    <property name="flag">wxEXPAND</property>
+                    <property name="flag">wxALL|wxEXPAND</property>
                     <property name="row">3</property>
                     <property name="rowspan">1</property>
                     <object class="wxStdDialogButtonSizer" expanded="1">
@@ -2087,8 +2090,9 @@
                         <property name="Save">0</property>
                         <property name="Yes">0</property>
                         <property name="minimum_size"></property>
-                        <property name="name">m_buttSizer</property>
+                        <property name="name">m_okcancelBUTS</property>
                         <property name="permission">protected</property>
+                        <event name="OnOKButtonClick">m_okcancelBUTSOnOKButtonClick</event>
                     </object>
                 </object>
             </object>

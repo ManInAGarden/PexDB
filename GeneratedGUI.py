@@ -106,6 +106,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
+		self.Bind( wx.EVT_MENU, self.editproject_menuItemOnMenuSelection, id = self.editproject_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.newproj_menutitemOnMenuSelection, id = self.newproj_menutitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.quit_PexViewer, id = self.quit_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
@@ -121,6 +122,9 @@ class PexViewerMainFrame ( wx.Frame ):
 
 
 	# Virtual event handlers, override them in your derived class
+	def editproject_menuItemOnMenuSelection( self, event ):
+		event.Skip()
+
 	def newproj_menutitemOnMenuSelection( self, event ):
 		event.Skip()
 
@@ -388,5 +392,78 @@ class EditResultDefinitions ( wx.Dialog ):
 	def m_splitter21OnIdle( self, event ):
 		self.m_splitter21.SetSashPosition( 346 )
 		self.m_splitter21.Unbind( wx.EVT_IDLE )
+
+
+###########################################################################
+## Class EditProjectDialog
+###########################################################################
+
+class EditProjectDialog ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 220,162 ), style = wx.DEFAULT_DIALOG_STYLE )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer3 = wx.GridBagSizer( 3, 3 )
+		gbSizer3.SetFlexibleDirection( wx.BOTH )
+		gbSizer3.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.nameL = wx.StaticText( self, wx.ID_ANY, _(u"Name"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.nameL.Wrap( -1 )
+
+		gbSizer3.Add( self.nameL, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_nameTB = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer3.Add( self.m_nameTB, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, _(u"Status"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText2.Wrap( -1 )
+
+		gbSizer3.Add( self.m_staticText2, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		m_projectstatusCOBChoices = []
+		self.m_projectstatusCOB = wx.ComboBox( self, wx.ID_ANY, _(u"Combo!"), wx.DefaultPosition, wx.DefaultSize, m_projectstatusCOBChoices, 0 )
+		gbSizer3.Add( self.m_projectstatusCOB, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, _(u"Is archived"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText3.Wrap( -1 )
+
+		gbSizer3.Add( self.m_staticText3, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_isArchivedCBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer3.Add( self.m_isArchivedCBX, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		m_okcancelBUTS = wx.StdDialogButtonSizer()
+		self.m_okcancelBUTSOK = wx.Button( self, wx.ID_OK )
+		m_okcancelBUTS.AddButton( self.m_okcancelBUTSOK )
+		self.m_okcancelBUTSCancel = wx.Button( self, wx.ID_CANCEL )
+		m_okcancelBUTS.AddButton( self.m_okcancelBUTSCancel )
+		m_okcancelBUTS.Realize();
+
+		gbSizer3.Add( m_okcancelBUTS, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+
+		gbSizer3.AddGrowableCol( 1 )
+
+		self.SetSizer( gbSizer3 )
+		self.Layout()
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.Bind( wx.EVT_SHOW, self.EditProjectDialogOnShow )
+		self.m_okcancelBUTSOK.Bind( wx.EVT_BUTTON, self.m_okcancelBUTSOnOKButtonClick )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def EditProjectDialogOnShow( self, event ):
+		event.Skip()
+
+	def m_okcancelBUTSOnOKButtonClick( self, event ):
+		event.Skip()
 
 

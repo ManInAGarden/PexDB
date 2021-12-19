@@ -6,6 +6,7 @@ import wx.propgrid as pg
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
 from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
+from PexDbViewerEditProjectDialog import PexDbViewerEditProjectDialog
 from PexDbViewerEditResultDefinitions import PexDbViewerEditResultDefinitions
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
@@ -336,7 +337,22 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		dia.ShowModal()
 
 	def newproj_menutitemOnMenuSelection( self, event ):
+		"""user selected "new project" in menu
+		we create a new standard project and make it the current project"""
 		self._currentproject = Project(name="New project")
+		self._fact.flush(self._currentproject)
+		self.displayprojinsb()
+
+	def editproject_menuItemOnMenuSelection( self, event ):
+		"""user selected "edit project" in menu.
+		we let him edit the current project"""
+
+		dial = PexDbViewerEditProjectDialog(self, self._fact, self._currentproject)
+		res = dial.ShowModal()
+		if res == wx.ID_CANCEL:
+			return
+		
+		self._currentproject = dial.project
 		self._fact.flush(self._currentproject)
 		self.displayprojinsb()
 
