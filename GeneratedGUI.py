@@ -28,13 +28,13 @@ class PexViewerMainFrame ( wx.Frame ):
 
 		self.m_menubar1 = wx.MenuBar( 0 )
 		self.file_menu = wx.Menu()
-		self.openproject_menuItem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Open project"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.openproject_menuItem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Open project")+ u"\t" + u"CTRL+O", wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.Append( self.openproject_menuItem )
 
 		self.editproject_menuItem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Edit project"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.Append( self.editproject_menuItem )
 
-		self.newproj_menutitem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"New project"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.newproj_menutitem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"New project")+ u"\t" + u"CTRL+N", wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.Append( self.newproj_menutitem )
 
 		self.file_menu.AppendSeparator()
@@ -106,6 +106,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
+		self.Bind( wx.EVT_MENU, self.openproject_menuItemOnMenuSelection, id = self.openproject_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.editproject_menuItemOnMenuSelection, id = self.editproject_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.newproj_menutitemOnMenuSelection, id = self.newproj_menutitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.quit_PexViewer, id = self.quit_menuitem.GetId() )
@@ -122,6 +123,9 @@ class PexViewerMainFrame ( wx.Frame ):
 
 
 	# Virtual event handlers, override them in your derived class
+	def openproject_menuItemOnMenuSelection( self, event ):
+		event.Skip()
+
 	def editproject_menuItemOnMenuSelection( self, event ):
 		event.Skip()
 
@@ -464,6 +468,68 @@ class EditProjectDialog ( wx.Dialog ):
 		event.Skip()
 
 	def m_okcancelBUTSOnOKButtonClick( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class OpenProjectDialog
+###########################################################################
+
+class OpenProjectDialog ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Open project"), pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer4 = wx.GridBagSizer( 0, 0 )
+		gbSizer4.SetFlexibleDirection( wx.BOTH )
+		gbSizer4.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText4 = wx.StaticText( self, wx.ID_ANY, _(u"Select a project"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText4.Wrap( -1 )
+
+		gbSizer4.Add( self.m_staticText4, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_projectsLCTRL = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT )
+		gbSizer4.Add( self.m_projectsLCTRL, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_checkBox2 = wx.CheckBox( self, wx.ID_ANY, _(u"Archived projects"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer4.Add( self.m_checkBox2, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		m_sdbSizer2 = wx.StdDialogButtonSizer()
+		self.m_sdbSizer2OK = wx.Button( self, wx.ID_OK )
+		m_sdbSizer2.AddButton( self.m_sdbSizer2OK )
+		self.m_sdbSizer2Cancel = wx.Button( self, wx.ID_CANCEL )
+		m_sdbSizer2.AddButton( self.m_sdbSizer2Cancel )
+		m_sdbSizer2.Realize();
+
+		gbSizer4.Add( m_sdbSizer2, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 5 )
+
+
+		self.SetSizer( gbSizer4 )
+		self.Layout()
+		gbSizer4.Fit( self )
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.Bind( wx.EVT_SHOW, self.OpenProjectDialogOnShow )
+		self.m_checkBox2.Bind( wx.EVT_CHECKBOX, self.m_checkBox2OnCheckBox )
+		self.m_sdbSizer2OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer2OnOKButtonClick )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def OpenProjectDialogOnShow( self, event ):
+		event.Skip()
+
+	def m_checkBox2OnCheckBox( self, event ):
+		event.Skip()
+
+	def m_sdbSizer2OnOKButtonClick( self, event ):
 		event.Skip()
 
 

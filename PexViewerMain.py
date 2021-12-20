@@ -8,6 +8,7 @@ from ConfigReader import *
 from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
 from PexDbViewerEditProjectDialog import PexDbViewerEditProjectDialog
 from PexDbViewerEditResultDefinitions import PexDbViewerEditResultDefinitions
+from PexDbViewerOpenProjectDialog import PexDbViewerOpenProjectDialog
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
@@ -113,7 +114,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self.m_experimentPG.Enable(False)
 		
 	def get_experiments(self):
-		q = sqp.SQQuery(self._fact, Experiment).where(Experiment.IsArchived == False).order_by(Experiment.CarriedOutDt)
+		q = sqp.SQQuery(self._fact, Experiment).where(Experiment.IsArchived == False 
+			and Experiment.ProjectId==self._currentproject._id).order_by(Experiment.CarriedOutDt)
 		experiments = []
 		for exp in q:
 			self._fact.fill_joins(exp, Experiment.Factors)
@@ -336,12 +338,32 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		dia = PexDbViewerEditResultDefinitions(self, self._fact)
 		dia.ShowModal()
 
+
+	def openproject_menuItemOnMenuSelection(self, event):
+		"""user wants to switch over to another project, so we open a selection dialog
+		for him"""
+
+		dial = PexDbViewerOpenProjectDialog(self, self._fact, self._currentproject)
+		res = dial.ShowModal()
+
+		if res == wx.ID_OK:
+			assert(dial.chosenproject is not None)
+			if self._currentproject._id != dial.chosenproject._id:
+				self._currentproject = dial.chosenproject
+				self.displayprojinsb()
+				#now refresh the gui parts to show the experiments of the new project (should be none at all)
+				self._experiments = self.get_experiments()
+				self.refresh_dash()
+
 	def newproj_menutitemOnMenuSelection( self, event ):
 		"""user selected "new project" in menu
 		we create a new standard project and make it the current project"""
 		self._currentproject = Project(name="New project")
 		self._fact.flush(self._currentproject)
 		self.displayprojinsb()
+		#now refresh the gui parts to show the experiments of the new project (should be none at all)
+		self._experiments = self.get_experiments()
+		self.refresh_dash()
 
 	def editproject_menuItemOnMenuSelection( self, event ):
 		"""user selected "edit project" in menu.
