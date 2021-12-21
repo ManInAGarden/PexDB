@@ -114,6 +114,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.dupicate_experiment_menuitemOnMenuSelection, id = self.dupicate_experiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.delete_experiment_menuItemOnMenuSelection, id = self.delte_experiment_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_edit_factors_menuitemOnMenuSelection, id = self.m_edit_factors_menuitem.GetId() )
+		self.Bind( wx.EVT_MENU, self.reseed_factors_menuItemOnMenuSelection, id = self.reseed_factors_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.edit_result_definitions, id = self.edit_result_definitions_menuItem.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
 		self.m_experimentPG.Bind( pg.EVT_PG_CHANGED, self.propgridChanged )
@@ -145,6 +146,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def m_edit_factors_menuitemOnMenuSelection( self, event ):
+		event.Skip()
+
+	def reseed_factors_menuItemOnMenuSelection( self, event ):
 		event.Skip()
 
 	def edit_result_definitions( self, event ):

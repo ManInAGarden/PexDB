@@ -11,6 +11,10 @@ select * from catalog;
 
 select * from project;
 
+select * from resultvalue;
+
+drop table catalog;
+
 select
     fv.value
 from 
@@ -19,6 +23,6 @@ from
 where
     fv.factordefinitionid==fd._id;
 
-.schema resultdefinition
+.schema factordefinition
 
 .tables

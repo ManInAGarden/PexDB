@@ -1,3 +1,4 @@
+from abc import update_abstractmethods
 import importlib
 import json
 
@@ -23,6 +24,32 @@ class SQPSeeder(object):
                 s = cls(**dm)
                 self._fact.flush(s)
 
+    def update_seeddata(self, uniqkdef : BaseVarType):
+        assert(uniqkdef is not None) #we need a unique key-field to find an already stored element in the db
+
+        unifieldname = uniqkdef.get_fieldname()
+        with open(self._filepath, 'r', encoding="utf8") as f:
+            data = json.load(f)
+        
+        ctupd = 0
+        ctins = 0
+        for datk, datlist in data.items():
+            cls = self._getclass(datk)
+            for datmap in datlist:
+                dm = self._doreplacements(cls, datmap)
+                s = cls(**dm)
+                skv = s.__getattribute__(unifieldname)
+                other = SQQuery(self._fact, cls).where(uniqkdef==skv).first_or_default(None)
+                if other is not None:
+                    #we have a stored version of this - so we have to update this one to keep the original contents of _id and created
+                    self._fact.flush(self._update(other, s))
+                    ctupd += 1
+                else:
+                    self._fact.flush(s)
+                    ctins += 1
+
+        return ctupd, ctins
+
     def _doreplacements(self, targetcls, datmap):
         dm = dict()
         
@@ -37,6 +64,25 @@ class SQPSeeder(object):
             dm[datkey] = dav
 
         return dm
+
+    def _update(self, oldi, newi):
+        oldcls = type(oldi)
+        newcls = type(newi)
+
+        assert(oldcls==newcls)
+        updated = oldcls() # get another instance of the type both old and new have
+
+        clsdict = oldcls.get_clsdict()
+        oldies = ["_id", "created"] #keep contents of these fields
+        for fldname, memdecl in clsdict.items():
+            oldval = getattr(oldi, fldname)
+            newval = getattr(newi, fldname)
+            if not fldname in oldies:
+                setattr(updated, fldname, newval)
+            else:
+                setattr(updated, fldname, oldval)
+
+        return updated
 
     def _replace(self, dav):
         answ = ""

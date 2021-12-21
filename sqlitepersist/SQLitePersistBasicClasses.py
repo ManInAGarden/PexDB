@@ -369,9 +369,15 @@ class PBase(object):
 
     @classmethod
     def get_memberdeclarationforcls(cls, membercls, membername : str):
+        """return then memberdeclaration for a member of the given class"""
         cd = cls._classdict[membercls]
         md = cd[membername]
         return md.get_declaration()
+
+    @classmethod
+    def get_clsdict(cls):
+        """return the classdict for the class"""
+        return cls._classdict[cls]
 
     @classmethod
     def is_catalogmember(cls, membername):

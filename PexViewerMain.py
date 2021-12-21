@@ -13,6 +13,7 @@ from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
 from sqlitepersist.SQLitePersistBasicClasses import OrderDirection
+from sqlitepersist.SQLitePersistSeeder import SQPSeeder
 
 # Implementing PexViewerMainFrame
 class PexViewerMain( gg.PexViewerMainFrame ):
@@ -51,7 +52,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def create_exp_gui(self):
 		self._expgui = WxGuiMapperExperiment(self._fact, self.m_experimentPG)
 		self.m_experimentPG.Enable(False) #disable in case we have no data
-		self._expgui.emtyallitems(self.m_experimentPG)
+		self._expgui.emptyallitems(self.m_experimentPG)
 		
 	def displayprojinsb(self):
 		self.m_mainSBA.SetStatusText("Project: {0}".format(self._currentproject.name), 1)
@@ -110,7 +111,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self.refresh_expview(selexp, self._expgui)
 			self._currentexperiment = selexp
 		else:
-			self._expgui.emtyallitems(self.m_experimentPG)
+			self._expgui.emptyallitems(self.m_experimentPG)
 			self.m_experimentPG.Enable(False)
 		
 	def get_experiments(self):
@@ -197,13 +198,20 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		self._fact.flush(exp)
 
-		#create new settings for the experiment from all the active parameters
+		#create/prepare new factorvalues for the experiment from all the active parameters
 		exp.factors = []
 		factdef_q = sqp.SQQuery(self._fact, FactorDefinition).where(FactorDefinition.IsActive==True)
 		for fdef in factdef_q:
 			fval = FactorValue(factordefinitionid=fdef._id, experimentid=exp._id, factordefinition=fdef)
 			self._fact.flush(fval)
 			exp.factors.append(fval)
+
+		exp.results = []
+		resdef_q = sqp.SQQuery(self._fact, ResultDefinition).where(ResultDefinition.IsActive==True)
+		for rdef in resdef_q:
+			rval = ResultValue(resultdefinitionid=rdef._id, experimentid=exp._id, resultdefinition=rdef)
+			self._fact.flush(rval)
+			exp.results.append(rval)
 
 		self._experiments.append(exp)
 		self.refresh_dash()
@@ -377,6 +385,19 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self._currentproject = dial.project
 		self._fact.flush(self._currentproject)
 		self.displayprojinsb()
+
+	def reseed_factors_menuItemOnMenuSelection( self, event ):
+		fpath = wx.FileSelector("Select factor definitions seed file",default_extension="json")
+
+		if fpath is None:
+			return
+
+		seeder = SQPSeeder(self._fact, fpath)
+		updct, insct = seeder.update_seeddata(FactorDefinition.Abbreviation)
+		if updct > 0 or insct > 0:
+			wx.MessageBox("{0} factor defintions were updated and {1} ned defintions were inserted".format(updct, insct))
+		else:
+			wx.MessageBox("No factor defintions were update or inserted")
 
 if __name__ == '__main__':
 	app = wx.App()

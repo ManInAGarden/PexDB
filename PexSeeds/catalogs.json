@@ -16,6 +16,7 @@
             {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_ENABLED", "value":"cool_fan_enabled", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_FULL_AT_HEIGHT", "value":"cool_fan_full_at_height", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_FULL_LAYER", "value":"cool_fan_full_layer", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_SPEED", "value":"cool_fan_speed", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_SPEED_MAX", "value":"cool_fan_speed_max", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"COOL_FAN_SPEED_MIN", "value":"cool_fan_speed_min", "langcode":"ENU"},
 

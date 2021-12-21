@@ -30,7 +30,7 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 		self.get_dbdta2gui(True)
 
 	def get_dbdta2gui(self, active = True):
-		self._factgui.emtyallitems(self.m_factorDtaPG)
+		self._factgui.emptyallitems(self.m_factorDtaPG)
 		self.m_factorDtaPG.Enable(False) #deisable the prop grid, will be enabled in case a factor gets selected by the user
 
 		self.m_factorDefsLC.DeleteAllItems()

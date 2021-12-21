@@ -18,7 +18,8 @@ class WxGuiMapperInfo(object):
             pgitemtype = None,
             fetchexpr = None,
             unitstr = None,
-            staticchoices = None):
+            staticchoices = None,
+            enabled=True):
         
         self._fieldname = fieldname
         self._fieldcls = fieldcls
@@ -27,6 +28,7 @@ class WxGuiMapperInfo(object):
         self._choicedta = None
         self._unitstr = unitstr
         self._staticchoices = staticchoices
+        self._enabled = enabled
         
         if pgitemname is None:
             self._pgitemname = fieldname
@@ -74,6 +76,8 @@ class WxGuiMapperInfo(object):
             pitem.SetAutoUnspecified()
         else:
             raise Exception("unknow property item type <{0}>".format(str(self.pgitemtype)))
+
+        pitem.Enable(self._enabled)
 
         return pitem
 
@@ -233,7 +237,7 @@ class WxGuiMapper(object):
         raise Exception("ovveride me!")
 
 		
-    def emtyallitems(self, pgrd):
+    def emptyallitems(self, pgrd):
         """emties all the properties to symbolise that no data are in the propgrid"""
         for key, guuinf in self._mapping.items():
             guuinf.set_emty(pgrd)

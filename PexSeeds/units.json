@@ -3,6 +3,8 @@
         [
             {"abbreviation" : "mm", "name": "millimeter", "baseunit":"m", "factortobase" : 0.001},
             {"abbreviation" : "mm/s", "name": "millimeter speed", "baseunit":"m/s", "factortobase" : 0.001},
+            {"abbreviation" : "s", "name": "second", "baseunit":"s", "factortobase" : 1.0},
+            {"abbreviation" : "h", "name": "hour", "baseunit":"s", "factortobase" : 3600.0},
             {"abbreviation" : "°C", "name": "temperature Celsius", "baseunit":"°C", "factortobase" : 1},
             {"abbreviation" : "mm^3", "name": "millimeter volume", "baseunit":"m^3", "factortobase" : 1E-9},
             {"abbreviation" : "mm^3/s", "name": "millimeter volume speed", "baseunit":"m^3/s", "factortobase" : 1E-9},

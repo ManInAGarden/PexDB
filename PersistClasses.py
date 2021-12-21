@@ -2,7 +2,7 @@ from enum import unique
 import sqlitepersist as sqp
 
 class AbbreviatedThing(sqp.PBase):
-    Abbreviation = sqp.String()
+    Abbreviation = sqp.String(uniquegrp="ABBRUNIQ")
     Name = sqp.String()
 
     def __str__(self):
@@ -60,7 +60,7 @@ class Unit(AbbreviatedThing):
 class _NamedValue(AbbreviatedThing):
     """a stored value of some kind with a unit, a GUI display type. Can be deactivated if
     not in use any more but data are stored which use it
-    do not instatiate directly but use the derived classes
+    do not instantiate directly but use the derived classes
     """
     UnitId = sqp.UUid()
     Unit = sqp.JoinedEmbeddedObject(targettype=Unit, localid=UnitId, autfill=True)
@@ -85,9 +85,9 @@ class FactorValue(sqp.PBase):
 
 class ResultValue(sqp.PBase):
     """The result of an experiment - a rating or a measure"""
-    ResultDefId = sqp.UUid()
+    ResultDefinitionId = sqp.UUid()
     ExperimentId = sqp.UUid()
-    ResultDefinition = sqp.JoinedEmbeddedObject(targettype=ResultDefinition, localid=ResultDefId, autofill=True)
+    ResultDefinition = sqp.JoinedEmbeddedObject(targettype=ResultDefinition, localid=ResultDefinitionId, autofill=True)
     Value = sqp.Float()
 
 class Project(sqp.PBase):
@@ -106,4 +106,6 @@ class Experiment(sqp.PBase):
     IsArchived = sqp.Boolean(default=False)
     Description = sqp.String()
     Factors = sqp.JoinedEmbeddedList(targettype=FactorValue, foreignid=FactorValue.ExperimentId, cascadedelete=True)
+    Results = sqp.JoinedEmbeddedList(targettype=ResultValue, foreignid=ResultValue.ExperimentId, cascadedelete=True)
+
     

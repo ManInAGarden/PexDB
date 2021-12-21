@@ -15,26 +15,36 @@ class WxGuiMapperExperiment(WxGuiMapper):
         self.add(WxGuiMapperInfo(fieldname="extruderused", pgitemtype=pg.EnumProperty, fieldcls=Extruder, idfieldname="extruderusedid",pgitemlabel="Extruder", fetchexpr=Extruder.IsActive==True))
         self.add(WxGuiMapperInfo(fieldname="factors_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Faktoren"))
 
-        fdef_q = sqp.SQQuery(fact, FactorDefinition).where(FactorDefinition.IsActive==True).select(lambda para : (para.name, para.disptype, para.unit))
-
-        for para in fdef_q:
-            if para[2] is not None:
-                un = para[2].abbreviation
+        fdef_q = sqp.SQQuery(fact, FactorDefinition)
+        for fdef in fdef_q:
+            if fdef.unit is not None:
+                un = fdef.unit.abbreviation
             else:
                 un = None
-            if para[1] == "FLOAT":
-                self.add(WxGuiMapperInfo(fieldname=para[0], pgitemtype=pg.FloatProperty, unitstr=un))
-            elif para[1] == "BOOLEAN":
-                self.add(WxGuiMapperInfo(fieldname=para[0], pgitemtype=pg.BoolProperty, unitstr=un))
+            if fdef.disptype == "FLOAT":
+                self.add(WxGuiMapperInfo(fieldname=fdef.name, pgitemtype=pg.FloatProperty, unitstr=un, enabled=fdef.isactive))
+            elif fdef.disptype == "BOOLEAN":
+                self.add(WxGuiMapperInfo(fieldname=fdef.name, pgitemtype=pg.BoolProperty, unitstr=un, enabled=fdef.isactive))
 
         self.add(WxGuiMapperInfo(fieldname="results_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Ergebnisse"))
+        
+        rdef_q = sqp.SQQuery(fact, ResultDefinition)
+        for resd in rdef_q:
+            if resd.unit is not None:
+                un = resd.unit.abbreviation
+            else:
+                un = None
+            if resd.disptype == "FLOAT":
+                self.add(WxGuiMapperInfo(fieldname=resd.name, pgitemtype=pg.FloatProperty, unitstr=un, enabled=resd.isactive))
+            elif resd.disptype == "BOOLEAN":
+                self.add(WxGuiMapperInfo(fieldname=resd.name, pgitemtype=pg.BoolProperty, unitstr=un, enabled=resd.isactive))
 
         self.createprops(parentpropgrid)
 
     def object2gui(self, obj, propgrid):
         """expect obj to be key,value dict and set the values of the property grid items accordingly"""
         for key, value in obj.items():
-            guidecl = self[key] #we are a dict too knwoing all the definitions for the propgriditems
+            guidecl = self[key] #we are a dict too knowing all the definitions for the propgriditems
             guidecl.setvalue(propgrid, value)
 
     def gui2object(self, propgrid) -> dict:

@@ -57,7 +57,7 @@
             <property name="window_name"></property>
             <property name="window_style">wxTAB_TRAVERSAL</property>
             <property name="xrc_skip_sizer">1</property>
-            <object class="wxMenuBar" expanded="0">
+            <object class="wxMenuBar" expanded="1">
                 <property name="bg"></property>
                 <property name="context_help"></property>
                 <property name="context_menu">1</property>
@@ -194,7 +194,7 @@
                         <event name="OnMenuSelection">delete_experiment_menuItemOnMenuSelection</event>
                     </object>
                 </object>
-                <object class="wxMenu" expanded="0">
+                <object class="wxMenu" expanded="1">
                     <property name="label">Factors</property>
                     <property name="name">factors_menu</property>
                     <property name="permission">protected</property>
@@ -224,6 +224,7 @@
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">reseed_factors_menuItemOnMenuSelection</event>
                     </object>
                 </object>
                 <object class="wxMenu" expanded="0">
