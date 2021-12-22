@@ -7,7 +7,7 @@ import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
 from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
 from PexDbViewerEditProjectDialog import PexDbViewerEditProjectDialog
-from PexDbViewerEditResultDefinitions import PexDbViewerEditResultDefinitions
+from PexDbViewerEditResponseDefinitions import PexDbViewerEditResponseDefinitions
 from PexDbViewerOpenProjectDialog import PexDbViewerOpenProjectDialog
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
@@ -128,13 +128,14 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		pclasses = [sqp.PCatalog, 
 			Unit, 
 			Project,
+			ProjectFactorPreparation,
 			Experiment, 
 			Printer, 
 			Extruder, 
 			FactorDefinition, 
 			FactorValue, 
-			ResultDefinition, 
-			ResultValue]
+			ResponseDefinition, 
+			ResponseValue]
 
 		createds = []
 		for pclass in pclasses:
@@ -162,8 +163,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/extruders.json")
 			sdr.create_seeddata()
 
-		if ResultDefinition in createds:
-			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/resultdefinitions.json")
+		if ResponseDefinition in createds:
+			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/responsedefinitions.json")
 			sdr.create_seeddata()
 
 		if Project in createds:
@@ -207,9 +208,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			exp.factors.append(fval)
 
 		exp.results = []
-		resdef_q = sqp.SQQuery(self._fact, ResultDefinition).where(ResultDefinition.IsActive==True)
+		resdef_q = sqp.SQQuery(self._fact, ResponseDefinition).where(ResponseDefinition.IsActive==True)
 		for rdef in resdef_q:
-			rval = ResultValue(resultdefinitionid=rdef._id, experimentid=exp._id, resultdefinition=rdef)
+			rval = ResponseValue(responsedefinitionid=rdef._id, experimentid=exp._id, responsedefinition=rdef)
 			self._fact.flush(rval)
 			exp.results.append(rval)
 
@@ -341,9 +342,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		dia = PexDbViewerEditFactorDefinitions(self, self._fact)
 		dia.ShowModal()
 
-	def edit_result_definitions(self, event):
+	def edit_response_definitions(self, event):
 		"""user clicked on edit result defs menu item"""
-		dia = PexDbViewerEditResultDefinitions(self, self._fact)
+		dia = PexDbViewerEditResponseDefinitions(self, self._fact)
 		dia.ShowModal()
 
 

@@ -70,9 +70,12 @@ class _NamedValue(AbbreviatedThing):
 class FactorDefinition(_NamedValue):
     """definition for a factor - i.e. a parameter in the sclicing process"""
     CuraName = sqp.Catalog(catalogtype=CuraNameCat)
+    DefaultMin = sqp.Float()
+    DefaultMax = sqp.Float()
+    DefaultLevelNum = sqp.Int(default=2)
     
 
-class ResultDefinition(_NamedValue):
+class ResponseDefinition(_NamedValue):
     """definition for a result - a measrurement/rating"""
     pass
 
@@ -81,19 +84,27 @@ class FactorValue(sqp.PBase):
     FactorDefinitionId = sqp.UUid()
     ExperimentId = sqp.UUid()
     FactorDefinition = sqp.JoinedEmbeddedObject(targettype=FactorDefinition, localid=FactorDefinitionId, autofill=True)
-    Value = sqp.String()
+    Value = sqp.Float()
 
-class ResultValue(sqp.PBase):
+class ResponseValue(sqp.PBase):
     """The result of an experiment - a rating or a measure"""
-    ResultDefinitionId = sqp.UUid()
+    ResponseDefinitionId = sqp.UUid()
     ExperimentId = sqp.UUid()
-    ResultDefinition = sqp.JoinedEmbeddedObject(targettype=ResultDefinition, localid=ResultDefinitionId, autofill=True)
+    ResponseDefinition = sqp.JoinedEmbeddedObject(targettype=ResponseDefinition, localid=ResponseDefinitionId, autofill=True)
     Value = sqp.Float()
 
 class Project(sqp.PBase):
     Name = sqp.String()
     Status = sqp.Catalog(catalogtype=ProjectStatusCat)
     IsArchived = sqp.Boolean(default=False)
+
+class ProjectFactorPreparation(sqp.PBase):
+    ProjectId = sqp.UUid()
+    MinValue = sqp.Float()
+    MaxValue = sqp.Float()
+    LevelNum = sqp.Int(default=2)
+    FactorDefinitionId = sqp.UUid()
+    FactorDefinition = sqp.JoinedEmbeddedObject(targettype=FactorDefinition, localid=FactorDefinitionId, autofill=True)
 
 class Experiment(sqp.PBase):
     ProjectId = sqp.UUid()
@@ -106,6 +117,6 @@ class Experiment(sqp.PBase):
     IsArchived = sqp.Boolean(default=False)
     Description = sqp.String()
     Factors = sqp.JoinedEmbeddedList(targettype=FactorValue, foreignid=FactorValue.ExperimentId, cascadedelete=True)
-    Results = sqp.JoinedEmbeddedList(targettype=ResultValue, foreignid=ResultValue.ExperimentId, cascadedelete=True)
+    Results = sqp.JoinedEmbeddedList(targettype=ResponseValue, foreignid=ResponseValue.ExperimentId, cascadedelete=True)
 
     

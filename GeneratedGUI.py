@@ -67,11 +67,11 @@ class PexViewerMainFrame ( wx.Frame ):
 
 		self.m_menubar1.Append( self.factors_menu, _(u"Factors") )
 
-		self.result_menu = wx.Menu()
-		self.edit_result_definitions_menuItem = wx.MenuItem( self.result_menu, wx.ID_ANY, _(u"Edit result definitions"), wx.EmptyString, wx.ITEM_NORMAL )
-		self.result_menu.Append( self.edit_result_definitions_menuItem )
+		self.response_menu = wx.Menu()
+		self.edit_response_definitions_menuItem = wx.MenuItem( self.response_menu, wx.ID_ANY, _(u"Edit response definitions"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.response_menu.Append( self.edit_response_definitions_menuItem )
 
-		self.m_menubar1.Append( self.result_menu, _(u"Results") )
+		self.m_menubar1.Append( self.response_menu, _(u"Responses") )
 
 		self.help_menu = wx.Menu()
 		self.help_menuItem = wx.MenuItem( self.help_menu, wx.ID_ANY, _(u"Help"), wx.EmptyString, wx.ITEM_NORMAL )
@@ -115,7 +115,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.delete_experiment_menuItemOnMenuSelection, id = self.delte_experiment_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_edit_factors_menuitemOnMenuSelection, id = self.m_edit_factors_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.reseed_factors_menuItemOnMenuSelection, id = self.reseed_factors_menuItem.GetId() )
-		self.Bind( wx.EVT_MENU, self.edit_result_definitions, id = self.edit_result_definitions_menuItem.GetId() )
+		self.Bind( wx.EVT_MENU, self.edit_response_definitions, id = self.edit_response_definitions_menuItem.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
 		self.m_experimentPG.Bind( pg.EVT_PG_CHANGED, self.propgridChanged )
 
@@ -151,7 +151,7 @@ class PexViewerMainFrame ( wx.Frame ):
 	def reseed_factors_menuItemOnMenuSelection( self, event ):
 		event.Skip()
 
-	def edit_result_definitions( self, event ):
+	def edit_response_definitions( self, event ):
 		event.Skip()
 
 	def experimentDWLC_selchanged( self, event ):
@@ -284,13 +284,13 @@ class EditFactorDefinitions ( wx.Dialog ):
 
 
 ###########################################################################
-## Class EditResultDefinitions
+## Class EditResponseDefinitions
 ###########################################################################
 
-class EditResultDefinitions ( wx.Dialog ):
+class EditResponseDefinitions ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit result definitions"), pos = wx.DefaultPosition, size = wx.Size( 659,387 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit response definitions"), pos = wx.DefaultPosition, size = wx.Size( 659,387 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -409,13 +409,13 @@ class EditResultDefinitions ( wx.Dialog ):
 class EditProjectDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 220,162 ), style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 467,315 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		gbSizer3 = wx.GridBagSizer( 3, 3 )
 		gbSizer3.SetFlexibleDirection( wx.BOTH )
-		gbSizer3.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		gbSizer3.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_ALL )
 
 		self.nameL = wx.StaticText( self, wx.ID_ANY, _(u"Name"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.nameL.Wrap( -1 )
@@ -423,7 +423,7 @@ class EditProjectDialog ( wx.Dialog ):
 		gbSizer3.Add( self.nameL, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		self.m_nameTB = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gbSizer3.Add( self.m_nameTB, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		gbSizer3.Add( self.m_nameTB, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 		self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, _(u"Status"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText2.Wrap( -1 )
@@ -432,7 +432,7 @@ class EditProjectDialog ( wx.Dialog ):
 
 		m_projectstatusCOBChoices = []
 		self.m_projectstatusCOB = wx.ComboBox( self, wx.ID_ANY, _(u"Combo!"), wx.DefaultPosition, wx.DefaultSize, m_projectstatusCOBChoices, 0 )
-		gbSizer3.Add( self.m_projectstatusCOB, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		gbSizer3.Add( self.m_projectstatusCOB, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 		self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, _(u"Is archived"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText3.Wrap( -1 )
@@ -442,6 +442,20 @@ class EditProjectDialog ( wx.Dialog ):
 		self.m_isArchivedCBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		gbSizer3.Add( self.m_isArchivedCBX, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
+		self.m_prepsLCTRL = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_ICON )
+		gbSizer3.Add( self.m_prepsLCTRL, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+		bSizer7 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_connfactorBU = wx.Button( self, wx.ID_ANY, _(u"Add factor"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.m_connfactorBU, 0, wx.ALL, 5 )
+
+		self.m_removefactorBU = wx.Button( self, wx.ID_ANY, _(u"Remove factor"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.m_removefactorBU, 0, wx.ALL, 5 )
+
+
+		gbSizer3.Add( bSizer7, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
 		m_okcancelBUTS = wx.StdDialogButtonSizer()
 		self.m_okcancelBUTSOK = wx.Button( self, wx.ID_OK )
 		m_okcancelBUTS.AddButton( self.m_okcancelBUTSOK )
@@ -449,7 +463,7 @@ class EditProjectDialog ( wx.Dialog ):
 		m_okcancelBUTS.AddButton( self.m_okcancelBUTSCancel )
 		m_okcancelBUTS.Realize();
 
-		gbSizer3.Add( m_okcancelBUTS, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer3.Add( m_okcancelBUTS, wx.GBPosition( 5, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 
 		gbSizer3.AddGrowableCol( 1 )
@@ -461,6 +475,8 @@ class EditProjectDialog ( wx.Dialog ):
 
 		# Connect Events
 		self.Bind( wx.EVT_SHOW, self.EditProjectDialogOnShow )
+		self.m_connfactorBU.Bind( wx.EVT_BUTTON, self.m_connfactorBUOnButtonClick )
+		self.m_removefactorBU.Bind( wx.EVT_BUTTON, self.m_removefactorBUOnButtonClick )
 		self.m_okcancelBUTSOK.Bind( wx.EVT_BUTTON, self.m_okcancelBUTSOnOKButtonClick )
 
 	def __del__( self ):
@@ -469,6 +485,12 @@ class EditProjectDialog ( wx.Dialog ):
 
 	# Virtual event handlers, override them in your derived class
 	def EditProjectDialogOnShow( self, event ):
+		event.Skip()
+
+	def m_connfactorBUOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_removefactorBUOnButtonClick( self, event ):
 		event.Skip()
 
 	def m_okcancelBUTSOnOKButtonClick( self, event ):
@@ -482,11 +504,11 @@ class EditProjectDialog ( wx.Dialog ):
 class OpenProjectDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Open project"), pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Open project"), pos = wx.DefaultPosition, size = wx.Size( 345,279 ), style = wx.DEFAULT_DIALOG_STYLE )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
-		gbSizer4 = wx.GridBagSizer( 0, 0 )
+		gbSizer4 = wx.GridBagSizer( 5, 5 )
 		gbSizer4.SetFlexibleDirection( wx.BOTH )
 		gbSizer4.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
@@ -511,9 +533,13 @@ class OpenProjectDialog ( wx.Dialog ):
 		gbSizer4.Add( m_sdbSizer2, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 5 )
 
 
+		gbSizer4.AddGrowableCol( 0 )
+		gbSizer4.AddGrowableCol( 1 )
+		gbSizer4.AddGrowableRow( 1 )
+		gbSizer4.AddGrowableRow( 2 )
+
 		self.SetSizer( gbSizer4 )
 		self.Layout()
-		gbSizer4.Fit( self )
 
 		self.Centre( wx.BOTH )
 
@@ -535,5 +561,53 @@ class OpenProjectDialog ( wx.Dialog ):
 
 	def m_sdbSizer2OnOKButtonClick( self, event ):
 		event.Skip()
+
+
+###########################################################################
+## Class AddFactorDialog
+###########################################################################
+
+class AddFactorDialog ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Select a factor"), pos = wx.DefaultPosition, size = wx.Size( 186,199 ), style = wx.DEFAULT_DIALOG_STYLE )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer5 = wx.GridBagSizer( 0, 0 )
+		gbSizer5.SetFlexibleDirection( wx.BOTH )
+		gbSizer5.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText5 = wx.StaticText( self, wx.ID_ANY, _(u"Factors not already present"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText5.Wrap( -1 )
+
+		gbSizer5.Add( self.m_staticText5, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_factorsLCTR = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_ICON )
+		gbSizer5.Add( self.m_factorsLCTR, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+		m_sdbSizer3 = wx.StdDialogButtonSizer()
+		self.m_sdbSizer3OK = wx.Button( self, wx.ID_OK )
+		m_sdbSizer3.AddButton( self.m_sdbSizer3OK )
+		self.m_sdbSizer3Cancel = wx.Button( self, wx.ID_CANCEL )
+		m_sdbSizer3.AddButton( self.m_sdbSizer3Cancel )
+		m_sdbSizer3.Realize();
+
+		gbSizer5.Add( m_sdbSizer3, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 5 )
+
+
+		gbSizer5.AddGrowableCol( 0 )
+		gbSizer5.AddGrowableCol( 1 )
+		gbSizer5.AddGrowableRow( 1 )
+		gbSizer5.AddGrowableRow( 2 )
+		gbSizer5.AddGrowableRow( 3 )
+
+		self.SetSizer( gbSizer5 )
+		self.Layout()
+
+		self.Centre( wx.BOTH )
+
+	def __del__( self ):
+		pass
 
 

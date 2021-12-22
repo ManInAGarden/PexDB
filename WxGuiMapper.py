@@ -55,6 +55,14 @@ class WxGuiMapperInfo(object):
             pitem = pg.FloatProperty(label, self.pgitemname)
             pitem.SetAttribute("Precision", 3)
             pitem.SetAutoUnspecified()
+        elif self.pgitemtype is pg.IntProperty:
+            if not self.unitstr is None:
+                label = "{0} [{1}]".format(self.pgitemlabel, self.unitstr)
+            else:
+                label = self.pgitemlabel
+
+            pitem = pg.IntProperty(label, self.pgitemname)
+            pitem.SetAutoUnspecified()
         elif self.pgitemtype is pg.StringProperty:
             pitem = pg.StringProperty(self.pgitemlabel, self.pgitemname)
             pitem.SetAutoUnspecified()

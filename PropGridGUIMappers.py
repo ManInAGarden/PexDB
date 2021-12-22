@@ -28,7 +28,7 @@ class WxGuiMapperExperiment(WxGuiMapper):
 
         self.add(WxGuiMapperInfo(fieldname="results_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Ergebnisse"))
         
-        rdef_q = sqp.SQQuery(fact, ResultDefinition)
+        rdef_q = sqp.SQQuery(fact, ResponseDefinition)
         for resd in rdef_q:
             if resd.unit is not None:
                 un = resd.unit.abbreviation
@@ -74,6 +74,9 @@ class WxGuiMapperFactorDefintion(WxGuiMapper):
         self.add(WxGuiMapperInfo(fieldname="disptype", pgitemtype=pg.EnumProperty, pgitemlabel="Display type", staticchoices=["FLOAT", "BOOLEAN"]))
         self.add(WxGuiMapperInfo(fieldname="isactive", pgitemtype=pg.BoolProperty, pgitemlabel="Is active"))
         self.add(WxGuiMapperInfo(fieldname="curaname", pgitemtype=pg.EnumProperty, fieldcls=CuraNameCat, pgitemlabel="Cura name"))
+        self.add(WxGuiMapperInfo(fieldname="defaultmin", pgitemtype=pg.FloatProperty, pgitemlabel="default min value"))
+        self.add(WxGuiMapperInfo(fieldname="defaultmax", pgitemtype=pg.FloatProperty, pgitemlabel="default max value"))
+        self.add(WxGuiMapperInfo(fieldname="defaultlevelnum", pgitemtype=pg.IntProperty, pgitemlabel="default number of levels"))
 
         self.createprops(parentpropgrid)
 

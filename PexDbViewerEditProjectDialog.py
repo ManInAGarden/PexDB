@@ -4,6 +4,7 @@ import wx
 from wx.core import NOT_FOUND
 import GeneratedGUI
 from PersistClasses import *
+from PexDbViewerAddFactorDialog import PexDbViewerAddFactorDialog
 import sqlitepersist as sqp
 
 # Implementing EditProjectDialog
@@ -23,9 +24,13 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		if event.Show is False:
 			return
 
-		self.fill_gui(self._project)
+		self._preps = []
+		connf_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._project._id)
+		self._preps = list(connf_q)
 
-	def fill_gui(self, pro):
+		self.fill_gui(self._project, self._preps)
+
+	def fill_gui(self, pro, factpreps):
 		self.m_nameTB.SetValue(pro.name)
 		self.m_isArchivedCBX.SetValue(pro.isarchived)
 		ps_q = sqp.SQQuery(self._fact, ProjectStatusCat).where(ProjectStatusCat.LangCode==self._fact.lang)
@@ -41,6 +46,19 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self.m_projectstatusCOB.SetItems(choicevals)
 		self.m_projectstatusCOB.SetSelection(sel)
 
+		self.m_prepsLCTRL.ClearAll()
+		self.m_prepsLCTRL.InsertColumn(0, "Factor")
+		self.m_prepsLCTRL.InsertColumn(0, "Minimum value", wx.LIST_FORMAT_RIGHT)
+		self.m_prepsLCTRL.InsertColumn(0, "Maximum value",  wx.LIST_FORMAT_RIGHT)
+		self.m_prepsLCTRL.InsertColumn(0, "Number of levels",  wx.LIST_FORMAT_RIGHT)
+
+		for prep in self._preps:
+			idx = self.m_prepsLCTRL.InsertItem(self.m_prepsLCTRL.GetColumnCount(), prep.factordefinition.name)
+			self.m_prepsLCTRL.SetItem(idx, 1, prep.minvalue)
+			self.m_prepsLCTRL.SetItem(idx, 1, prep.maxvalue)
+			self.m_prepsLCTRL.SetItem(idx, 1, prep.levelnum)
+		
+
 	def m_okcancelBUTSOnOKButtonClick( self, event ):
 		self._project.name = self.m_nameTB.GetValue()
 		self._project.isarchived = self.m_isArchivedCBX.GetValue()
@@ -52,5 +70,15 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 			self._project.status = self._pstatcat[statidx]
 
 		self.EndModal(wx.ID_OK)
+
+	def m_connfactorBUOnButtonClick( self, event ):
+		dial = PexDbViewerAddFactorDialog(self, list(self._preps))
+		res = dial.ShowModal()
+
+		if res != wx.ID_CANCEL:
+			pass
+
+	def m_removefactorBUOnButtonClick( self, event ):
+		event.Skip()
 		
 

@@ -1,17 +1,14 @@
 { 
     "PersistClasses.FactorDefinition": 
         [
-            {"abbreviation" : "COASTINGENAB", "name": "enable coasting", "unitid": null, "curaname":"COASTING_ENABLE", "disptype":"BOOLEAN", "isactive":false},
-            {"abbreviation" : "COASTINGMINVOL", "name": "coasting minimal volume", "unitid":"${PersistClasses.Unit.name:millimeter volume:_id}", "curaname":"COASTING_MIN_VOLUME", "disptype":"FLOAT", "isactive":false},
-            {"abbreviation" : "COASTINGVOL", "name": "coasting volume", "unitid":"${PersistClasses.Unit.name:millimeter volume:_id}", "curaname":"COASTING_VOLUME", "disptype":"FLOAT", "isactive":false},
-            {"abbreviation" : "LAYERHEIGHT", "name": "layer height", "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"LAYER_HEIGHT", "disptype":"FLOAT"},
-            {"abbreviation" : "PRISP", "name": "print speed", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_PRINT", "disptype":"FLOAT"},
-            {"abbreviation" : "PRISPTOBO", "name": "print speed top bottom", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_TOPBOTTOM", "disptype":"FLOAT"},
-            {"abbreviation" : "PRINOZZTEMP", "name": "print temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_PRINT_TEMPERATURE", "disptype":"FLOAT"},
-            {"abbreviation" : "MATBEDTEMP", "name": "bed temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_BED_TEMPERATURE", "disptype":"FLOAT"},
-            {"abbreviation" : "MATFLOW", "name": "material flow", "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"MATERIAL_FLOW", "disptype":"FLOAT"},
-            {"abbreviation" : "MATFLOWLAY0", "name": "top level material flow", "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"MATERIAL_FLOW_LAYER_0", "disptype":"FLOAT"},
-            {"abbreviation" : "FANSPEED", "name": "fan speed", "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"COOL_FAN_SPEED", "disptype":"FLOAT"}
+            {"abbreviation" : "LAYERHEIGHT", "name": "layer height", "defaultmin":0.1, "defaultmax":0.3, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"LAYER_HEIGHT", "disptype":"FLOAT"},
+            {"abbreviation" : "PRISP", "name": "print speed", "defaultmin":10.0, "defaultmax":60.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_PRINT", "disptype":"FLOAT"},
+            {"abbreviation" : "PRISPTOBO", "name": "print speed top bottom", "defaultmin":10.0, "defaultmax":60.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}", "curaname":"SPEED_TOPBOTTOM", "disptype":"FLOAT"},
+            {"abbreviation" : "PRINOZZTEMP", "name": "print temperature", "defaultmin":180.0, "defaultmax":240.0, "defaultlevelnum":3, "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_PRINT_TEMPERATURE", "disptype":"FLOAT"},
+            {"abbreviation" : "MATBEDTEMP", "name": "bed temperature", "defaultmin":0.0, "defaultmax":110.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_BED_TEMPERATURE", "disptype":"FLOAT"},
+            {"abbreviation" : "MATFLOW", "name": "material flow", "defaultmin":80.0, "defaultmax":110.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"MATERIAL_FLOW", "disptype":"FLOAT"},
+            {"abbreviation" : "MATFLOWLAY0", "name": "top level material flow",  "defaultmin":80.0, "defaultmax":110.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"MATERIAL_FLOW_LAYER_0", "disptype":"FLOAT"},
+            {"abbreviation" : "FANSPEED", "name": "fan speed",  "defaultmin":0.0, "defaultmax":100.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"COOL_FAN_SPEED", "disptype":"FLOAT"}
         ]
   
 }

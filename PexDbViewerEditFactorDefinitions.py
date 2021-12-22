@@ -73,7 +73,7 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 		selfactdef = self._factor_defs[myidx]
 		self._currentfdef = selfactdef
 		valdict = {}
-		fetchthese = ["name", "abbreviation", "disptype", "unit", "isactive", "curaname"]
+		fetchthese = ["name", "abbreviation", "disptype", "unit", "isactive", "curaname", "defaultmax", "defaultmin", "defaultlevelnum"]
 		for attnam in fetchthese:
 			valdict[attnam] = selfactdef.__getattribute__(attnam)
 
