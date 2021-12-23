@@ -409,7 +409,7 @@ class EditResponseDefinitions ( wx.Dialog ):
 class EditProjectDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 467,315 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 503,423 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -442,16 +442,19 @@ class EditProjectDialog ( wx.Dialog ):
 		self.m_isArchivedCBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		gbSizer3.Add( self.m_isArchivedCBX, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
-		self.m_prepsLCTRL = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_ICON )
+		self.m_prepsLCTRL = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT|wx.LC_SINGLE_SEL|wx.LC_SORT_ASCENDING )
 		gbSizer3.Add( self.m_prepsLCTRL, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 		bSizer7 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_connfactorBU = wx.Button( self, wx.ID_ANY, _(u"Add factor"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_connfactorBU = wx.Button( self, wx.ID_ANY, _(u"Add factor prerparation"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer7.Add( self.m_connfactorBU, 0, wx.ALL, 5 )
 
-		self.m_removefactorBU = wx.Button( self, wx.ID_ANY, _(u"Remove factor"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_removefactorBU = wx.Button( self, wx.ID_ANY, _(u"Remove preperation"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer7.Add( self.m_removefactorBU, 0, wx.ALL, 5 )
+
+		self.editPrepBU = wx.Button( self, wx.ID_ANY, _(u"Edit preparation"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.editPrepBU, 0, wx.ALL, 5 )
 
 
 		gbSizer3.Add( bSizer7, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
@@ -467,6 +470,7 @@ class EditProjectDialog ( wx.Dialog ):
 
 
 		gbSizer3.AddGrowableCol( 1 )
+		gbSizer3.AddGrowableRow( 3 )
 
 		self.SetSizer( gbSizer3 )
 		self.Layout()
@@ -477,6 +481,7 @@ class EditProjectDialog ( wx.Dialog ):
 		self.Bind( wx.EVT_SHOW, self.EditProjectDialogOnShow )
 		self.m_connfactorBU.Bind( wx.EVT_BUTTON, self.m_connfactorBUOnButtonClick )
 		self.m_removefactorBU.Bind( wx.EVT_BUTTON, self.m_removefactorBUOnButtonClick )
+		self.editPrepBU.Bind( wx.EVT_BUTTON, self.editPrepBUOnButtonClick )
 		self.m_okcancelBUTSOK.Bind( wx.EVT_BUTTON, self.m_okcancelBUTSOnOKButtonClick )
 
 	def __del__( self ):
@@ -491,6 +496,9 @@ class EditProjectDialog ( wx.Dialog ):
 		event.Skip()
 
 	def m_removefactorBUOnButtonClick( self, event ):
+		event.Skip()
+
+	def editPrepBUOnButtonClick( self, event ):
 		event.Skip()
 
 	def m_okcancelBUTSOnOKButtonClick( self, event ):
@@ -570,7 +578,7 @@ class OpenProjectDialog ( wx.Dialog ):
 class AddFactorDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Select a factor"), pos = wx.DefaultPosition, size = wx.Size( 186,199 ), style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Select a factor"), pos = wx.DefaultPosition, size = wx.Size( 403,327 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -583,7 +591,7 @@ class AddFactorDialog ( wx.Dialog ):
 
 		gbSizer5.Add( self.m_staticText5, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
-		self.m_factorsLCTR = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_ICON )
+		self.m_factorsLCTR = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT )
 		gbSizer5.Add( self.m_factorsLCTR, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 		m_sdbSizer3 = wx.StdDialogButtonSizer()
@@ -607,7 +615,92 @@ class AddFactorDialog ( wx.Dialog ):
 
 		self.Centre( wx.BOTH )
 
+		# Connect Events
+		self.Bind( wx.EVT_SHOW, self.AddFactorDialogOnShow )
+		self.m_sdbSizer3OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer3OnOKButtonClick )
+
 	def __del__( self ):
 		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def AddFactorDialogOnShow( self, event ):
+		event.Skip()
+
+	def m_sdbSizer3OnOKButtonClick( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class EditPreparation
+###########################################################################
+
+class EditPreparation ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit factor preparation"), pos = wx.DefaultPosition, size = wx.Size( 252,176 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer6 = wx.GridBagSizer( 5, 5 )
+		gbSizer6.SetFlexibleDirection( wx.BOTH )
+		gbSizer6.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText6 = wx.StaticText( self, wx.ID_ANY, _(u"Minimum value"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6.Wrap( -1 )
+
+		gbSizer6.Add( self.m_staticText6, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_minValTBX = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer6.Add( self.m_minValTBX, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_staticText7 = wx.StaticText( self, wx.ID_ANY, _(u"Maximum value"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText7.Wrap( -1 )
+
+		gbSizer6.Add( self.m_staticText7, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_maxValTBX = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer6.Add( self.m_maxValTBX, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_staticText8 = wx.StaticText( self, wx.ID_ANY, _(u"Number of levels"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText8.Wrap( -1 )
+
+		gbSizer6.Add( self.m_staticText8, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_numLvlsTBX = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer6.Add( self.m_numLvlsTBX, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		m_sdbSizer4 = wx.StdDialogButtonSizer()
+		self.m_sdbSizer4OK = wx.Button( self, wx.ID_OK )
+		m_sdbSizer4.AddButton( self.m_sdbSizer4OK )
+		self.m_sdbSizer4Cancel = wx.Button( self, wx.ID_CANCEL )
+		m_sdbSizer4.AddButton( self.m_sdbSizer4Cancel )
+		m_sdbSizer4.Realize();
+
+		gbSizer6.Add( m_sdbSizer4, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 5 )
+
+
+		gbSizer6.AddGrowableCol( 1 )
+		gbSizer6.AddGrowableRow( 3 )
+
+		self.SetSizer( gbSizer6 )
+		self.Layout()
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.Bind( wx.EVT_SHOW, self.EditPreparationOnShow )
+		self.m_sdbSizer4OK.Bind( wx.EVT_BUTTON, self.OnOKButtonClick )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def EditPreparationOnShow( self, event ):
+		event.Skip()
+
+	def OnOKButtonClick( self, event ):
+		event.Skip()
 
 

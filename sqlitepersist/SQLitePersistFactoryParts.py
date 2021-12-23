@@ -399,7 +399,9 @@ class SQFactory():
             "$gt":">",
             "$lt":"<",
             "$gte":">=",
-            "&lte":"<="}
+            "$lte":"<=",
+            "$nin": "NOT IN",
+            "$in": "IN"}
         return mapping[ops]
 
     def _get_rightrightpart(self, val):
@@ -435,6 +437,17 @@ class SQFactory():
             return "datetime('{0:04d}-{1:02d}-{2:02d}T{3:02d}:{4:02d}:{5:02d}.{6}')".format(operand.year, operand.month, operand.day, operand.hour, operand.minute, operand.second, operand.microsecond)
         elif t is bool:
             return operand
+        elif t is list:
+            answ = "("
+            first = True
+            for lel in operand:
+                if first:
+                    answ += self._getoperand(lel)
+                    first = False
+                else:
+                    answ += ", " + self._getoperand(lel)
+            answ += ")"
+            return answ
         else:
             raise Exception("unknown operand type {0} in _getoperand()".format(str(t)))
 

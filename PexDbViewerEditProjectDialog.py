@@ -5,6 +5,7 @@ from wx.core import NOT_FOUND
 import GeneratedGUI
 from PersistClasses import *
 from PexDbViewerAddFactorDialog import PexDbViewerAddFactorDialog
+from PexDbViewerEditPreparation import PexDbViewerEditPreparation
 import sqlitepersist as sqp
 
 # Implementing EditProjectDialog
@@ -47,16 +48,19 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self.m_projectstatusCOB.SetSelection(sel)
 
 		self.m_prepsLCTRL.ClearAll()
-		self.m_prepsLCTRL.InsertColumn(0, "Factor")
-		self.m_prepsLCTRL.InsertColumn(0, "Minimum value", wx.LIST_FORMAT_RIGHT)
-		self.m_prepsLCTRL.InsertColumn(0, "Maximum value",  wx.LIST_FORMAT_RIGHT)
-		self.m_prepsLCTRL.InsertColumn(0, "Number of levels",  wx.LIST_FORMAT_RIGHT)
+		self.m_prepsLCTRL.InsertColumn(0, "Factor", width=200)
+		self.m_prepsLCTRL.InsertColumn(1, "Minimum value", wx.LIST_FORMAT_RIGHT)
+		self.m_prepsLCTRL.InsertColumn(2, "Maximum value",  wx.LIST_FORMAT_RIGHT)
+		self.m_prepsLCTRL.InsertColumn(3, "Number of levels",  wx.LIST_FORMAT_RIGHT)
 
+		ct = 0
 		for prep in self._preps:
 			idx = self.m_prepsLCTRL.InsertItem(self.m_prepsLCTRL.GetColumnCount(), prep.factordefinition.name)
-			self.m_prepsLCTRL.SetItem(idx, 1, prep.minvalue)
-			self.m_prepsLCTRL.SetItem(idx, 1, prep.maxvalue)
-			self.m_prepsLCTRL.SetItem(idx, 1, prep.levelnum)
+			self.m_prepsLCTRL.SetItemData(idx, ct)
+			self.m_prepsLCTRL.SetItem(idx, 1, str(prep.minvalue))
+			self.m_prepsLCTRL.SetItem(idx, 2, str(prep.maxvalue))
+			self.m_prepsLCTRL.SetItem(idx, 3, str(prep.levelnum))
+			ct += 1
 		
 
 	def m_okcancelBUTSOnOKButtonClick( self, event ):
@@ -72,13 +76,54 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self.EndModal(wx.ID_OK)
 
 	def m_connfactorBUOnButtonClick( self, event ):
-		dial = PexDbViewerAddFactorDialog(self, list(self._preps))
+		dial = PexDbViewerAddFactorDialog(self, self._fact, list(map(lambda pr : pr.factordefinitionid, self._preps)))
 		res = dial.ShowModal()
 
-		if res != wx.ID_CANCEL:
-			pass
+		if res == wx.ID_CANCEL:
+			return
+
+		newfact = dial.selectedfactor
+
+		newprep = ProjectFactorPreparation(projectid=self._project._id, 
+			factordefinitionid = newfact._id,
+			factordefinition=newfact,
+			minvalue = newfact.defaultmin,
+			maxvalue = newfact.defaultmax,
+			levelnum = newfact.defaultlevelnum)
+
+		self._fact.flush(newprep)
+		self._preps.append(newprep)
+		self.fill_gui(self._project, self._preps)
+
 
 	def m_removefactorBUOnButtonClick( self, event ):
-		event.Skip()
+		selidx = self.m_prepsLCTRL.GetFirstSelected()
+
+		if selidx==wx.NOT_FOUND:
+			wx.MessageBox("please select a factor preparation to be removed")
+			return
+
+		idx = self.m_prepsLCTRL.GetItemData(selidx)
+		remoprep = self._preps.pop(idx)
+
+		self._fact.delete(remoprep)		
+		self.fill_gui(self._project, self._preps)
+
+	def editPrepBUOnButtonClick(self, event):
+		selidx = self.m_prepsLCTRL.GetFirstSelected()
+
+		if selidx==wx.NOT_FOUND:
+			wx.MessageBox("please select a factor preparation to be edited")
+			return
+
+		idx = self.m_prepsLCTRL.GetItemData(selidx)
 		
+		dial = PexDbViewerEditPreparation(self, self._preps[idx])
+		res = dial.ShowModal()
+		if res == wx.ID_CANCEL:
+			return
+
+		self._fact.flush(dial.editedprep)
+		self._preps[idx] = dial.editedprep
+		self.fill_gui(self._project, self._preps)
 
