@@ -56,6 +56,14 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.delte_experiment_menuItem = wx.MenuItem( self.experiment_menu, wx.ID_ANY, _(u"Delete experiment"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.experiment_menu.Append( self.delte_experiment_menuItem )
 
+		self.experiment_menu.AppendSeparator()
+
+		self.m_menu1 = wx.Menu()
+		self.m_createFullFactorialMEI = wx.MenuItem( self.m_menu1, wx.ID_ANY, _(u"Create full factorial"), _(u"Creates experiments for all combinations of facor-levels."), wx.ITEM_NORMAL )
+		self.m_menu1.Append( self.m_createFullFactorialMEI )
+
+		self.experiment_menu.AppendSubMenu( self.m_menu1, _(u"Create experiments") )
+
 		self.m_menubar1.Append( self.experiment_menu, _(u"Experimente") )
 
 		self.factors_menu = wx.Menu()
@@ -113,6 +121,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.dupicate_experiment_menuitemOnMenuSelection, id = self.dupicate_experiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.delete_experiment_menuItemOnMenuSelection, id = self.delte_experiment_menuItem.GetId() )
+		self.Bind( wx.EVT_MENU, self.m_createFullFactorialMEIOnMenuSelection, id = self.m_createFullFactorialMEI.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_edit_factors_menuitemOnMenuSelection, id = self.m_edit_factors_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.reseed_factors_menuItemOnMenuSelection, id = self.reseed_factors_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.edit_response_definitions, id = self.edit_response_definitions_menuItem.GetId() )
@@ -143,6 +152,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def delete_experiment_menuItemOnMenuSelection( self, event ):
+		event.Skip()
+
+	def m_createFullFactorialMEIOnMenuSelection( self, event ):
 		event.Skip()
 
 	def m_edit_factors_menuitemOnMenuSelection( self, event ):

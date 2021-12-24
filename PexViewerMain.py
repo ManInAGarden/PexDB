@@ -3,6 +3,7 @@
 from datetime import datetime
 import wx
 import wx.propgrid as pg
+from CreaFullFactorial import CreaFullFactorial
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
 from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
@@ -399,6 +400,25 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			wx.MessageBox("{0} factor defintions were updated and {1} ned defintions were inserted".format(updct, insct))
 		else:
 			wx.MessageBox("No factor defintions were update or inserted")
+
+	def m_createFullFactorialMEIOnMenuSelection(self, event):
+		if self._currentproject is None:
+			wx.MessageBox("The current project is not defined. Experiment creation is impossible.")
+			return
+
+		q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._currentproject._id).select(lambda prep : prep._id)
+		prpct = len(list(q))
+
+		if prpct==0:
+			wx.MessageBox("Please define some factor preparations by editing the project")
+			return
+
+		crea = CreaFullFactorial(self._fact, self._currentproject)
+		crea.create()
+
+		exp_q = sqp.SQQuery(self._fact, Experiment).where(Experiment.ProjectId==self._currentproject._id)
+		self._experiments = list(exp_q)		
+		self.refresh_dash()
 
 if __name__ == '__main__':
 	app = wx.App()
