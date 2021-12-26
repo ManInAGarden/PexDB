@@ -413,12 +413,12 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			wx.MessageBox("Please define some factor preparations by editing the project")
 			return
 
-		crea = CreaFullFactorial(self._fact, self._currentproject)
-		crea.create()
+		crea = CreaFullFactorial(self._fact, self._currentproject, self._prefprinter, self._prefextruder)
+		numexps = crea.create()
 
-		exp_q = sqp.SQQuery(self._fact, Experiment).where(Experiment.ProjectId==self._currentproject._id)
-		self._experiments = list(exp_q)		
+		self.get_experiments()
 		self.refresh_dash()
+		wx.MessageBox("{} Experiments were created under the current project".format(numexps))
 
 if __name__ == '__main__':
 	app = wx.App()

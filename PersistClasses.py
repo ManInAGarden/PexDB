@@ -86,6 +86,14 @@ class FactorValue(sqp.PBase):
     FactorDefinition = sqp.JoinedEmbeddedObject(targettype=FactorDefinition, localid=FactorDefinitionId, autofill=True)
     Value = sqp.Float()
 
+    def __str__(self) -> str:
+        unit = ""
+        if self.facordefinition is not None and self.factordefinition.unit is not None:
+            unit = self.factordefinition.unit.abbreviation
+
+        return "factor val: {}{}".format(self._value, unit)
+
+
 class ResponseValue(sqp.PBase):
     """The result of an experiment - a rating or a measure"""
     ResponseDefinitionId = sqp.UUid()
