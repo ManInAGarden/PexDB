@@ -1,4 +1,5 @@
 from datetime import date, datetime
+import random
 import sqlitepersist as sqp
 from itertools import combinations, permutations
 from PersistClasses import *
@@ -29,15 +30,21 @@ class LevelCounter(object):
         for i in range(len(self._currlevels)):
             self._currlevels[i] = 0
 
+    def get_maxcountforstage(self, stage):
+        if stage > len(self._lvlmax):
+            raise Exception("Stage # {} does not exist in levelcounter. Maximum stage is {}".format(stage, len(self._lvlmax)))
+
+        return self._lvlmax[stage]
+
+    def get_first(self):
+        return [0] * len(self._currlevels)
+
+
     def get_next(self):
         if self._overflow:
             raise Exception("Already in overlfow, do not call get_next anymore")
 
-        if self._first: #let first call return the 0,0,0,0...-vector
-            self._first = False
-            return self._currlevels
-
-        if self._currlevels[self._currpos] < self._lvlmax[self._currpos]-1:
+        if self._currlevels[self._currpos] < self._lvlmax[self._currpos]:
             self._currlevels[self._currpos] += 1
         else:
             self._currpos += 1
@@ -45,8 +52,6 @@ class LevelCounter(object):
                 raise LevelOverflow("Level overflow - no more levels")
             
             self._currlevels[self._currpos] += 1
-
-       
 
         return self._currlevels
 
@@ -61,6 +66,8 @@ class LevelCounter(object):
 
         if self._currpos >= len(self._lvlmax):
             raise LevelOverflow("Level overflow - no more levels")
+
+        return self
 
     def has_smaller_stage(self, other):
         return self._currpos < other._currpos
@@ -129,9 +136,16 @@ class CreaFullFactorial:
 
         return answ
 
-    
+    def _dbgprint(self, idxes, factline):
+        for idx in idxes:
+            print("{}, ".format(idx))
+
+        for fact in factline:
+            print("{}, ".format(fact.value))
+
 
     def create(self):
+        """create all factors in combinations of values according to all their defined levels"""
         self._prepare()
         self._factors = []
 
@@ -140,16 +154,29 @@ class CreaFullFactorial:
         maxlevel = len(self._preps)
         lvl = 1
         while lvl < maxlevel:
-            movingcounter.reset()
-            while(movingcounter.stage < lvl):
-                idxes = movingcounter.get_next()    
-                factline = self._getfactors(idxes)
-                result.append(factline)
+            topcount = 0
+            maxtopcount = movingcounter.get_maxcountforstage(lvl)
+            while topcount <= maxtopcount:
+                movingcounter.reset()
+                idxes = movingcounter.get_first()
+                while movingcounter.stage < lvl:
+                    idxes[lvl] = topcount #we set the counters toplevel result to make this count upwards too
+                    factline = self._getfactors(idxes)
+                    self._dbgprint(idxes, factline)
+                    result.append(factline)
+                    idxes = movingcounter.get_next()
+
+
+                topcount += 1
 
             lvl += 1
 
         expct = 0
-        for res in result:
+
+        while len(result) > 0:
+            residx = random.randint(0, len(result)-1) #randomize the sequence!
+            res = result[residx]
+
             exp = Experiment(carriedoutdt=datetime.now(), 
                 description="Exp #{}".format(expct+1),
                 project = self._proj,
@@ -159,11 +186,13 @@ class CreaFullFactorial:
                 extruderused = self._extruder,
                 extruderusedid = self._extruder._id)
             self._fact.flush(exp) #we need the _id
-            expct += 1
 
             for factval in res:
                 factval.experimentid = exp._id
                 self._fact.flush(factval)
+
+            result.pop(residx)
+            expct += 1
 
         return expct
 

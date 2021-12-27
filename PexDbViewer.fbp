@@ -179,19 +179,39 @@
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection">dupicate_experiment_menuitemOnMenuSelection</event>
                     </object>
-                    <object class="wxMenuItem" expanded="0">
+                    <object class="submenu" expanded="1">
                         <property name="bitmap"></property>
-                        <property name="checked">0</property>
-                        <property name="enabled">1</property>
-                        <property name="help"></property>
-                        <property name="id">wxID_ANY</property>
-                        <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Delete experiment</property>
-                        <property name="name">delte_experiment_menuItem</property>
-                        <property name="permission">none</property>
-                        <property name="shortcut"></property>
-                        <property name="unchecked_bitmap"></property>
-                        <event name="OnMenuSelection">delete_experiment_menuItemOnMenuSelection</event>
+                        <property name="label">Delete experiments</property>
+                        <property name="name">m_deleteExperimentsMenu</property>
+                        <property name="permission">protected</property>
+                        <object class="wxMenuItem" expanded="0">
+                            <property name="bitmap"></property>
+                            <property name="checked">0</property>
+                            <property name="enabled">1</property>
+                            <property name="help"></property>
+                            <property name="id">wxID_ANY</property>
+                            <property name="kind">wxITEM_NORMAL</property>
+                            <property name="label">Delete single experiment</property>
+                            <property name="name">delte_experiment_menuItem</property>
+                            <property name="permission">none</property>
+                            <property name="shortcut"></property>
+                            <property name="unchecked_bitmap"></property>
+                            <event name="OnMenuSelection">delete_experiment_menuItemOnMenuSelection</event>
+                        </object>
+                        <object class="wxMenuItem" expanded="1">
+                            <property name="bitmap"></property>
+                            <property name="checked">0</property>
+                            <property name="enabled">1</property>
+                            <property name="help"></property>
+                            <property name="id">wxID_ANY</property>
+                            <property name="kind">wxITEM_NORMAL</property>
+                            <property name="label">Delete all experiments</property>
+                            <property name="name">m_deleteAllExperimentsMEI</property>
+                            <property name="permission">none</property>
+                            <property name="shortcut"></property>
+                            <property name="unchecked_bitmap"></property>
+                            <event name="OnMenuSelection">m_deleteAllExperimentsMEIOnMenuSelection</event>
+                        </object>
                     </object>
                     <object class="separator" expanded="1">
                         <property name="name">m_separator3</property>
@@ -216,6 +236,20 @@
                             <property name="unchecked_bitmap"></property>
                             <event name="OnMenuSelection">m_createFullFactorialMEIOnMenuSelection</event>
                         </object>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Export to csv</property>
+                        <property name="name">m_exportExperimentsCsvMEI</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">m_exportExperimentsCsvMEIOnMenuSelection</event>
                     </object>
                 </object>
                 <object class="wxMenu" expanded="0">

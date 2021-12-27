@@ -125,6 +125,6 @@ class Experiment(sqp.PBase):
     IsArchived = sqp.Boolean(default=False)
     Description = sqp.String()
     Factors = sqp.JoinedEmbeddedList(targettype=FactorValue, foreignid=FactorValue.ExperimentId, cascadedelete=True)
-    Results = sqp.JoinedEmbeddedList(targettype=ResponseValue, foreignid=ResponseValue.ExperimentId, cascadedelete=True)
+    Responses = sqp.JoinedEmbeddedList(targettype=ResponseValue, foreignid=ResponseValue.ExperimentId, cascadedelete=True)
 
     

@@ -53,8 +53,14 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.dupicate_experiment_menuitem = wx.MenuItem( self.experiment_menu, wx.ID_ANY, _(u"Duplicate Experiment"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.experiment_menu.Append( self.dupicate_experiment_menuitem )
 
-		self.delte_experiment_menuItem = wx.MenuItem( self.experiment_menu, wx.ID_ANY, _(u"Delete experiment"), wx.EmptyString, wx.ITEM_NORMAL )
-		self.experiment_menu.Append( self.delte_experiment_menuItem )
+		self.m_deleteExperimentsMenu = wx.Menu()
+		self.delte_experiment_menuItem = wx.MenuItem( self.m_deleteExperimentsMenu, wx.ID_ANY, _(u"Delete single experiment"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_deleteExperimentsMenu.Append( self.delte_experiment_menuItem )
+
+		self.m_deleteAllExperimentsMEI = wx.MenuItem( self.m_deleteExperimentsMenu, wx.ID_ANY, _(u"Delete all experiments"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_deleteExperimentsMenu.Append( self.m_deleteAllExperimentsMEI )
+
+		self.experiment_menu.AppendSubMenu( self.m_deleteExperimentsMenu, _(u"Delete experiments") )
 
 		self.experiment_menu.AppendSeparator()
 
@@ -63,6 +69,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.m_menu1.Append( self.m_createFullFactorialMEI )
 
 		self.experiment_menu.AppendSubMenu( self.m_menu1, _(u"Create experiments") )
+
+		self.m_exportExperimentsCsvMEI = wx.MenuItem( self.experiment_menu, wx.ID_ANY, _(u"Export to csv"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.experiment_menu.Append( self.m_exportExperimentsCsvMEI )
 
 		self.m_menubar1.Append( self.experiment_menu, _(u"Experimente") )
 
@@ -121,7 +130,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.dupicate_experiment_menuitemOnMenuSelection, id = self.dupicate_experiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.delete_experiment_menuItemOnMenuSelection, id = self.delte_experiment_menuItem.GetId() )
+		self.Bind( wx.EVT_MENU, self.m_deleteAllExperimentsMEIOnMenuSelection, id = self.m_deleteAllExperimentsMEI.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_createFullFactorialMEIOnMenuSelection, id = self.m_createFullFactorialMEI.GetId() )
+		self.Bind( wx.EVT_MENU, self.m_exportExperimentsCsvMEIOnMenuSelection, id = self.m_exportExperimentsCsvMEI.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_edit_factors_menuitemOnMenuSelection, id = self.m_edit_factors_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.reseed_factors_menuItemOnMenuSelection, id = self.reseed_factors_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.edit_response_definitions, id = self.edit_response_definitions_menuItem.GetId() )
@@ -154,7 +165,13 @@ class PexViewerMainFrame ( wx.Frame ):
 	def delete_experiment_menuItemOnMenuSelection( self, event ):
 		event.Skip()
 
+	def m_deleteAllExperimentsMEIOnMenuSelection( self, event ):
+		event.Skip()
+
 	def m_createFullFactorialMEIOnMenuSelection( self, event ):
+		event.Skip()
+
+	def m_exportExperimentsCsvMEIOnMenuSelection( self, event ):
 		event.Skip()
 
 	def m_edit_factors_menuitemOnMenuSelection( self, event ):

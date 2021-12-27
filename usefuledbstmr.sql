@@ -7,7 +7,7 @@ select * from unit;
 
 select * from experiment;
 
-delete  from experiment;
+-- delete  from experiment;
 
 select * from catalog;
 
@@ -15,7 +15,7 @@ select * from project;
 
 select * from responsevalue;
 
-drop table catalog;
+-- drop table catalog;
 
 select
     fv.value
