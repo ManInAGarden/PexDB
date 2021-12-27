@@ -456,7 +456,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 			header.append(head)
 
-		with open(filename, mode="w", encoding="UTF-8", newline=None) as f:
+		with open(filename, mode="w", encoding="UTF-8", newline="\n") as f:
 			cwr = csv.writer(f)
 			cwr.writerow(header)
 
