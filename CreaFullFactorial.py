@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from enum import Enum
 import random
 import sqlitepersist as sqp
 from itertools import combinations, permutations
@@ -13,7 +14,6 @@ class LevelCounter(object):
         self._currpos = 0
         self._lvlmax = []
         self._currlevels = []
-        self._first = True
         self._overflow = False
         for prep in preps:
             self._lvlmax.append(prep.levelnum-1)
@@ -25,7 +25,6 @@ class LevelCounter(object):
 
     def reset(self):
         self._currpos = 0
-        self._first = True
         self._overflow = False
         for i in range(len(self._currlevels)):
             self._currlevels[i] = 0
@@ -36,8 +35,8 @@ class LevelCounter(object):
 
         return self._lvlmax[stage]
 
-    def get_first(self):
-        return [0] * len(self._currlevels)
+    def get_current(self):
+        return list(self._currlevels) #return a clone of the list without incrementing anything
 
 
     def get_next(self):
@@ -49,18 +48,16 @@ class LevelCounter(object):
         else:
             self._currpos += 1
             if self._currpos >= len(self._lvlmax):
+                self._overflow = True
                 raise LevelOverflow("Level overflow - no more levels")
             
             self._currlevels[self._currpos] += 1
 
-        return self._currlevels
+        return list(self._currlevels) #return a clone of the list
 
     def next_stage(self):
         if self._overflow:
             raise Exception("Already in overlfow, do not call get_next anymore")
-
-        if self._first:
-            self._first = False
 
         self._currpos += 1
 
@@ -103,18 +100,25 @@ class LevelCounter(object):
 
         return self._currlevels[self._currpos] < other._currlevels[other._currpos]
 
+class CreaSequenceEnum(Enum):
+    LINEAR = 0 #experiments are created in the same sequence as defined
+    MIXED = 1 #exps are created in a random sequence
 
 class CreaFullFactorial:
     """creates one experiment for every combination of factor levels defined in the given 
     project's factor preparations"""
 
-    def __init__(self, fact : sqp.SQFactory, project : Project, printer: Printer, extruder : Extruder):
+    def __init__(self, fact : sqp.SQFactory, 
+            project : Project, 
+            printer: Printer, 
+            extruder : Extruder,
+            sequence : CreaSequenceEnum = CreaSequenceEnum.LINEAR):
+
         self._fact = fact
         self._proj = project
         self._printer = printer
         self._extruder = extruder
-
-        
+        self._sequence = sequence
 
     def _prepare(self):
         preps_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._proj._id)
@@ -150,19 +154,25 @@ class CreaFullFactorial:
         self._factors = []
 
         result = []
+        idxhistory = []
         movingcounter = LevelCounter(self._preps)
         maxlevel = len(self._preps)
         lvl = 1
         while lvl < maxlevel:
-            topcount = 0
+            if lvl == 1:
+                topcount = 0
+            else:
+                topcount = 1
+                
             maxtopcount = movingcounter.get_maxcountforstage(lvl)
             while topcount <= maxtopcount:
                 movingcounter.reset()
-                idxes = movingcounter.get_first()
+                idxes = movingcounter.get_current()
                 while movingcounter.stage < lvl:
                     idxes[lvl] = topcount #we set the counters toplevel result to make this count upwards too
+                    idxhistory.append(idxes) #nice for debugging of the algorithm
                     factline = self._getfactors(idxes)
-                    self._dbgprint(idxes, factline)
+                    # self._dbgprint(idxes, factline)
                     result.append(factline)
                     idxes = movingcounter.get_next()
 
@@ -171,8 +181,38 @@ class CreaFullFactorial:
 
             lvl += 1
 
-        expct = 0
+        if self._sequence is CreaSequenceEnum.MIXED:
+            expct = self.write_mixed(result)
+        elif self._sequence is CreaSequenceEnum.LINEAR:
+            expct = self.write_linear(result)
+        else:
+            raise Exception("unknown sequence value {}".format(str(self._sequence)))
 
+        return expct
+
+    def write_linear(self, result):
+        expct = 0
+        for res in result:
+            exp = Experiment(carriedoutdt=datetime.now(), 
+                description="Exp #{}".format(expct+1),
+                project = self._proj,
+                projectid = self._proj._id,
+                printerused = self._printer,
+                printerusedid = self._printer._id,
+                extruderused = self._extruder,
+                extruderusedid = self._extruder._id)
+            self._fact.flush(exp) #we need the _id
+
+            for factval in res:
+                factval.experimentid = exp._id
+                self._fact.flush(factval)
+
+            expct += 1
+            
+        return expct
+
+    def write_mixed(self, result):
+        expct = 0
         while len(result) > 0:
             residx = random.randint(0, len(result)-1) #randomize the sequence!
             res = result[residx]
@@ -193,7 +233,7 @@ class CreaFullFactorial:
 
             result.pop(residx)
             expct += 1
-
+        
         return expct
 
         

@@ -5,7 +5,7 @@ import csv
 import wx
 from wx.core import CENTRE, YES_NO
 import wx.propgrid as pg
-from CreaFullFactorial import CreaFullFactorial
+from CreaFullFactorial import CreaFullFactorial, CreaSequenceEnum
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
 from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
@@ -15,8 +15,8 @@ from PexDbViewerOpenProjectDialog import PexDbViewerOpenProjectDialog
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
-from sqlitepersist.SQLitePersistBasicClasses import OrderDirection
-from sqlitepersist.SQLitePersistSeeder import SQPSeeder
+#from sqlitepersist.SQLitePersistBasicClasses import OrderDirection
+#from sqlitepersist.SQLitePersistSeeder import SQPSeeder
 
 # Implementing PexViewerMainFrame
 class PexViewerMain( gg.PexViewerMainFrame ):
@@ -45,7 +45,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		
 	def _get_current_proj(self):
 		"""get the youngest not archive project"""
-		proj = sqp.SQQuery(self._fact, Project).where(Project.IsArchived==False).order_by(sqp.OrderInfo(Project.Created, OrderDirection.DESCENDING)).first_or_default(None)
+		proj = sqp.SQQuery(self._fact, Project).where(Project.IsArchived==False).order_by(sqp.OrderInfo(Project.Created, 
+																	sqp.OrderDirection.DESCENDING)).first_or_default(None)
 
 		if proj is None:
 			raise Exception("strangely no project was found to be used as an initial/default project")
@@ -396,12 +397,24 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		if fpath is None:
 			return
 
-		seeder = SQPSeeder(self._fact, fpath)
+		seeder = sqp.SQPSeeder(self._fact, fpath)
 		updct, insct = seeder.update_seeddata(FactorDefinition.Abbreviation)
 		if updct > 0 or insct > 0:
 			wx.MessageBox("{0} factor defintions were updated and {1} ned defintions were inserted".format(updct, insct))
 		else:
 			wx.MessageBox("No factor defintions were update or inserted")
+
+	def get_crea_sequence(self):
+		"""get the sequence value as an enum from the configuration"""
+		cval = self._configuration.get_value("experimentcreation", "sequence")
+		cvall = cval.lower()
+		if cvall == "linear":
+			return CreaSequenceEnum.LINEAR
+		elif cvall == "mixed":
+			return CreaSequenceEnum.MIXED
+		else:
+			wx.MessageBox("Configuration error, unknown sequence value <{}> in section experimentcreation".format(cval))
+		
 
 	def m_createFullFactorialMEIOnMenuSelection(self, event):
 		if self._currentproject is None:
@@ -415,7 +428,12 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			wx.MessageBox("Please define some factor preparations by editing the project")
 			return
 
-		crea = CreaFullFactorial(self._fact, self._currentproject, self._prefprinter, self._prefextruder)
+		crea = CreaFullFactorial(self._fact, 
+			self._currentproject, 
+			self._prefprinter, 
+			self._prefextruder,
+			self.get_crea_sequence())
+
 		numexps = crea.create()
 
 		self._experiments = self.get_experiments()
