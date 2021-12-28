@@ -9,7 +9,7 @@ from PersistClasses import *
 class LevelOverflow(Exception):
     pass
 
-class LevelCounter(object):
+""" class LevelCounter(object):
     def __init__(self, preps):
         self._currpos = 0
         self._lvlmax = []
@@ -98,7 +98,39 @@ class LevelCounter(object):
         elif self._currpos > other._currpos:
             return False
 
-        return self._currlevels[self._currpos] < other._currlevels[other._currpos]
+        return self._currlevels[self._currpos] < other._currlevels[other._currpos] """
+
+
+class LevelCounter():
+    def __init__(self, preps):
+        self._stagemax = []
+        self._currlevels = []
+
+        for prep in preps:
+            self._stagemax.append(prep.levelnum)
+            self._currlevels.append(0)
+
+    @property
+    def currlevels(self):
+        return list(self._currlevels)
+
+    def increment(self):
+        """add one to the counter"""
+        done = False
+        for i in range(len(self._currlevels)):
+            self._currlevels[i] += 1
+            if self._currlevels[i] < self._stagemax[i]:
+                done = True
+                break
+            else:
+                self._currlevels[i] = 0 #overflow
+                
+        if not done:
+            raise LevelOverflow("Level overflow in LevelCounter")
+
+        return list(self._currlevels)
+
+
 
 class CreaSequenceEnum(Enum):
     LINEAR = 0 #experiments are created in the same sequence as defined
@@ -149,6 +181,33 @@ class CreaFullFactorial:
 
 
     def create(self):
+        """create all factors in combinations of values according to all their defined levels"""
+        self._prepare()
+        result = []
+        idxhistory = []
+
+        lvlct = LevelCounter(self._preps)
+        try:
+            idxes = lvlct.currlevels
+            while True: #do this until we get the level overflow esception
+                idxhistory.append(idxes)
+                factline = self._getfactors(idxes)
+                # self._dbgprint(idxes, factline)
+                result.append(factline)
+                idxes = lvlct.increment()
+        except LevelOverflow:
+            pass
+
+        if self._sequence is CreaSequenceEnum.MIXED:
+            expct = self.write_mixed(result)
+        elif self._sequence is CreaSequenceEnum.LINEAR:
+            expct = self.write_linear(result)
+        else:
+            raise Exception("unknown sequence value {}".format(str(self._sequence)))
+
+        return expct
+
+    def create_old(self):
         """create all factors in combinations of values according to all their defined levels"""
         self._prepare()
         self._factors = []
