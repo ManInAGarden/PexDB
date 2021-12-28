@@ -104,8 +104,8 @@ class PexViewerMainFrame ( wx.Frame ):
 		main_gsizer = wx.GridSizer( 0, 2, 0, 0 )
 
 		self.m_experimentsDataViewListCtrl = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_CarriedOutDtDWLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Ausführungsdatum"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.m_DescriptionDWLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Beschreibung"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.m_CarriedOutDtDWLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Description"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.m_DescriptionDWLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Date carried out"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		self.m_DescriptionDWLC.GetRenderer().EnableEllipsize( wx.ELLIPSIZE_END );
 		main_gsizer.Add( self.m_experimentsDataViewListCtrl, 0, wx.ALL|wx.EXPAND, 5 )
 
@@ -582,6 +582,9 @@ class OpenProjectDialog ( wx.Dialog ):
 
 		# Connect Events
 		self.Bind( wx.EVT_SHOW, self.OpenProjectDialogOnShow )
+		self.m_projectsLCTRL.Bind( wx.EVT_LEFT_DCLICK, self.m_projectsLCTRLOnLeftDClick )
+		self.m_projectsLCTRL.Bind( wx.EVT_LIST_ITEM_DESELECTED, self.m_projectsLCTRLOnListItemDeselected )
+		self.m_projectsLCTRL.Bind( wx.EVT_LIST_ITEM_SELECTED, self.m_projectsLCTRLOnListItemSelected )
 		self.m_checkBox2.Bind( wx.EVT_CHECKBOX, self.m_checkBox2OnCheckBox )
 		self.m_sdbSizer2OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer2OnOKButtonClick )
 
@@ -591,6 +594,15 @@ class OpenProjectDialog ( wx.Dialog ):
 
 	# Virtual event handlers, override them in your derived class
 	def OpenProjectDialogOnShow( self, event ):
+		event.Skip()
+
+	def m_projectsLCTRLOnLeftDClick( self, event ):
+		event.Skip()
+
+	def m_projectsLCTRLOnListItemDeselected( self, event ):
+		event.Skip()
+
+	def m_projectsLCTRLOnListItemSelected( self, event ):
 		event.Skip()
 
 	def m_checkBox2OnCheckBox( self, event ):
@@ -646,6 +658,9 @@ class AddFactorDialog ( wx.Dialog ):
 
 		# Connect Events
 		self.Bind( wx.EVT_SHOW, self.AddFactorDialogOnShow )
+		self.m_factorsLCTR.Bind( wx.EVT_LEFT_DCLICK, self.m_factorsLCTROnLeftDClick )
+		self.m_factorsLCTR.Bind( wx.EVT_LIST_ITEM_DESELECTED, self.m_factorsLCTROnListItemDeselected )
+		self.m_factorsLCTR.Bind( wx.EVT_LIST_ITEM_SELECTED, self.m_factorsLCTROnListItemSelected )
 		self.m_sdbSizer3OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer3OnOKButtonClick )
 
 	def __del__( self ):
@@ -654,6 +669,15 @@ class AddFactorDialog ( wx.Dialog ):
 
 	# Virtual event handlers, override them in your derived class
 	def AddFactorDialogOnShow( self, event ):
+		event.Skip()
+
+	def m_factorsLCTROnLeftDClick( self, event ):
+		event.Skip()
+
+	def m_factorsLCTROnListItemDeselected( self, event ):
+		event.Skip()
+
+	def m_factorsLCTROnListItemSelected( self, event ):
 		event.Skip()
 
 	def m_sdbSizer3OnOKButtonClick( self, event ):

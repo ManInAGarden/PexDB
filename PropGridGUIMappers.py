@@ -9,7 +9,8 @@ class WxGuiMapperExperiment(WxGuiMapper):
     result definitions"""
     def __init__(self, fact : sqp.SQFactory, parentpropgrid):
         super().__init__(fact)
-        self.add(WxGuiMapperInfo(fieldname="carriedoutdt", pgitemlabel="Ausführungsdatum", pgitemtype=pg.DateProperty))
+        self.add(WxGuiMapperInfo(fieldname="carriedout_dt", pgitemlabel="Ausführungsdatum", pgitemtype=pg.DateProperty))
+        self.add(WxGuiMapperInfo(fieldname="carriedout_ti", pgitemlabel="Ausführungszeit", pgitemtype=pg.StringProperty))
         self.add(WxGuiMapperInfo(fieldname="description", pgitemlabel="Beschreibung"))
         self.add(WxGuiMapperInfo(fieldname="printerused", pgitemtype=pg.EnumProperty, fieldcls=Printer, idfieldname="printerusedid", pgitemlabel="Drucker", fetchexpr=Printer.IsActive==True))
         self.add(WxGuiMapperInfo(fieldname="extruderused", pgitemtype=pg.EnumProperty, fieldcls=Extruder, idfieldname="extruderusedid",pgitemlabel="Extruder", fetchexpr=Extruder.IsActive==True))

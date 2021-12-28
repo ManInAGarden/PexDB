@@ -68,6 +68,7 @@ class WxGuiMapperInfo(object):
             pitem.SetAutoUnspecified()
         elif self.pgitemtype is pg.DateProperty:
             pitem = pg.DateProperty(self.pgitemlabel, self.pgitemname)
+            #pitem.SetAttribute(pg.PG_DATE_FORMAT, "%d.%m.%Y %H:%M:%S")
             pitem.SetAutoUnspecified()
         elif self.pgitemtype is pg.PropertyCategory:
             pitem = pg.PropertyCategory(self.pgitemlabel, self.pgitemname)

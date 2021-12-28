@@ -101,7 +101,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self.m_experimentsDataViewListCtrl.DeleteAllItems()
 		ct = 0
 		for exp in self._experiments:
-			visr = [str(exp.carriedoutdt), exp.description]
+			visr = [exp.description, exp.carriedoutdt.strftime("%m.%d.%Y %H:%M:%S")]
 			self.m_experimentsDataViewListCtrl.AppendItem(visr)
 
 			ct += 1
@@ -238,7 +238,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		#flatten the experiment data to da key, value dict
 		vd = {}
 		vd["description"] = exp.description
-		vd["carriedoutdt"] = exp.carriedoutdt
+		vd["carriedout_dt"] = exp.carriedoutdt.date()
+		vd["carriedout_ti"] = exp.carriedoutdt.time().strftime("%H:%M:%S")
 		vd["extruderused"] = exp.extruderused
 		vd["printerused"] = exp.printerused
 		for setg in exp.factors:
@@ -279,7 +280,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def get_changed_exp(self, exppg : pg.PropertyGrid, exp: Experiment):
 		valdict = self._expgui.gui2object(exppg)
 
-		exp.carriedoutdt = valdict["carriedoutdt"]
+		dt = valdict["carriedout_dt"]
+		tim = datetime.strptime(valdict["carriedout_ti"], "%H:%M:%S")
+		exp.carriedoutdt = datetime(dt.year, dt.month, dt.day, tim.hour, tim.minute, tim.second)
 		exp.description = valdict["description"]
 		exp.printerused = valdict["printerused"]
 		exp.extruderused = valdict["extruderused"]

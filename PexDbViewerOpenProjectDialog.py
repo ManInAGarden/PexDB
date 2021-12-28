@@ -23,8 +23,7 @@ class PexDbViewerOpenProjectDialog( GeneratedGUI.OpenProjectDialog ):
 		# TODO: Implement m_checkBox2OnCheckBox
 		pass
 
-	def m_sdbSizer2OnOKButtonClick( self, event ):
-		# TODO: Implement m_sdbSizer2OnOKButtonClick
+	def dook(self):
 		selidx = self.m_projectsLCTRL.GetFirstSelected()
 		if selidx == wx.NOT_FOUND:
 			wx.MessageBox("Please select a project", caption="Message", parent=self)
@@ -32,11 +31,16 @@ class PexDbViewerOpenProjectDialog( GeneratedGUI.OpenProjectDialog ):
 
 		self._chosenproject = self._listed_projects[selidx]
 		self.EndModal(wx.ID_OK)
+	
+	def m_sdbSizer2OnOKButtonClick( self, event ):
+		self.dook()
+	
 
 	def OpenProjectDialogOnShow(self, event):
 		if event.Show==False:
 			return
 
+		self.m_sdbSizer2OK.Enable(False) #gets enabled when something is selected
 		self._get_n_show_projects()
 
 
@@ -56,6 +60,16 @@ class PexDbViewerOpenProjectDialog( GeneratedGUI.OpenProjectDialog ):
 			if proj.status is not None:
 				self.m_projectsLCTRL.SetItem(idx, 1, proj.status.value)
 			self.m_projectsLCTRL.SetItem(idx, 2, str(proj.isarchived))
+
+	def m_projectsLCTRLOnLeftDClick(self, event):
+		self.dook()
+
+
+	def m_projectsLCTRLOnListItemDeselected(self, event):
+		self.m_sdbSizer2OK.Enable(False)
+
+	def m_projectsLCTRLOnListItemSelected(self, event):
+		self.m_sdbSizer2OK.Enable()
 
 		
 

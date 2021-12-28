@@ -36,7 +36,7 @@ class PexDbViewerAddFactorDialog( GeneratedGUI.AddFactorDialog ):
 			self.m_factorsLCTR.SetItem(idx, 1, fact.unit.abbreviation)
 			ct += 1
 
-	def m_sdbSizer3OnOKButtonClick(self, event):
+	def dook(self):
 		selidx = self.m_factorsLCTR.GetFirstSelected()
 		if selidx == wx.NOT_FOUND:
 			wx.MessageBox("Please select a factor in the list")
@@ -45,4 +45,17 @@ class PexDbViewerAddFactorDialog( GeneratedGUI.AddFactorDialog ):
 		idx = self.m_factorsLCTR.GetItemData(selidx)
 		self._selectedfactor = self._factorlist[idx]
 		self.EndModal(wx.ID_OK)
+
+	def m_sdbSizer3OnOKButtonClick(self, event):
+		self.dook()
+
+	def m_factorsLCTROnListItemDeselected(self, event):
+		self.m_sdbSizer3OK.Enable(False)
+
+	def m_factorsLCTROnListItemSelected(self, event):
+		self.m_sdbSizer3OK.Enable()
+
+	def m_factorsLCTROnLeftDClick(self, event):
+		self.dook()
+
 
