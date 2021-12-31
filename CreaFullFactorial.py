@@ -61,13 +61,15 @@ class CreaFullFactorial:
         self._sequence = sequence
 
     def _prepare(self):
-        preps_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._proj._id)
-        self._preps = list(preps_q) #we store the preps which we will need more than once
+        factpreps_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._proj._id)
+        self._factpreps = list(factpreps_q) #we store the preps which we will need more than once
+        resppreps_q = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._proj._id)
+        self._resppreps = list(resppreps_q)
         
     def _getfactors(self, idxes : list):
         answ = []
         for i in range(len(idxes)):
-            p = self._preps[i]
+            p = self._factpreps[i]
             min = p.minvalue
             max = p.maxvalue
             lvls = p.levelnum
@@ -94,7 +96,7 @@ class CreaFullFactorial:
         result = []
         idxhistory = []
 
-        lvlct = LevelCounter(self._preps)
+        lvlct = LevelCounter(self._factpreps)
         try:
             idxes = lvlct.currlevels
             while True: #do this until we get the level overflow esception
@@ -132,6 +134,8 @@ class CreaFullFactorial:
                 factval.experimentid = exp._id
                 self._fact.flush(factval)
 
+            self.write_resps(exp) #write the prepared responses
+        
             expct += 1
             
         return expct
@@ -156,10 +160,22 @@ class CreaFullFactorial:
                 factval.experimentid = exp._id
                 self._fact.flush(factval)
 
+            self.write_resps(exp) #write the prepared responses
+
             result.pop(residx)
             expct += 1
         
         return expct
+
+    def write_resps(self, exp : Experiment):
+        for respprep in self._resppreps:
+            resdef = respprep.responsedefinition
+            resp = ResponseValue(experimentid=exp._id, 
+                responsedefinition=resdef,
+                responsedefinitionid=resdef._id,
+                value = 0.0)
+
+            self._fact.flush(resp)
 
         
         

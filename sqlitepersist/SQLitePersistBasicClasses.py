@@ -111,6 +111,19 @@ class BaseVarType(BaseComparableType):
         if not done:
             setattr(self, membername, None)
 
+class Blob(BaseVarType):
+    _innertype = bytes
+    _outertype = DbType.BLOB
+    
+    def __init__(self, **kwarg):
+        super().__init__(**kwarg)
+
+    def to_innertype(self, dta):
+        if dta is None:
+            return None
+        else:
+            return bytes(dta)
+
 class String(BaseVarType):
     _innertype = str
     _outertype = DbType.TEXT

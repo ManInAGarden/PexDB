@@ -2,6 +2,7 @@
 [
     {"abbreviation" : "TOTPRINTTIME", "name": "print time", "unitid": "${PersistClasses.Unit.name:second:_id}"},
     {"abbreviation" : "TENACITY", "name": "tenacity", "unitid": "${PersistClasses.Unit.name:mega pascal:_id}"},
-    {"abbreviation" : "SURFQUAL", "name": "surface quality"}
+    {"abbreviation" : "SURFQUAL", "name": "surface quality"},
+    {"abbreviation" : "DIMACC", "name" : "dimensional accuracy", "unitid" : "${PersistClasses.Unit.name:millimeter:_id}"}
 ]
 }

@@ -106,6 +106,8 @@ class Project(sqp.PBase):
     Name = sqp.String()
     Status = sqp.Catalog(catalogtype=ProjectStatusCat)
     IsArchived = sqp.Boolean(default=False)
+    Description = sqp.String()
+
 
 class ProjectFactorPreparation(sqp.PBase):
     ProjectId = sqp.UUid()
@@ -114,6 +116,16 @@ class ProjectFactorPreparation(sqp.PBase):
     LevelNum = sqp.Int(default=2)
     FactorDefinitionId = sqp.UUid()
     FactorDefinition = sqp.JoinedEmbeddedObject(targettype=FactorDefinition, localid=FactorDefinitionId, autofill=True)
+
+class ProjectResponsePreparation(sqp.PBase):
+    ProjectId = sqp.UUid()
+    ResponseDefinitionId = sqp.UUid()
+    ResponseDefinition = sqp.JoinedEmbeddedObject(targettype=ResponseDefinition, localid=ResponseDefinitionId, autofill=True)
+
+class ExperimentDoc(sqp.PBase):
+    ExperimentId = sqp.UUid()
+    Text = sqp.String()
+    Picture = sqp.Blob()
 
 class Experiment(sqp.PBase):
     ProjectId = sqp.UUid()
@@ -127,5 +139,7 @@ class Experiment(sqp.PBase):
     Description = sqp.String()
     Factors = sqp.JoinedEmbeddedList(targettype=FactorValue, foreignid=FactorValue.ExperimentId, cascadedelete=True)
     Responses = sqp.JoinedEmbeddedList(targettype=ResponseValue, foreignid=ResponseValue.ExperimentId, cascadedelete=True)
+    Docs = sqp.JoinedEmbeddedList(targettype=ExperimentDoc, foreignid=ExperimentDoc.ExperimentId, cascadedelete=True)
+
 
     

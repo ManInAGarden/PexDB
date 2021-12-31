@@ -15,8 +15,6 @@ from PexDbViewerOpenProjectDialog import PexDbViewerOpenProjectDialog
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
-#from sqlitepersist.SQLitePersistBasicClasses import OrderDirection
-#from sqlitepersist.SQLitePersistSeeder import SQPSeeder
 
 # Implementing PexViewerMainFrame
 class PexViewerMain( gg.PexViewerMainFrame ):
@@ -54,7 +52,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		return proj
 
 	def create_exp_gui(self):
-		self._expgui = WxGuiMapperExperiment(self._fact, self.m_experimentPG)
+		self._expgui = WxGuiMapperExperiment(self._fact, self.m_experimentPG, self._currentproject)
 		self.m_experimentPG.Enable(False) #disable in case we have no data
 		self._expgui.emptyallitems(self.m_experimentPG)
 		
@@ -123,7 +121,10 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			and Experiment.ProjectId==self._currentproject._id).order_by(Experiment.CarriedOutDt)
 		experiments = []
 		for exp in q:
-			self._fact.fill_joins(exp, Experiment.Factors)
+			self._fact.fill_joins(exp,
+				Experiment.Factors,
+				Experiment.Responses)
+
 			experiments.append(exp)
 
 		return experiments
@@ -139,7 +140,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			FactorDefinition, 
 			FactorValue, 
 			ResponseDefinition, 
-			ResponseValue]
+			ProjectResponsePreparation,
+			ResponseValue,
+			ExperimentDoc]
 
 		createds = []
 		for pclass in pclasses:
@@ -245,6 +248,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		for setg in exp.factors:
 			vd[setg.factordefinition.name] = self.get_typed_factor_value(setg.value, setg.factordefinition.disptype)
 
+		for respg in exp.responses:
+			vd[respg.responsedefinition.name] = respg.value
+
 		expgui.object2gui(vd, self.m_experimentPG)
 			
 	def get_typed_factor_value(self, vals : str, disptype : str):
@@ -293,6 +299,10 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		for setg in exp.factors:
 			key = setg.factordefinition.name
+			setg.value = self.get_store_str(valdict[key])
+
+		for setg in exp.responses:
+			key = setg.responsedefinition.name
 			setg.value = self.get_store_str(valdict[key])
 		
 

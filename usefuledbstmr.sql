@@ -13,9 +13,17 @@ select * from catalog;
 
 select * from project;
 
+select * from responsedefinition;
+
+select * from projectresponsepreparation;
+
 select * from responsevalue;
 
+select * from factorvalue;
+
 -- drop table catalog;
+-- drop table unit;
+-- drop table responsedefinition;
 
 select
     fv.value
@@ -25,6 +33,6 @@ from
 where
     fv.factordefinitionid==fd._id;
 
-.schema factordefinition
+.schema experimentdoc
 
 .tables

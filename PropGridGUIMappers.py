@@ -7,8 +7,9 @@ class WxGuiMapperExperiment(WxGuiMapper):
     some proprty items are declared statically but all the factors and results
     are added dynamically by what is found in the currenty active factor definitions and 
     result definitions"""
-    def __init__(self, fact : sqp.SQFactory, parentpropgrid):
+    def __init__(self, fact : sqp.SQFactory, parentpropgrid, proj):
         super().__init__(fact)
+        self._project = proj
         self.add(WxGuiMapperInfo(fieldname="carriedout_dt", pgitemlabel="Ausführungsdatum", pgitemtype=pg.DateProperty))
         self.add(WxGuiMapperInfo(fieldname="carriedout_ti", pgitemlabel="Ausführungszeit", pgitemtype=pg.StringProperty))
         self.add(WxGuiMapperInfo(fieldname="description", pgitemlabel="Beschreibung"))
@@ -16,8 +17,9 @@ class WxGuiMapperExperiment(WxGuiMapper):
         self.add(WxGuiMapperInfo(fieldname="extruderused", pgitemtype=pg.EnumProperty, fieldcls=Extruder, idfieldname="extruderusedid",pgitemlabel="Extruder", fetchexpr=Extruder.IsActive==True))
         self.add(WxGuiMapperInfo(fieldname="factors_category", pgitemtype=pg.PropertyCategory, pgitemlabel="Faktoren"))
 
-        fdef_q = sqp.SQQuery(fact, FactorDefinition)
-        for fdef in fdef_q:
+        fprep_q = sqp.SQQuery(fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==proj._id)
+        for fprep in fprep_q:
+            fdef = fprep.factordefinition
             if fdef.unit is not None:
                 un = fdef.unit.abbreviation
             else:
