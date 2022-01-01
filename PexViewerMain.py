@@ -53,8 +53,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 	def create_exp_gui(self):
 		self._expgui = WxGuiMapperExperiment(self._fact, self.m_experimentPG, self._currentproject)
+		#self._expgui.emptyallitems()
 		self.m_experimentPG.Enable(False) #disable in case we have no data
-		self._expgui.emptyallitems(self.m_experimentPG)
 		
 	def displayprojinsb(self):
 		self.m_mainSBA.SetStatusText("Project: {0}".format(self._currentproject.name), 1)
@@ -99,7 +99,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self.m_experimentsDataViewListCtrl.DeleteAllItems()
 		ct = 0
 		for exp in self._experiments:
-			visr = [exp.description, exp.carriedoutdt.strftime("%m.%d.%Y %H:%M:%S")]
+			visr = [str(exp.sequence), exp.description]
 			self.m_experimentsDataViewListCtrl.AppendItem(visr)
 
 			ct += 1
@@ -113,12 +113,12 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self.refresh_expview(selexp, self._expgui)
 			self._currentexperiment = selexp
 		else:
-			self._expgui.emptyallitems(self.m_experimentPG)
+			self._expgui.emptyallitems()
 			self.m_experimentPG.Enable(False)
 		
 	def get_experiments(self):
 		q = sqp.SQQuery(self._fact, Experiment).where(Experiment.IsArchived == False 
-			and Experiment.ProjectId==self._currentproject._id).order_by(Experiment.CarriedOutDt)
+			and Experiment.ProjectId==self._currentproject._id).order_by(Experiment.Sequence)
 		experiments = []
 		for exp in q:
 			self._fact.fill_joins(exp,
@@ -224,7 +224,20 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self._experiments.append(exp)
 		self.refresh_dash()
 
+	def save_exp(self):
+		self.get_changed_exp(self._currentexperiment)
+		self._fact.flush(self._currentexperiment)
+		for factor in self._currentexperiment.factors:
+			self._fact.flush(factor)
+
+		for response in self._currentexperiment.responses:
+			self._fact.flush(response)
+
+
 	def experimentDWLC_selchanged( self, event):
+		if self._expgui.has_changed():
+			self.save_exp()
+
 		"""The user selected a row in the list of experiments"""
 		idx = self.m_experimentsDataViewListCtrl.GetSelectedRow()
 		if idx == wx.NOT_FOUND:
@@ -238,11 +251,18 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def refresh_expview(self, exp, expgui : WxGuiMapperExperiment):
 		"""refresh the experiment data on the gui with the data of the given experiment"""
 
-		#flatten the experiment data to da key, value dict
+		#flatten the experiment data to a key, value dict
 		vd = {}
+		vd["sequence"] = exp.sequence
 		vd["description"] = exp.description
-		vd["carriedout_dt"] = exp.carriedoutdt.date()
-		vd["carriedout_ti"] = exp.carriedoutdt.time().strftime("%H:%M:%S")
+		cdt = exp.carriedoutdt
+		if cdt is not None:
+			vd["carriedout_dt"] = exp.carriedoutdt.date()
+			vd["carriedout_ti"] = exp.carriedoutdt.time()
+		else:
+			vd["carriedout_dt"] = None
+			vd["carriedout_ti"] = None
+
 		vd["extruderused"] = exp.extruderused
 		vd["printerused"] = exp.printerused
 		for setg in exp.factors:
@@ -251,7 +271,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		for respg in exp.responses:
 			vd[respg.responsedefinition.name] = respg.value
 
-		expgui.object2gui(vd, self.m_experimentPG)
+		expgui.object2gui(vd)
 			
 	def get_typed_factor_value(self, vals : str, disptype : str):
 		#factors are always stored as strings in the db, so we have to change them to the correct type here
@@ -280,15 +300,27 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 				return "0"
 		elif vt is float:
 			return str(val)
+		elif vt is str:
+			return val
 		else:
-			raise Exception("unsupported type in get_store_str()")
+			raise Exception("unsupported type {0} in get_store_str() for value <{1}>".format(str(vt), val))
 
-	def get_changed_exp(self, exppg : pg.PropertyGrid, exp: Experiment):
-		valdict = self._expgui.gui2object(exppg)
+	def get_changed_exp(self, exp: Experiment):
+		valdict = self._expgui.gui2object()
 
 		dt = valdict["carriedout_dt"]
-		tim = datetime.strptime(valdict["carriedout_ti"], "%H:%M:%S")
-		exp.carriedoutdt = datetime(dt.year, dt.month, dt.day, tim.hour, tim.minute, tim.second)
+		time = valdict["carriedout_ti"]
+		if time is not None:
+			if dt is not None:
+				exp.carriedoutdt = datetime(dt.year, dt.month, dt.day, time.hour, time.minute, time.second)
+			else:
+				exp.carriedoutdt = None
+		else:
+			if dt is not None:
+				exp.carriedoutdt = datetime(dt.year, dt.month, dt.day)
+			else:
+				exp.carriedoutdt = None
+
 		exp.description = valdict["description"]
 		exp.printerused = valdict["printerused"]
 		exp.extruderused = valdict["extruderused"]
@@ -303,19 +335,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		for setg in exp.responses:
 			key = setg.responsedefinition.name
-			setg.value = self.get_store_str(valdict[key])
+			setg.value = valdict[key]
 		
-
-
-	def propgridChanged( self, event ):
-		"""handles PropertyGridChanged event"""
-		self.get_changed_exp(self.m_experimentPG, self._currentexperiment)
-		self._fact.flush(self._currentexperiment)
-		for setg in self._currentexperiment.factors:
-			self._fact.flush(setg)
-
-		self.refresh_dash()
-
 
 	def delete_experiment_menuItemOnMenuSelection( self, event ):
 		idx = self.m_experimentsDataViewListCtrl.GetSelectedRow()
@@ -376,6 +397,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			assert(dial.chosenproject is not None)
 			if self._currentproject._id != dial.chosenproject._id:
 				self._currentproject = dial.chosenproject
+				self.create_exp_gui()
 				self.displayprojinsb()
 				#now refresh the gui parts to show the experiments of the new project (should be none at all)
 				self._experiments = self.get_experiments()

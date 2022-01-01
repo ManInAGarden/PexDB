@@ -132,6 +132,7 @@ class Experiment(sqp.PBase):
     ExtruderUsedId = sqp.UUid()
     PrinterUsedId = sqp.UUid()
     Project = sqp.JoinedEmbeddedObject(targettype=Project, localid=ProjectId, autofill=True)
+    Sequence = sqp.Int()
     ExtruderUsed = sqp.JoinedEmbeddedObject(targettype=Extruder, localid=ExtruderUsedId, autofill=True)
     PrinterUsed = sqp.JoinedEmbeddedObject(targettype=Printer, localid=PrinterUsedId, autofill=True)
     CarriedOutDt = sqp.DateTime()

@@ -120,7 +120,7 @@ class CreaFullFactorial:
     def write_linear(self, result):
         expct = 0
         for res in result:
-            exp = Experiment(carriedoutdt=datetime.now(), 
+            exp = Experiment(sequence=expct + 1, 
                 description="Exp #{}".format(expct+1),
                 project = self._proj,
                 projectid = self._proj._id,
@@ -146,7 +146,7 @@ class CreaFullFactorial:
             residx = random.randint(0, len(result)-1) #randomize the sequence!
             res = result[residx]
 
-            exp = Experiment(carriedoutdt=datetime.now(), 
+            exp = Experiment(sequence=expct + 1, 
                 description="Exp #{}".format(expct+1),
                 project = self._proj,
                 projectid = self._proj._id,

@@ -104,12 +104,12 @@ class PexViewerMainFrame ( wx.Frame ):
 		main_gsizer = wx.GridSizer( 0, 2, 0, 0 )
 
 		self.m_experimentsDataViewListCtrl = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_CarriedOutDtDWLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Description"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.m_DescriptionDWLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Date carried out"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.m_DescriptionDWLC.GetRenderer().EnableEllipsize( wx.ELLIPSIZE_END );
+		self.m_sequenceDVLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Sequence #"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.m_descriptionDVLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Description"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.m_descriptionDVLC.GetRenderer().EnableEllipsize( wx.ELLIPSIZE_END );
 		main_gsizer.Add( self.m_experimentsDataViewListCtrl, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.m_experimentPG = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.TAB_TRAVERSAL)
+		self.m_experimentPG = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_BOLD_MODIFIED|wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.TAB_TRAVERSAL)
 		main_gsizer.Add( self.m_experimentPG, 0, wx.ALL|wx.EXPAND, 5 )
 
 
@@ -137,7 +137,6 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.reseed_factors_menuItemOnMenuSelection, id = self.reseed_factors_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.edit_response_definitions, id = self.edit_response_definitions_menuItem.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
-		self.m_experimentPG.Bind( pg.EVT_PG_CHANGED, self.propgridChanged )
 
 	def __del__( self ):
 		pass
@@ -184,9 +183,6 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def experimentDWLC_selchanged( self, event ):
-		event.Skip()
-
-	def propgridChanged( self, event ):
 		event.Skip()
 
 	def PexViewerMainFrameOnContextMenu( self, event ):
