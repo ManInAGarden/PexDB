@@ -95,13 +95,15 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		answ = sqp.SQQuery(self._fact, Extruder).where(Extruder.Abbreviation==abbr).first_or_default(None)
 		return answ
 	
+	def _get_visr(self, exp):
+		return [str(exp.sequence), exp.description]
+
 	def refresh_dash(self):
 		self.m_experimentsDataViewListCtrl.DeleteAllItems()
 		ct = 0
 		for exp in self._experiments:
-			visr = [str(exp.sequence), exp.description]
+			visr = self._get_visr(exp)
 			self.m_experimentsDataViewListCtrl.AppendItem(visr)
-
 			ct += 1
 
 		if ct > 0:
@@ -115,6 +117,23 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		else:
 			self._expgui.emptyallitems()
 			self.m_experimentPG.Enable(False)
+
+	def refresh_dash_current(self):
+		idx = -1
+		for i in range(len(self._experiments)):
+			if self._experiments[i]._id == self._currentexperiment._id:
+				idx = i
+				break
+
+		if idx < 0:
+			raise Exception("No current experiment found in list of experiments")
+
+		self._experiments[idx] = self._currentexperiment
+		self.m_experimentsDataViewListCtrl.DeleteItem(idx)
+		self.m_experimentsDataViewListCtrl.InsertItem(idx, 
+			self._get_visr(self._currentexperiment))
+
+		self.m_experimentsDataViewListCtrl.Refresh()
 		
 	def get_experiments(self):
 		q = sqp.SQQuery(self._fact, Experiment).where(Experiment.IsArchived == False 
@@ -193,39 +212,11 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		creator = cr.CreaSingle(self._fact, self._currentproject, self._prefprinter, self._prefextruder)
 		ct, exp = creator.create()
 
-		# exp = Experiment(carriedoutdt=datetime.now(), 
-		# 	description="Neues Experiment")
-		
-		# exp.projectid = self._currentproject._id
-		# self.project = self._currentproject
-		
-		# if self._prefextruder is not None:
-		# 	exp.extruderused = self._prefextruder
-		# 	exp.extruderusedid = self._prefextruder._id
+		if ct==1 and exp is not None:
+			self._experiments.append(exp)
 
-		# if self._prefprinter is not None:
-		# 	exp.printerused = self._prefprinter
-		# 	exp.printerusedid = self._prefprinter._id
-
-		# self._fact.flush(exp)
-
-		# #create/prepare new factorvalues for the experiment from all the active parameters
-		# exp.factors = []
-		# factdef_q = sqp.SQQuery(self._fact, FactorDefinition).where(FactorDefinition.IsActive==True)
-		# for fdef in factdef_q:
-		# 	fval = FactorValue(factordefinitionid=fdef._id, experimentid=exp._id, factordefinition=fdef)
-		# 	self._fact.flush(fval)
-		# 	exp.factors.append(fval)
-
-		# exp.results = []
-		# resdef_q = sqp.SQQuery(self._fact, ResponseDefinition).where(ResponseDefinition.IsActive==True)
-		# for rdef in resdef_q:
-		# 	rval = ResponseValue(responsedefinitionid=rdef._id, experimentid=exp._id, responsedefinition=rdef)
-		# 	self._fact.flush(rval)
-		# 	exp.results.append(rval)
-
-		self._experiments.append(exp)
 		self.refresh_dash()
+
 
 	def save_exp(self):
 		self.get_changed_exp(self._currentexperiment)
@@ -236,12 +227,15 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		for response in self._currentexperiment.responses:
 			self._fact.flush(response)
 
+		self.refresh_dash_current()
+
 
 	def experimentDWLC_selchanged( self, event):
+		"""The user selected a row in the list of experiments"""
+
 		if self._expgui.has_changed():
 			self.save_exp()
 
-		"""The user selected a row in the list of experiments"""
 		idx = self.m_experimentsDataViewListCtrl.GetSelectedRow()
 		if idx == wx.NOT_FOUND:
 			return
@@ -501,16 +495,27 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		header = ["experiment"]
 		factstart = len(header)
-		prep_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._currentproject._id)
-		preps = list(prep_q)
-		
-		for prep in preps:
-			fdef = prep.factordefinition
+		fprep_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._currentproject._id)
+		fpreps = list(fprep_q)
+		rprep_q = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._currentproject._id)
+		rpreps = list(rprep_q)
+
+		for fprep in fpreps:
+			fdef = fprep.factordefinition
 			head = fdef.name
 			if fdef.unit is not None:
 				head += "[{}]".format(fdef.unit.abbreviation)
 
 			header.append(head)
+
+		for rprep in rpreps:
+			fdef = rprep.responsedefinition
+			head = fdef.name
+			if fdef.unit is not None:
+				head += "[{}]".format(fdef.unit.abbreviation)
+
+			header.append(head)
+
 
 		with open(filename, mode="w", encoding="UTF-8", newline="\n") as f:
 			cwr = csv.writer(f)
@@ -521,6 +526,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 				data.append(exp.description)
 				for fv in exp.factors:
 					data.append(fv.value)
+				for rv in exp.responses:
+					data.append(rv.value)
 
 				cwr.writerow(data)
 
