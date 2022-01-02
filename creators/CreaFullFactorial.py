@@ -2,9 +2,9 @@ from datetime import date, datetime
 from enum import Enum
 import random
 import sqlitepersist as sqp
-from itertools import combinations, permutations
 from PersistClasses import *
 
+from .CreaBasics import _CreaBase, _CreaSequential, CreaSequenceEnum
 
 class LevelOverflow(Exception):
     pass
@@ -39,33 +39,13 @@ class LevelCounter():
         return list(self._currlevels)
 
 
-
-class CreaSequenceEnum(Enum):
-    LINEAR = 0 #experiments are created in the same sequence as defined
-    MIXED = 1 #exps are created in a random sequence
-
-class CreaFullFactorial:
+class CreaFullFactorial(_CreaSequential):
     """creates one experiment for every combination of factor levels defined in the given 
     project's factor preparations"""
 
-    def __init__(self, fact : sqp.SQFactory, 
-            project : Project, 
-            printer: Printer, 
-            extruder : Extruder,
-            sequence : CreaSequenceEnum = CreaSequenceEnum.LINEAR):
+    def __init__(self, fact: sqp.SQFactory, project: Project, printer: Printer, extruder: Extruder, sequence: CreaSequenceEnum = ...):
+        super().__init__(fact, project, printer, extruder, sequence=sequence)
 
-        self._fact = fact
-        self._proj = project
-        self._printer = printer
-        self._extruder = extruder
-        self._sequence = sequence
-
-    def _prepare(self):
-        factpreps_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._proj._id)
-        self._factpreps = list(factpreps_q) #we store the preps which we will need more than once
-        resppreps_q = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._proj._id)
-        self._resppreps = list(resppreps_q)
-        
     def _getfactors(self, idxes : list):
         answ = []
         for i in range(len(idxes)):
@@ -92,7 +72,6 @@ class CreaFullFactorial:
 
     def create(self):
         """create all factors in combinations of values according to all their defined levels"""
-        self._prepare()
         result = []
         idxhistory = []
 
@@ -119,6 +98,7 @@ class CreaFullFactorial:
 
     def write_linear(self, result):
         expct = 0
+
         for res in result:
             exp = Experiment(sequence=expct + 1, 
                 description="Exp #{}".format(expct+1),
@@ -167,15 +147,7 @@ class CreaFullFactorial:
         
         return expct
 
-    def write_resps(self, exp : Experiment):
-        for respprep in self._resppreps:
-            resdef = respprep.responsedefinition
-            resp = ResponseValue(experimentid=exp._id, 
-                responsedefinition=resdef,
-                responsedefinitionid=resdef._id,
-                value = 0.0)
-
-            self._fact.flush(resp)
+    
 
         
         

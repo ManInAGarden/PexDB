@@ -5,7 +5,7 @@ import csv
 import wx
 from wx.core import CENTRE, YES_NO
 import wx.propgrid as pg
-from CreaFullFactorial import CreaFullFactorial, CreaSequenceEnum
+import creators as cr
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
 from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
@@ -185,41 +185,44 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self.Close()
 		
 	def create_new_experiment( self, event ):
-		"""The user selected the menuitem "create new experiment"
+		"""The user selected the menuitem "create a single new experiment"
 		"""
 		if self._currentproject is None:
 			raise Exception("We have no current project! Experiment cannot be created!")
 
-		exp = Experiment(carriedoutdt=datetime.now(), 
-			description="Neues Experiment")
+		creator = cr.CreaSingle(self._fact, self._currentproject, self._prefprinter, self._prefextruder)
+		ct, exp = creator.create()
+
+		# exp = Experiment(carriedoutdt=datetime.now(), 
+		# 	description="Neues Experiment")
 		
-		exp.projectid = self._currentproject._id
-		self.project = self._currentproject
+		# exp.projectid = self._currentproject._id
+		# self.project = self._currentproject
 		
-		if self._prefextruder is not None:
-			exp.extruderused = self._prefextruder
-			exp.extruderusedid = self._prefextruder._id
+		# if self._prefextruder is not None:
+		# 	exp.extruderused = self._prefextruder
+		# 	exp.extruderusedid = self._prefextruder._id
 
-		if self._prefprinter is not None:
-			exp.printerused = self._prefprinter
-			exp.printerusedid = self._prefprinter._id
+		# if self._prefprinter is not None:
+		# 	exp.printerused = self._prefprinter
+		# 	exp.printerusedid = self._prefprinter._id
 
-		self._fact.flush(exp)
+		# self._fact.flush(exp)
 
-		#create/prepare new factorvalues for the experiment from all the active parameters
-		exp.factors = []
-		factdef_q = sqp.SQQuery(self._fact, FactorDefinition).where(FactorDefinition.IsActive==True)
-		for fdef in factdef_q:
-			fval = FactorValue(factordefinitionid=fdef._id, experimentid=exp._id, factordefinition=fdef)
-			self._fact.flush(fval)
-			exp.factors.append(fval)
+		# #create/prepare new factorvalues for the experiment from all the active parameters
+		# exp.factors = []
+		# factdef_q = sqp.SQQuery(self._fact, FactorDefinition).where(FactorDefinition.IsActive==True)
+		# for fdef in factdef_q:
+		# 	fval = FactorValue(factordefinitionid=fdef._id, experimentid=exp._id, factordefinition=fdef)
+		# 	self._fact.flush(fval)
+		# 	exp.factors.append(fval)
 
-		exp.results = []
-		resdef_q = sqp.SQQuery(self._fact, ResponseDefinition).where(ResponseDefinition.IsActive==True)
-		for rdef in resdef_q:
-			rval = ResponseValue(responsedefinitionid=rdef._id, experimentid=exp._id, responsedefinition=rdef)
-			self._fact.flush(rval)
-			exp.results.append(rval)
+		# exp.results = []
+		# resdef_q = sqp.SQQuery(self._fact, ResponseDefinition).where(ResponseDefinition.IsActive==True)
+		# for rdef in resdef_q:
+		# 	rval = ResponseValue(responsedefinitionid=rdef._id, experimentid=exp._id, responsedefinition=rdef)
+		# 	self._fact.flush(rval)
+		# 	exp.results.append(rval)
 
 		self._experiments.append(exp)
 		self.refresh_dash()
@@ -444,9 +447,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		cval = self._configuration.get_value("experimentcreation", "sequence")
 		cvall = cval.lower()
 		if cvall == "linear":
-			return CreaSequenceEnum.LINEAR
+			return cr.CreaSequenceEnum.LINEAR
 		elif cvall == "mixed":
-			return CreaSequenceEnum.MIXED
+			return cr.CreaSequenceEnum.MIXED
 		else:
 			wx.MessageBox("Configuration error, unknown sequence value <{}> in section experimentcreation".format(cval))
 		
@@ -463,7 +466,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			wx.MessageBox("Please define some factor preparations by editing the project")
 			return
 
-		crea = CreaFullFactorial(self._fact, 
+		crea = cr.CreaFullFactorial(self._fact, 
 			self._currentproject, 
 			self._prefprinter, 
 			self._prefextruder,
