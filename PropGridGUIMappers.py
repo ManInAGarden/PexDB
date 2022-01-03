@@ -27,6 +27,7 @@ class WxGuiMapperExperiment(WxGuiMapper):
 
         self._project = proj
         self.add(WxGuiMapperInfo(fname="sequence", pgilabel="#", pgitype=pg.IntProperty))
+        self.add(WxGuiMapperInfo(fname="repnum", pgilabel="Repetition#", pgitype=pg.IntProperty))
         self.add(WxGuiMapperInfo(fname="carriedout_dt", pgilabel="Date", pgitype=pg.DateProperty))
         self.add(WxGuiMapperInfo(fname="carriedout_ti", pgilabel="Time", pgitype=TimeProperty))
         self.add(WxGuiMapperInfo(fname="description", pgilabel="Description"))

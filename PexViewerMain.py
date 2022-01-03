@@ -12,6 +12,7 @@ from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
 from PexDbViewerEditProjectDialog import PexDbViewerEditProjectDialog
 from PexDbViewerEditResponseDefinitions import PexDbViewerEditResponseDefinitions
 from PexDbViewerOpenProjectDialog import PexDbViewerOpenProjectDialog
+from PexDbViewerCreateFullDetailsDialog import PexDbViewerCreateFullDetailsDialog
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
@@ -251,6 +252,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		#flatten the experiment data to a key, value dict
 		vd = {}
 		vd["sequence"] = exp.sequence
+		vd["repnum"] = exp.repnum
 		vd["description"] = exp.description
 		cdt = exp.carriedoutdt
 		if cdt is not None:
@@ -317,7 +319,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 				exp.carriedoutdt = datetime(dt.year, dt.month, dt.day)
 			else:
 				exp.carriedoutdt = None
-
+		
+		#exp.sequence = valdict["sequence"]
+		#exp.repnum = valdict["repnum"]
 		exp.description = valdict["description"]
 		exp.printerused = valdict["printerused"]
 		exp.extruderused = valdict["extruderused"]
@@ -354,6 +358,8 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		
 		self._fact.flush(aexp)
 		aexp.factors = []
+		aexp.responses = []
+
 		for factval in exp.factors:
 			nfact = FactorValue(experimentid=aexp._id,
 				factordefinitionid=factval.factordefinitionid,
@@ -361,6 +367,13 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 				value = factval.value)
 			aexp.factors.append(nfact)
 			self._fact.flush(nfact)
+
+		for respval in exp.responses:
+			nresp = ResponseValue(experimentid=aexp._id,
+				responsedefinitionid=respval.responsedefinitionid,
+				responsedefinition=respval.responsedefinition,
+				value=respval.value)
+			aexp.responses.append(nresp)
 
 		return aexp #return the deeply cloned experiment
 
@@ -453,24 +466,19 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			wx.MessageBox("The current project is not defined. Experiment creation is impossible.")
 			return
 
-		q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._currentproject._id).select(lambda prep : prep._id)
-		prpct = len(list(q))
+		dial = PexDbViewerCreateFullDetailsDialog(self, 
+			self._fact, 
+			self._currentproject,
+			self._prefprinter,
+			self._prefextruder)
 
-		if prpct==0:
-			wx.MessageBox("Please define some factor preparations by editing the project")
-			return
+		res = dial.ShowModal()
 
-		crea = cr.CreaFullFactorial(self._fact, 
-			self._currentproject, 
-			self._prefprinter, 
-			self._prefextruder,
-			self.get_crea_sequence())
+		if res==wx.ID_OK:
+			self._experiments = self.get_experiments()
+			self.refresh_dash()
+			wx.MessageBox("{} Experiments were created under the current project".format(dial.numexps))
 
-		numexps = crea.create()
-
-		self._experiments = self.get_experiments()
-		self.refresh_dash()
-		wx.MessageBox("{} Experiments were created under the current project".format(numexps))
 
 	def m_deleteAllExperimentsMEIOnMenuSelection(self, event):
 		res = wx.MessageBox("Are you sure to delete all experiments in the current project", "Delete all experiments", style=YES_NO|CENTRE)

@@ -56,9 +56,13 @@ class _CreaSequential(_CreaBase):
             project : Project, 
             printer: Printer, 
             extruder : Extruder,
-            sequence : CreaSequenceEnum = CreaSequenceEnum.LINEAR):
+            sequence : CreaSequenceEnum = CreaSequenceEnum.LINEAR,
+            planneddt: datetime = None,
+            repetitions : int=1):
 
         super().__init__(fact, project, printer, extruder)
         self._sequence = sequence
+        self._planneddt = planneddt
+        self._repetitions = repetitions
 
     

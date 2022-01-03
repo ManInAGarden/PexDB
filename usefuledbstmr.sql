@@ -19,6 +19,8 @@ select * from projectresponsepreparation;
 
 select * from responsevalue;
 
+drop table experiment;
+
 select * from factorvalue;
 
 -- drop table catalog;

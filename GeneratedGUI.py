@@ -11,6 +11,7 @@ import wx
 import wx.xrc
 import wx.dataview
 import wx.propgrid as pg
+import wx.adv
 
 import gettext
 _ = gettext.gettext
@@ -45,8 +46,19 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.m_menubar1.Append( self.file_menu, _(u"File") )
 
 		self.experiment_menu = wx.Menu()
+		self.m_menu1 = wx.Menu()
+		self.newExperiment_menuitem = wx.MenuItem( self.m_menu1, wx.ID_ANY, _(u"Create single experiment"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu1.Append( self.newExperiment_menuitem )
+
+		self.m_createFullFactorialMEI = wx.MenuItem( self.m_menu1, wx.ID_ANY, _(u"Create full factorial"), _(u"Creates experiments for all combinations of facor-levels."), wx.ITEM_NORMAL )
+		self.m_menu1.Append( self.m_createFullFactorialMEI )
+
+		self.experiment_menu.AppendSubMenu( self.m_menu1, _(u"Create experiments") )
+
 		self.dupicate_experiment_menuitem = wx.MenuItem( self.experiment_menu, wx.ID_ANY, _(u"Duplicate Experiment"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.experiment_menu.Append( self.dupicate_experiment_menuitem )
+
+		self.experiment_menu.AppendSeparator()
 
 		self.m_deleteExperimentsMenu = wx.Menu()
 		self.delte_experiment_menuItem = wx.MenuItem( self.m_deleteExperimentsMenu, wx.ID_ANY, _(u"Delete single experiment"), wx.EmptyString, wx.ITEM_NORMAL )
@@ -58,15 +70,6 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.experiment_menu.AppendSubMenu( self.m_deleteExperimentsMenu, _(u"Delete experiments") )
 
 		self.experiment_menu.AppendSeparator()
-
-		self.m_menu1 = wx.Menu()
-		self.newExperiment_menuitem = wx.MenuItem( self.m_menu1, wx.ID_ANY, _(u"Create single experiment"), wx.EmptyString, wx.ITEM_NORMAL )
-		self.m_menu1.Append( self.newExperiment_menuitem )
-
-		self.m_createFullFactorialMEI = wx.MenuItem( self.m_menu1, wx.ID_ANY, _(u"Create full factorial"), _(u"Creates experiments for all combinations of facor-levels."), wx.ITEM_NORMAL )
-		self.m_menu1.Append( self.m_createFullFactorialMEI )
-
-		self.experiment_menu.AppendSubMenu( self.m_menu1, _(u"Create experiments") )
 
 		self.m_exportExperimentsCsvMEI = wx.MenuItem( self.experiment_menu, wx.ID_ANY, _(u"Export to csv"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.experiment_menu.Append( self.m_exportExperimentsCsvMEI )
@@ -125,11 +128,11 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.editproject_menuItemOnMenuSelection, id = self.editproject_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.newproj_menutitemOnMenuSelection, id = self.newproj_menutitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.quit_PexViewer, id = self.quit_menuitem.GetId() )
+		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
+		self.Bind( wx.EVT_MENU, self.m_createFullFactorialMEIOnMenuSelection, id = self.m_createFullFactorialMEI.GetId() )
 		self.Bind( wx.EVT_MENU, self.dupicate_experiment_menuitemOnMenuSelection, id = self.dupicate_experiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.delete_experiment_menuItemOnMenuSelection, id = self.delte_experiment_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_deleteAllExperimentsMEIOnMenuSelection, id = self.m_deleteAllExperimentsMEI.GetId() )
-		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
-		self.Bind( wx.EVT_MENU, self.m_createFullFactorialMEIOnMenuSelection, id = self.m_createFullFactorialMEI.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_exportExperimentsCsvMEIOnMenuSelection, id = self.m_exportExperimentsCsvMEI.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_edit_factors_menuitemOnMenuSelection, id = self.m_edit_factors_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.reseed_factors_menuItemOnMenuSelection, id = self.reseed_factors_menuItem.GetId() )
@@ -153,6 +156,12 @@ class PexViewerMainFrame ( wx.Frame ):
 	def quit_PexViewer( self, event ):
 		event.Skip()
 
+	def create_new_experiment( self, event ):
+		event.Skip()
+
+	def m_createFullFactorialMEIOnMenuSelection( self, event ):
+		event.Skip()
+
 	def dupicate_experiment_menuitemOnMenuSelection( self, event ):
 		event.Skip()
 
@@ -160,12 +169,6 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def m_deleteAllExperimentsMEIOnMenuSelection( self, event ):
-		event.Skip()
-
-	def create_new_experiment( self, event ):
-		event.Skip()
-
-	def m_createFullFactorialMEIOnMenuSelection( self, event ):
 		event.Skip()
 
 	def m_exportExperimentsCsvMEIOnMenuSelection( self, event ):
@@ -861,6 +864,87 @@ class EditPreparation ( wx.Dialog ):
 		event.Skip()
 
 	def OnOKButtonClick( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class CreateFullDetailsDialog
+###########################################################################
+
+class CreateFullDetailsDialog ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Create full factorial details"), pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer8 = wx.GridBagSizer( 0, 0 )
+		gbSizer8.SetFlexibleDirection( wx.BOTH )
+		gbSizer8.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText13 = wx.StaticText( self, wx.ID_ANY, _(u"Repetitions"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText13.Wrap( -1 )
+
+		self.m_staticText13.SetToolTip( _(u"Number of repetitions for each combinations of factors") )
+
+		gbSizer8.Add( self.m_staticText13, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_repetitionsSPCTRL = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 20, 1 )
+		gbSizer8.Add( self.m_repetitionsSPCTRL, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText14 = wx.StaticText( self, wx.ID_ANY, _(u"Planned date"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText14.Wrap( -1 )
+
+		gbSizer8.Add( self.m_staticText14, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_datePicker1 = wx.adv.DatePickerCtrl( self, wx.ID_ANY, wx.DefaultDateTime, wx.DefaultPosition, wx.DefaultSize, wx.adv.DP_ALLOWNONE|wx.adv.DP_DEFAULT|wx.adv.DP_DROPDOWN )
+		gbSizer8.Add( self.m_datePicker1, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText15 = wx.StaticText( self, wx.ID_ANY, _(u"Sequence"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText15.Wrap( -1 )
+
+		gbSizer8.Add( self.m_staticText15, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		m_sequenceCHOIChoices = [ _(u"linear"), _(u"random mixed") ]
+		self.m_sequenceCHOI = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_sequenceCHOIChoices, wx.CB_SORT )
+		self.m_sequenceCHOI.SetSelection( 0 )
+		gbSizer8.Add( self.m_sequenceCHOI, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_progressGAUGE = wx.Gauge( self, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL )
+		self.m_progressGAUGE.SetValue( 0 )
+		gbSizer8.Add( self.m_progressGAUGE, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.ALL, 5 )
+
+		self.m_staticline1 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		gbSizer8.Add( self.m_staticline1, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+		m_sdbSizer6 = wx.StdDialogButtonSizer()
+		self.m_sdbSizer6OK = wx.Button( self, wx.ID_OK )
+		m_sdbSizer6.AddButton( self.m_sdbSizer6OK )
+		self.m_sdbSizer6Cancel = wx.Button( self, wx.ID_CANCEL )
+		m_sdbSizer6.AddButton( self.m_sdbSizer6Cancel )
+		m_sdbSizer6.Realize();
+
+		gbSizer8.Add( m_sdbSizer6, wx.GBPosition( 5, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+
+		gbSizer8.AddGrowableCol( 1 )
+		gbSizer8.AddGrowableRow( 1 )
+
+		self.SetSizer( gbSizer8 )
+		self.Layout()
+		gbSizer8.Fit( self )
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.m_sdbSizer6OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer6OnOKButtonClick )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def m_sdbSizer6OnOKButtonClick( self, event ):
 		event.Skip()
 
 
