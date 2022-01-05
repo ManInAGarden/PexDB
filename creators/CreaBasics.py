@@ -6,6 +6,39 @@ class CreaSequenceEnum(Enum):
     LINEAR = 0 #experiments are created in the same sequence as defined
     MIXED = 1 #exps are created in a random sequence
 
+
+class LevelOverflow(Exception):
+    pass
+
+class LevelCounter():
+    def __init__(self, preps):
+        self._stagemax = []
+        self._currlevels = []
+
+        for prep in preps:
+            self._stagemax.append(prep.levelnum)
+            self._currlevels.append(0)
+
+    @property
+    def currlevels(self):
+        return list(self._currlevels)
+
+    def increment(self):
+        """add one to the counter"""
+        done = False
+        for i in range(len(self._currlevels)):
+            self._currlevels[i] += 1
+            if self._currlevels[i] < self._stagemax[i]:
+                done = True
+                break
+            else:
+                self._currlevels[i] = 0 #overflow
+                
+        if not done:
+            raise LevelOverflow("Level overflow in LevelCounter")
+
+        return list(self._currlevels)
+        
 class _CreaBase:
     """basic class for experiment creation, do not use directly, only use derivated classes"""
 

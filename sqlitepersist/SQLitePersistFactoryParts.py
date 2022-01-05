@@ -239,7 +239,13 @@ class SQFactory():
         self._catcache[ck] = ce
         return ce
 
+    def flushcopy(self, pinst):
+        """flush the instance but make sure we have a fill insert even if we have been flushing before"""
+        pinst._id = None
+        self.flush(pinst)
+
     def flush(self, pinst : PBase):
+        """write the instance to the database inserting or updating as needed"""
         curs = self.conn.cursor()
         try:
             curs.execute("BEGIN")

@@ -4,39 +4,7 @@ import random
 import sqlitepersist as sqp
 from PersistClasses import *
 
-from .CreaBasics import _CreaBase, _CreaSequential, CreaSequenceEnum
-
-class LevelOverflow(Exception):
-    pass
-
-class LevelCounter():
-    def __init__(self, preps):
-        self._stagemax = []
-        self._currlevels = []
-
-        for prep in preps:
-            self._stagemax.append(prep.levelnum)
-            self._currlevels.append(0)
-
-    @property
-    def currlevels(self):
-        return list(self._currlevels)
-
-    def increment(self):
-        """add one to the counter"""
-        done = False
-        for i in range(len(self._currlevels)):
-            self._currlevels[i] += 1
-            if self._currlevels[i] < self._stagemax[i]:
-                done = True
-                break
-            else:
-                self._currlevels[i] = 0 #overflow
-                
-        if not done:
-            raise LevelOverflow("Level overflow in LevelCounter")
-
-        return list(self._currlevels)
+from .CreaBasics import _CreaBase, _CreaSequential, CreaSequenceEnum, LevelCounter, LevelOverflow
 
 
 class CreaFullFactorial(_CreaSequential):
@@ -123,7 +91,7 @@ class CreaFullFactorial(_CreaSequential):
 
                 for factval in res:
                     factval.experimentid = exp._id
-                    self._fact.flush(factval)
+                    self._fact.flushcopy(factval)
 
                 self.write_resps(exp) #write the prepared responses
             

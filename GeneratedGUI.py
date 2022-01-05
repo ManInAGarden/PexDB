@@ -91,6 +91,12 @@ class PexViewerMainFrame ( wx.Frame ):
 
 		self.m_menubar1.Append( self.response_menu, _(u"Responses") )
 
+		self.m_calculationsMENU = wx.Menu()
+		self.m_linearRegrMEI = wx.MenuItem( self.m_calculationsMENU, wx.ID_ANY, _(u"Linear regression"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_calculationsMENU.Append( self.m_linearRegrMEI )
+
+		self.m_menubar1.Append( self.m_calculationsMENU, _(u"Calculations") )
+
 		self.help_menu = wx.Menu()
 		self.help_menuItem = wx.MenuItem( self.help_menu, wx.ID_ANY, _(u"Help"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.help_menu.Append( self.help_menuItem )
@@ -137,6 +143,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.m_edit_factors_menuitemOnMenuSelection, id = self.m_edit_factors_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.reseed_factors_menuItemOnMenuSelection, id = self.reseed_factors_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.edit_response_definitions, id = self.edit_response_definitions_menuItem.GetId() )
+		self.Bind( wx.EVT_MENU, self.m_linearRegrMEIOnMenuSelection, id = self.m_linearRegrMEI.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
 
 	def __del__( self ):
@@ -181,6 +188,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def edit_response_definitions( self, event ):
+		event.Skip()
+
+	def m_linearRegrMEIOnMenuSelection( self, event ):
 		event.Skip()
 
 	def experimentDWLC_selchanged( self, event ):
@@ -945,6 +955,75 @@ class CreateFullDetailsDialog ( wx.Dialog ):
 
 	# Virtual event handlers, override them in your derived class
 	def m_sdbSizer6OnOKButtonClick( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class LinRegrDialog
+###########################################################################
+
+class LinRegrDialog ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Multiple linear regression"), pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer9 = wx.GridBagSizer( 0, 0 )
+		gbSizer9.SetFlexibleDirection( wx.BOTH )
+		gbSizer9.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_inputDataDLCTRL = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer9.Add( self.m_inputDataDLCTRL, wx.GBPosition( 6, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_projectNameSTXT = wx.StaticText( self, wx.ID_ANY, _(u"<projectname>"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_projectNameSTXT.Wrap( -1 )
+
+		gbSizer9.Add( self.m_projectNameSTXT, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, _(u"Results"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16.Wrap( -1 )
+
+		gbSizer9.Add( self.m_staticText16, wx.GBPosition( 8, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.doCalcBUT = wx.Button( self, wx.ID_ANY, _(u"Calclulate"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer9.Add( self.doCalcBUT, wx.GBPosition( 7, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_resultsDLCTRL = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer9.Add( self.m_resultsDLCTRL, wx.GBPosition( 9, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		m_sdbSizer7 = wx.StdDialogButtonSizer()
+		self.m_sdbSizer7OK = wx.Button( self, wx.ID_OK )
+		m_sdbSizer7.AddButton( self.m_sdbSizer7OK )
+		self.m_sdbSizer7Cancel = wx.Button( self, wx.ID_CANCEL )
+		m_sdbSizer7.AddButton( self.m_sdbSizer7Cancel )
+		m_sdbSizer7.Realize();
+
+		gbSizer9.Add( m_sdbSizer7, wx.GBPosition( 10, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+
+		gbSizer9.AddGrowableRow( 6 )
+		gbSizer9.AddGrowableRow( 9 )
+
+		self.SetSizer( gbSizer9 )
+		self.Layout()
+		gbSizer9.Fit( self )
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.Bind( wx.EVT_INIT_DIALOG, self.LinRegrDialogOnInitDialog )
+		self.Bind( wx.EVT_SHOW, self.LinRegrDialogOnShow )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def LinRegrDialogOnInitDialog( self, event ):
+		event.Skip()
+
+	def LinRegrDialogOnShow( self, event ):
 		event.Skip()
 
 

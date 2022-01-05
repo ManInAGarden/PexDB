@@ -5,6 +5,7 @@ import csv
 import wx
 from wx.core import CENTRE, YES_NO
 import wx.propgrid as pg
+from PexDbViewerLinRegrDialog import PexDbViewerLinRegrDialog
 import creators as cr
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
@@ -538,6 +539,11 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 					data.append(rv.value)
 
 				cwr.writerow(data)
+
+	def m_linearRegrMEIOnMenuSelection(self, event):
+		dial = PexDbViewerLinRegrDialog(self, self._fact, self._currentproject)
+		res = dial.ShowModal()
+
 
 if __name__ == '__main__':
 	app = wx.App()
