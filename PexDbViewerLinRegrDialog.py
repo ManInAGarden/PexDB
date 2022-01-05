@@ -23,18 +23,29 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 			return
 
 		df = self._solver.dataframe
-		grdf = df.groupby(["repnum"])
-		meanl = []
 		
+		meanl = []
 		for rprep in sqp.SQQuery(self._f, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._p._id):
 			meanl.append(rprep.responsedefinition.abbreviation)	
 		
-		mi = grdf.mean(meanl)
-		std= grdf.std()
-		
-		col = self.m_inputDataDLCTRL.InsertColumn(self.m_inputDataDLCTRL.GetColumnCount(), "#")
-		for abbr, name in self._solver.factdict.items():
-			col = self.m_inputDataDLCTRL.InsertColumn(col, name)
+		mi = df.mean(meanl)
+		std= df.std()
+	
+		self.m_inputDataDLCTRL.AppendTextColumn("#")
+		for abbr, fact in self._solver.factdict.items():
+			col = self.m_inputDataDLCTRL.AppendTextColumn(fact.name)
 
-		for abbr, name in self._solver.respdict.items():
-			self.m_inputDataDLCTRL.InsertColumn(col, name)
+		for abbr, resp in self._solver.respdict.items():
+			self.m_inputDataDLCTRL.AppendTextColumn(resp.name)
+		
+		drow = []
+		for idx, row in mi.iterrows():
+			drow.clear()
+			drow.append(str(idx))
+			for abbr in self._solver.factdict:
+				drow.append(str(row[abbr]))
+
+			for abbr in self._solver.respdict:
+				drow.append(str(row[abbr]))
+
+			self.m_inputDataDLCTRL.AppendItem(drow)

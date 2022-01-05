@@ -9,6 +9,7 @@ class MultiReg():
         self._p = project
         self._pid = project._id
         self._df = None
+        self._grpdf = None
         self._experiments = None
         self._factdict = {}
         self._respdict = {}
@@ -25,7 +26,14 @@ class MultiReg():
     def dataframe(self):
         if self._df is None:
             raise Exception("Dataframe has not been built yet")
+        return self._grpdf #return the grouped dataframe
+
+    def rawframe(self):
+        if self._df is None:
+            raise Exception("Dataframe has not been built yet")
+
         return self._df
+        
 
     def _get_experiments(self):
         expi_q = sqp.SQQuery(self._f, Experiment).where(Experiment.ProjectId==self._pid).order_by(Experiment.Repnum)
@@ -45,7 +53,7 @@ class MultiReg():
 
         for respdef in rpreps_q:
             bname = respdef.responsedefinition.abbreviation
-            self._respdict[bname] = respdef.responsedefintion
+            self._respdict[bname] = respdef.responsedefinition
             answ[bname] = []
 
         return answ
@@ -68,8 +76,6 @@ class MultiReg():
             for resp in exp.responses:
                 rnam = resp.responsedefinition.abbreviation
                 data[rnam].append(resp.value)
-                data[rnam+"#vari"].append(0.0)
-                data[rnam+"#stddev"].append(0.0)
 
         return data
 
@@ -79,7 +85,7 @@ class MultiReg():
         self._experiments = self._get_experiments()
         ddict = self._get_dataframe()
         self._df = pas.DataFrame(ddict)
-        return self._df
+        self._grpdf = self._df.groupby(["repnum"])
 
 
     def solve_for(self, indiname : str):

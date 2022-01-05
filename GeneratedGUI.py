@@ -965,7 +965,7 @@ class CreateFullDetailsDialog ( wx.Dialog ):
 class LinRegrDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Multiple linear regression"), pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Multiple linear regression"), pos = wx.DefaultPosition, size = wx.Size( 270,525 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -974,6 +974,8 @@ class LinRegrDialog ( wx.Dialog ):
 		gbSizer9.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
 		self.m_inputDataDLCTRL = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_inputDataDLCTRL.SetMinSize( wx.Size( 100,200 ) )
+
 		gbSizer9.Add( self.m_inputDataDLCTRL, wx.GBPosition( 6, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 		self.m_projectNameSTXT = wx.StaticText( self, wx.ID_ANY, _(u"<projectname>"), wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -1002,12 +1004,12 @@ class LinRegrDialog ( wx.Dialog ):
 		gbSizer9.Add( m_sdbSizer7, wx.GBPosition( 10, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 
+		gbSizer9.AddGrowableCol( 0 )
 		gbSizer9.AddGrowableRow( 6 )
 		gbSizer9.AddGrowableRow( 9 )
 
 		self.SetSizer( gbSizer9 )
 		self.Layout()
-		gbSizer9.Fit( self )
 
 		self.Centre( wx.BOTH )
 
