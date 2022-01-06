@@ -43,6 +43,7 @@ class MultiReg():
         answ = {}
 
         answ["repnum"] = []
+        answ["#factkey"] = []
         fpreps_q = sqp.SQQuery(self._f, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._pid)
         for fprep in fpreps_q:
             bname = fprep.factordefinition.abbreviation
@@ -68,10 +69,22 @@ class MultiReg():
 
         for exp in self._experiments:
             self._f.fill_joins(exp, Experiment.Factors, Experiment.Responses)
-            data["repnum"].append(exp.repnum)
+            if exp.repnum is not None:
+                data["repnum"].append(exp.repnum)
+            else:
+                data["repnum"].append(0)
 
+            factkey = None
+            first = True
             for fact in exp.factors:
                 data[fact.factordefinition.abbreviation].append(fact.value)
+                if first:
+                    factkey = str(fact.value)
+                    first = False
+                else:
+                    factkey += "#" + str(fact.value)
+
+            data["#factkey"].append(factkey)
 
             for resp in exp.responses:
                 rnam = resp.responsedefinition.abbreviation
@@ -85,7 +98,7 @@ class MultiReg():
         self._experiments = self._get_experiments()
         ddict = self._get_dataframe()
         self._df = pas.DataFrame(ddict)
-        self._grpdf = self._df.groupby(["repnum"])
+        self._grpdf = self._df.groupby(["#factkey"])
 
 
     def solve_for(self, indiname : str):
