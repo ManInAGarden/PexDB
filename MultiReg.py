@@ -1,4 +1,5 @@
 import pandas as pas
+import statsmodels.api as sma
 import sqlitepersist as sqp
 from PersistClasses import *
 
@@ -8,8 +9,9 @@ class MultiReg():
         self._f = fact
         self._p = project
         self._pid = project._id
-        self._df = None
-        self._grpdf = None
+        self._df = None #ras data frame
+        self._grpdf = None #grouped dataframe
+        self._grpdff = None #flattened grouped data frame
         self._experiments = None
         self._factdict = {}
         self._respdict = {}
@@ -26,8 +28,13 @@ class MultiReg():
     def dataframe(self):
         if self._df is None:
             raise Exception("Dataframe has not been built yet")
-        return self._grpdf #return the grouped dataframe
+        return self._grpdff #return the grouped dataframe
 
+    @property
+    def meanframe(self):
+        return self._grpdf
+
+    @property
     def rawframe(self):
         if self._df is None:
             raise Exception("Dataframe has not been built yet")
@@ -99,8 +106,21 @@ class MultiReg():
         ddict = self._get_dataframe()
         self._df = pas.DataFrame(ddict)
         self._grpdf = self._df.groupby(["#factkey"])
+        meanl = list(self._factdict.keys()).extend(self._respdict.keys())
+        self._grpdff = self._grpdf.mean(meanl)
+        self._grpdff = self._grpdff.reset_index()
+
+    def solve_for(self, dependiname : str):
+        """solve the lin regression for a given dependent variable"""
+        y = self.dataframe[dependiname]
+        x_names = list(self._factdict.keys())
+        X = self.dataframe[x_names]
+        X = sma.add_constant(X)
+        model = sma.OLS(y, X).fit()
+        predictions = model.predict(X)
+        summary = model.summary()
+
+        return predictions, summary
 
 
-    def solve_for(self, indiname : str):
-        pass
         

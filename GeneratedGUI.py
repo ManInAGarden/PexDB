@@ -12,6 +12,7 @@ import wx.xrc
 import wx.dataview
 import wx.propgrid as pg
 import wx.adv
+import wx.html
 
 import gettext
 _ = gettext.gettext
@@ -965,7 +966,7 @@ class CreateFullDetailsDialog ( wx.Dialog ):
 class LinRegrDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Multiple linear regression"), pos = wx.DefaultPosition, size = wx.Size( 648,543 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Multiple linear regression"), pos = wx.DefaultPosition, size = wx.Size( 711,702 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -991,37 +992,42 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_staticText19 = wx.StaticText( self, wx.ID_ANY, _(u"Revised input data"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText19.Wrap( -1 )
 
-		gbSizer9.Add( self.m_staticText19, wx.GBPosition( 5, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		gbSizer9.Add( self.m_staticText19, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		self.m_inputDataDLCTRL = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_inputDataDLCTRL.SetMinSize( wx.Size( 100,200 ) )
 
-		gbSizer9.Add( self.m_inputDataDLCTRL, wx.GBPosition( 6, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer9.Add( self.m_inputDataDLCTRL, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
-		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, _(u"Results"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, _(u"Summary"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText16.Wrap( -1 )
 
-		gbSizer9.Add( self.m_staticText16, wx.GBPosition( 8, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		gbSizer9.Add( self.m_staticText16, wx.GBPosition( 5, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		self.doCalcBUT = wx.Button( self, wx.ID_ANY, _(u"Calclulate"), wx.DefaultPosition, wx.DefaultSize, 0 )
-		gbSizer9.Add( self.doCalcBUT, wx.GBPosition( 7, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		gbSizer9.Add( self.doCalcBUT, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
-		self.m_resultsDLCTRL = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gbSizer9.Add( self.m_resultsDLCTRL, wx.GBPosition( 9, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+		m_targetCHOIChoices = []
+		self.m_targetCHOI = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_targetCHOIChoices, wx.CB_SORT )
+		self.m_targetCHOI.SetSelection( 0 )
+		gbSizer9.Add( self.m_targetCHOI, wx.GBPosition( 4, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_summaryHTMLWIN = wx.html.HtmlWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.html.HW_SCROLLBAR_AUTO )
+		self.m_summaryHTMLWIN.SetMinSize( wx.Size( 100,100 ) )
+
+		gbSizer9.Add( self.m_summaryHTMLWIN, wx.GBPosition( 6, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 		m_sdbSizer7 = wx.StdDialogButtonSizer()
 		self.m_sdbSizer7OK = wx.Button( self, wx.ID_OK )
 		m_sdbSizer7.AddButton( self.m_sdbSizer7OK )
-		self.m_sdbSizer7Cancel = wx.Button( self, wx.ID_CANCEL )
-		m_sdbSizer7.AddButton( self.m_sdbSizer7Cancel )
 		m_sdbSizer7.Realize();
 
 		gbSizer9.Add( m_sdbSizer7, wx.GBPosition( 10, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 
 		gbSizer9.AddGrowableCol( 1 )
+		gbSizer9.AddGrowableRow( 3 )
 		gbSizer9.AddGrowableRow( 6 )
-		gbSizer9.AddGrowableRow( 9 )
 
 		self.SetSizer( gbSizer9 )
 		self.Layout()
@@ -1032,6 +1038,7 @@ class LinRegrDialog ( wx.Dialog ):
 		self.Bind( wx.EVT_INIT_DIALOG, self.LinRegrDialogOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.LinRegrDialogOnShow )
 		self.m_precisionCHOI.Bind( wx.EVT_CHOICE, self.m_precisionCHOIOnChoice )
+		self.doCalcBUT.Bind( wx.EVT_BUTTON, self.doCalcBUTOnButtonClick )
 
 	def __del__( self ):
 		pass
@@ -1045,6 +1052,9 @@ class LinRegrDialog ( wx.Dialog ):
 		event.Skip()
 
 	def m_precisionCHOIOnChoice( self, event ):
+		event.Skip()
+
+	def doCalcBUTOnButtonClick( self, event ):
 		event.Skip()
 
 

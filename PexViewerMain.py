@@ -503,7 +503,6 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			parent=self)
 
 		header = ["experiment"]
-		factstart = len(header)
 		fprep_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._currentproject._id)
 		fpreps = list(fprep_q)
 		rprep_q = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._currentproject._id)

@@ -18,20 +18,24 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		self.m_projectNameSTXT.SetLabelText(self._p.name)
 		self._solver = MultiReg(self._f, self._p)
 		self._solver.read_data()
+
+		done = False
+		for respabbr, response in self._solver.respdict.items():
+			self.m_targetCHOI.Append(response.name, respabbr)
+			done = True
+
+		if done:
+			self.m_targetCHOI.Select(0)
+
+		self.m_summaryHTMLWIN.AppendToPage("Calculate to show summary here")
+		
 		
 	def _get_floatstr(self, flnum):
 		return self._forms.format(flnum)
 
 	def show_input(self):
-		df = self._solver.dataframe
+		df = self._solver.dataframe #already contains mean values in case of repetitions in the experiments
 		
-		meanl = []
-		for rprep in sqp.SQQuery(self._f, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._p._id):
-			meanl.append(rprep.responsedefinition.abbreviation)	
-		
-		mi = df.mean(meanl)
-		std= df.std()
-	
 		if self.m_inputDataDLCTRL.GetColumnCount() <= 0: #we do this the first time, we have to add columns
 			self.m_inputDataDLCTRL.AppendTextColumn("#",
 				align=wx.ALIGN_RIGHT)
@@ -47,7 +51,7 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		
 		drow = []
 		ct = 0
-		for idx, row in mi.iterrows():
+		for idx, row in df.iterrows():
 			drow.clear()
 			ct += 1
 			drow.append(str(ct))
@@ -76,4 +80,27 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		self._forms = "{:." + str(self._floatpreci) + "f}" 
 		self.show_input()
 		self.m_inputDataDLCTRL.Refresh()
+
+	def _replaceabbr(self, txt : str):
+		"""replace all abbreviations for factors and responses with their full names"""
+		if txt is None: 
+			return None
+
+		answ = txt
+		for key, resp in self._solver.respdict.items():
+			answ = answ.replace(key, resp.name)
+		for key, fact in self._solver.factdict.items():
+			answ = answ.replace(key, fact.name)
+
+		return answ
+
+	def doCalcBUTOnButtonClick(self, event):
+		targsel = self.m_targetCHOI.GetSelection()
+
+		if targsel == wx.NOT_FOUND:
+			return
+		rabbr = self.m_targetCHOI.GetClientData(targsel)
+		predi, sum = self._solver.solve_for(rabbr)
+
+		self.m_summaryHTMLWIN.SetPage(self._replaceabbr(sum.as_html()))
 		
