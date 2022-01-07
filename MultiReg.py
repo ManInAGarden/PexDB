@@ -116,11 +116,38 @@ class MultiReg():
         x_names = list(self._factdict.keys())
         X = self.dataframe[x_names]
         X = sma.add_constant(X)
-        model = sma.OLS(y, X).fit()
-        predictions = model.predict(X)
-        summary = model.summary()
+        self.model = sma.OLS(y, X).fit()
+        predictions = self.model.predict(X)
+        summary = self.model.summary()
 
         return predictions, summary
+
+    def get_formula(self, floatforms : str):
+        answ = "<{}> = ".format(self.respdict[self.model.model.endog_names].name)
+        answ += floatforms.format(self.model.params["const"])
+        for abbr, fact in self.factdict.items():
+            flt = self.model.params[abbr]
+            if abs(flt) < 1e-6:
+                continue
+
+            if flt > 0.0:
+                answ += " + "
+            elif flt < 0.0:
+                answ += " - "
+                flt *= -1
+
+            answ += floatforms.format(flt) + "*" + "<{}>".format(fact.name)
+
+        return answ
+
+    def predict(self, x):
+        """predict a response for a single combination or many combinations of factors
+        x is list -> single response value
+        x is array -> multiple predictions"""
+        if self.model is None:
+            raise Exception("Please solve befor predicting")
+
+        return self.model.predict(x)
 
 
         

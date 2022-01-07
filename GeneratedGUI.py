@@ -966,7 +966,7 @@ class CreateFullDetailsDialog ( wx.Dialog ):
 class LinRegrDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Multiple linear regression"), pos = wx.DefaultPosition, size = wx.Size( 711,702 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Multiple linear regression"), pos = wx.DefaultPosition, size = wx.Size( 711,606 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -977,57 +977,114 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_projectNameSTXT = wx.StaticText( self, wx.ID_ANY, _(u"<projectname>"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_projectNameSTXT.Wrap( -1 )
 
-		gbSizer9.Add( self.m_projectNameSTXT, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 2 ), wx.ALL, 5 )
+		gbSizer9.Add( self.m_projectNameSTXT, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
-		self.m_staticText18 = wx.StaticText( self, wx.ID_ANY, _(u"Float precision"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_linRegNBCK = wx.Notebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.NB_TOP )
+		self.m_panel5 = wx.Panel( self.m_linRegNBCK, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		gbSizer13 = wx.GridBagSizer( 0, 0 )
+		gbSizer13.SetFlexibleDirection( wx.BOTH )
+		gbSizer13.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText18 = wx.StaticText( self.m_panel5, wx.ID_ANY, _(u"Float precision"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText18.Wrap( -1 )
 
-		gbSizer9.Add( self.m_staticText18, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		gbSizer13.Add( self.m_staticText18, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		m_precisionCHOIChoices = [ _(u"0"), _(u"1"), _(u"2"), _(u"3"), _(u"4"), _(u"5"), _(u"6") ]
-		self.m_precisionCHOI = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_precisionCHOIChoices, 0 )
+		self.m_precisionCHOI = wx.Choice( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_precisionCHOIChoices, 0 )
 		self.m_precisionCHOI.SetSelection( 3 )
-		gbSizer9.Add( self.m_precisionCHOI, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		gbSizer13.Add( self.m_precisionCHOI, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
-		self.m_staticText19 = wx.StaticText( self, wx.ID_ANY, _(u"Revised input data"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText19 = wx.StaticText( self.m_panel5, wx.ID_ANY, _(u"Revised input data"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText19.Wrap( -1 )
 
-		gbSizer9.Add( self.m_staticText19, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		gbSizer13.Add( self.m_staticText19, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
-		self.m_inputDataDLCTRL = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_inputDataDLCTRL = wx.dataview.DataViewListCtrl( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_inputDataDLCTRL.SetMinSize( wx.Size( 100,200 ) )
 
-		gbSizer9.Add( self.m_inputDataDLCTRL, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer13.Add( self.m_inputDataDLCTRL, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
-		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, _(u"Summary"), wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText16.Wrap( -1 )
-
-		gbSizer9.Add( self.m_staticText16, wx.GBPosition( 5, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
-
-		self.doCalcBUT = wx.Button( self, wx.ID_ANY, _(u"Calclulate"), wx.DefaultPosition, wx.DefaultSize, 0 )
-		gbSizer9.Add( self.doCalcBUT, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		self.doCalcBUT = wx.Button( self.m_panel5, wx.ID_ANY, _(u"Calclulate"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer13.Add( self.doCalcBUT, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		m_targetCHOIChoices = []
-		self.m_targetCHOI = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_targetCHOIChoices, wx.CB_SORT )
+		self.m_targetCHOI = wx.Choice( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_targetCHOIChoices, wx.CB_SORT )
 		self.m_targetCHOI.SetSelection( 0 )
-		gbSizer9.Add( self.m_targetCHOI, wx.GBPosition( 4, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer13.Add( self.m_targetCHOI, wx.GBPosition( 3, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
-		self.m_summaryHTMLWIN = wx.html.HtmlWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.html.HW_SCROLLBAR_AUTO )
+		self.m_staticText16 = wx.StaticText( self.m_panel5, wx.ID_ANY, _(u"Summary"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16.Wrap( -1 )
+
+		gbSizer13.Add( self.m_staticText16, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_summaryHTMLWIN = wx.html.HtmlWindow( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.html.HW_SCROLLBAR_AUTO )
 		self.m_summaryHTMLWIN.SetMinSize( wx.Size( 100,100 ) )
 
-		gbSizer9.Add( self.m_summaryHTMLWIN, wx.GBPosition( 6, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer13.Add( self.m_summaryHTMLWIN, wx.GBPosition( 5, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+
+		gbSizer13.AddGrowableCol( 1 )
+		gbSizer13.AddGrowableRow( 2 )
+		gbSizer13.AddGrowableRow( 5 )
+
+		self.m_panel5.SetSizer( gbSizer13 )
+		self.m_panel5.Layout()
+		gbSizer13.Fit( self.m_panel5 )
+		self.m_linRegNBCK.AddPage( self.m_panel5, _(u"Regression Calculation"), False )
+		self.m_panel6 = wx.Panel( self.m_linRegNBCK, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		gbSizer11 = wx.GridBagSizer( 0, 0 )
+		gbSizer11.SetFlexibleDirection( wx.BOTH )
+		gbSizer11.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText24 = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"Formula"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText24.Wrap( -1 )
+
+		gbSizer11.Add( self.m_staticText24, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText27 = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"Factor precision"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText27.Wrap( -1 )
+
+		gbSizer11.Add( self.m_staticText27, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		m_factorPrecisionCHOIChoices = [ _(u"0"), _(u"1"), _(u"2"), _(u"3"), _(u"4"), _(u"5"), _(u"6") ]
+		self.m_factorPrecisionCHOI = wx.Choice( self.m_panel6, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_factorPrecisionCHOIChoices, wx.CB_SORT )
+		self.m_factorPrecisionCHOI.SetSelection( 0 )
+		gbSizer11.Add( self.m_factorPrecisionCHOI, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_formulaTBX = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer11.Add( self.m_formulaTBX, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_staticText25 = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"Target"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText25.Wrap( -1 )
+
+		gbSizer11.Add( self.m_staticText25, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_targetResponseSTXT = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"..."), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_targetResponseSTXT.Wrap( -1 )
+
+		gbSizer11.Add( self.m_targetResponseSTXT, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+
+		gbSizer11.AddGrowableCol( 1 )
+
+		self.m_panel6.SetSizer( gbSizer11 )
+		self.m_panel6.Layout()
+		gbSizer11.Fit( self.m_panel6 )
+		self.m_linRegNBCK.AddPage( self.m_panel6, _(u"Prediction"), True )
+
+		gbSizer9.Add( self.m_linRegNBCK, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 		m_sdbSizer7 = wx.StdDialogButtonSizer()
 		self.m_sdbSizer7OK = wx.Button( self, wx.ID_OK )
 		m_sdbSizer7.AddButton( self.m_sdbSizer7OK )
 		m_sdbSizer7.Realize();
 
-		gbSizer9.Add( m_sdbSizer7, wx.GBPosition( 10, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer9.Add( m_sdbSizer7, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 
-		gbSizer9.AddGrowableCol( 1 )
-		gbSizer9.AddGrowableRow( 3 )
-		gbSizer9.AddGrowableRow( 6 )
+		gbSizer9.AddGrowableCol( 0 )
+		gbSizer9.AddGrowableRow( 1 )
 
 		self.SetSizer( gbSizer9 )
 		self.Layout()
@@ -1037,8 +1094,10 @@ class LinRegrDialog ( wx.Dialog ):
 		# Connect Events
 		self.Bind( wx.EVT_INIT_DIALOG, self.LinRegrDialogOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.LinRegrDialogOnShow )
+		self.m_linRegNBCK.Bind( wx.EVT_NOTEBOOK_PAGE_CHANGED, self.m_linRegNBCKOnNotebookPageChanged )
 		self.m_precisionCHOI.Bind( wx.EVT_CHOICE, self.m_precisionCHOIOnChoice )
 		self.doCalcBUT.Bind( wx.EVT_BUTTON, self.doCalcBUTOnButtonClick )
+		self.m_factorPrecisionCHOI.Bind( wx.EVT_CHOICE, self.m_factorPrecisionCHOIOnChoice )
 
 	def __del__( self ):
 		pass
@@ -1051,10 +1110,16 @@ class LinRegrDialog ( wx.Dialog ):
 	def LinRegrDialogOnShow( self, event ):
 		event.Skip()
 
+	def m_linRegNBCKOnNotebookPageChanged( self, event ):
+		event.Skip()
+
 	def m_precisionCHOIOnChoice( self, event ):
 		event.Skip()
 
 	def doCalcBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_factorPrecisionCHOIOnChoice( self, event ):
 		event.Skip()
 
 

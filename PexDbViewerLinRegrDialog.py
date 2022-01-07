@@ -13,6 +13,9 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		self._p = proj
 		self._floatpreci = 3
 		self._forms = "{:." + str(self._floatpreci) + "f}" 
+		self._float_factorpreci = 2
+		self._factorforms = "{:." + str(self._float_factorpreci) + "f}" 
+		self._currenttargabbr = None
 
 	def LinRegrDialogOnInitDialog( self, event ):
 		self.m_projectNameSTXT.SetLabelText(self._p.name)
@@ -26,6 +29,9 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 
 		if done:
 			self.m_targetCHOI.Select(0)
+
+		self.m_factorPrecisionCHOI.Select(self._floatpreci)
+		self.m_factorPrecisionCHOI.Select(self._float_factorpreci)
 
 		self.m_summaryHTMLWIN.AppendToPage("Calculate to show summary here")
 		
@@ -102,5 +108,31 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		rabbr = self.m_targetCHOI.GetClientData(targsel)
 		predi, sum = self._solver.solve_for(rabbr)
 
+		self._currenttargabbr = rabbr
+
 		self.m_summaryHTMLWIN.SetPage(self._replaceabbr(sum.as_html()))
+		self._predi = predi
+		self._sum = sum
+
+	def m_linRegNBCKOnNotebookPageChanged(self, event):
+		if event.Selection == 1: #we have changed to page 1
+			self._initpredictpage()
+
+	def _initpredictpage(self):
+		if self._currenttargabbr is None:
+			wx.MessageBox("Please execute a calculation first")
+
+		self.m_targetResponseSTXT.SetLabelText(self._solver.respdict[self._currenttargabbr].name)
+		self.m_formulaTBX.SetLabelText(self._solver.get_formula(self._factorforms))
+
+		preds = self._solver.predict([0.2,95])
+
+		print(preds)
+
+	def m_factorPrecisionCHOIOnChoice(self, event):
+		if event.Selection is not wx.NOT_FOUND:
+			self._float_factorpreci = event.Selection
+			self._factorforms = "{:." + str(event.Selection) + "f}"
+			self.m_formulaTBX.SetLabelText(self._solver.get_formula(self._factorforms))
+			
 		

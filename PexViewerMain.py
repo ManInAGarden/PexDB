@@ -446,7 +446,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		seeder = sqp.SQPSeeder(self._fact, fpath)
 		updct, insct = seeder.update_seeddata(FactorDefinition.Abbreviation)
 		if updct > 0 or insct > 0:
-			wx.MessageBox("{0} factor defintions were updated and {1} ned defintions were inserted".format(updct, insct))
+			wx.MessageBox("{0} factor defintions were updated and {1} defintions were inserted".format(updct, insct))
 		else:
 			wx.MessageBox("No factor defintions were update or inserted")
 
