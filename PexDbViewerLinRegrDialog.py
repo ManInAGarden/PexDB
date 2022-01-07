@@ -19,6 +19,7 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 
 	def LinRegrDialogOnInitDialog( self, event ):
 		self.m_projectNameSTXT.SetLabelText(self._p.name)
+		self.m_linRegNBCK.SetSelection(0)
 		self._solver = MultiReg(self._f, self._p)
 		self._solver.read_data()
 

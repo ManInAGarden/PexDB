@@ -1031,7 +1031,7 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_panel5.SetSizer( gbSizer13 )
 		self.m_panel5.Layout()
 		gbSizer13.Fit( self.m_panel5 )
-		self.m_linRegNBCK.AddPage( self.m_panel5, _(u"Regression Calculation"), False )
+		self.m_linRegNBCK.AddPage( self.m_panel5, _(u"Regression Calculation"), True )
 		self.m_panel6 = wx.Panel( self.m_linRegNBCK, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		gbSizer11 = wx.GridBagSizer( 0, 0 )
 		gbSizer11.SetFlexibleDirection( wx.BOTH )
@@ -1071,7 +1071,7 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_panel6.SetSizer( gbSizer11 )
 		self.m_panel6.Layout()
 		gbSizer11.Fit( self.m_panel6 )
-		self.m_linRegNBCK.AddPage( self.m_panel6, _(u"Prediction"), True )
+		self.m_linRegNBCK.AddPage( self.m_panel6, _(u"Prediction"), False )
 
 		gbSizer9.Add( self.m_linRegNBCK, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
