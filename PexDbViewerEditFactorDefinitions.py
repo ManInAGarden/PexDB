@@ -30,7 +30,7 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 		self.get_dbdta2gui(True)
 
 	def get_dbdta2gui(self, active = True):
-		self._factgui.emptyallitems(self.m_factorDtaPG)
+		self._factgui.emptyallitems()
 		self.m_factorDtaPG.Enable(False) #deisable the prop grid, will be enabled in case a factor gets selected by the user
 
 		self.m_factorDefsLC.DeleteAllItems()
@@ -77,10 +77,10 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 		for attnam in fetchthese:
 			valdict[attnam] = selfactdef.__getattribute__(attnam)
 
-		self._factgui.object2gui(valdict, self.m_factorDtaPG)
+		self._factgui.object2gui(valdict)
 
 	def m_factorDtaPGOnPropertyGridChanged( self, event ):
-		vald = self._factgui.gui2object(self.m_factorDtaPG)
+		vald = self._factgui.gui2object()
 		fetchthese = ["name", "abbreviation", "disptype", "unit", "unitid", "isactive", "curaname"]
 		for name in fetchthese:
 			self._currentfdef.__setattr__(name, vald[name])

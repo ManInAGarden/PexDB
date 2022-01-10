@@ -92,15 +92,15 @@ class WxGuiMapperFactorDefintion(WxGuiMapper):
     """
     def __init__(self, fact : sqp.SQFactory, parentpropgrid : pg.PropertyGrid):
         super().__init__(fact, parentpropgrid)
-        self.add(WxGuiMapperInfo(fieldname="abbreviation", pgitemlabel="Abbreviation", pgitemtype=pg.StringProperty))
-        self.add(WxGuiMapperInfo(fieldname="name", pgitemlabel="Name", pgitemtype=pg.StringProperty))
-        self.add(WxGuiMapperInfo(fieldname="unit", pgitemtype=pg.EnumProperty, fieldcls=Unit, idfieldname="unitid", pgitemlabel="Unit"))
-        self.add(WxGuiMapperInfo(fieldname="disptype", pgitemtype=pg.EnumProperty, pgitemlabel="Display type", staticchoices=["FLOAT", "BOOLEAN"]))
-        self.add(WxGuiMapperInfo(fieldname="isactive", pgitemtype=pg.BoolProperty, pgitemlabel="Is active"))
-        self.add(WxGuiMapperInfo(fieldname="curaname", pgitemtype=pg.EnumProperty, fieldcls=CuraNameCat, pgitemlabel="Cura name"))
-        self.add(WxGuiMapperInfo(fieldname="defaultmin", pgitemtype=pg.FloatProperty, pgitemlabel="default min value"))
-        self.add(WxGuiMapperInfo(fieldname="defaultmax", pgitemtype=pg.FloatProperty, pgitemlabel="default max value"))
-        self.add(WxGuiMapperInfo(fieldname="defaultlevelnum", pgitemtype=pg.IntProperty, pgitemlabel="default number of levels"))
+        self.add(WxGuiMapperInfo(fname="abbreviation", pgilabel="Abbreviation", pgitype=pg.StringProperty))
+        self.add(WxGuiMapperInfo(fname="name", pgilabel="Name", pgitype=pg.StringProperty))
+        self.add(WxGuiMapperInfo(fname="unit", pgitype=pg.EnumProperty, fcls=Unit, idfldname="unitid", pgilabel="Unit"))
+        self.add(WxGuiMapperInfo(fname="disptype", pgitype=pg.EnumProperty, pgilabel="Display type", schoices=["FLOAT", "BOOLEAN"]))
+        self.add(WxGuiMapperInfo(fname="isactive", pgitype=pg.BoolProperty, pgilabel="Is active"))
+        self.add(WxGuiMapperInfo(fname="curaname", pgitype=pg.EnumProperty, fcls=CuraNameCat, pgilabel="Cura name"))
+        self.add(WxGuiMapperInfo(fname="defaultmin", pgitype=pg.FloatProperty, pgilabel="default min value"))
+        self.add(WxGuiMapperInfo(fname="defaultmax", pgitype=pg.FloatProperty, pgilabel="default max value"))
+        self.add(WxGuiMapperInfo(fname="defaultlevelnum", pgitype=pg.IntProperty, pgilabel="default number of levels"))
 
         self.createallprops()
 
@@ -131,10 +131,10 @@ class WxGuiMapperResultDefintion(WxGuiMapper):
     """
     def __init__(self, fact : sqp.SQFactory, parentpropgrid : pg.PropertyGrid):
         super().__init__(fact, parentpropgrid)
-        self.add(WxGuiMapperInfo(fieldname="abbreviation", pgitemlabel="Abbreviation", pgitemtype=pg.StringProperty))
-        self.add(WxGuiMapperInfo(fieldname="name", pgitemlabel="Name", pgitemtype=pg.StringProperty))
-        self.add(WxGuiMapperInfo(fieldname="unit", pgitemtype=pg.EnumProperty, fieldcls=Unit, idfieldname="unitid", pgitemlabel="Unit"))
-        self.add(WxGuiMapperInfo(fieldname="isactive", pgitemtype=pg.BoolProperty, pgitemlabel="Is active"))
+        self.add(WxGuiMapperInfo(fname="abbreviation", pgilabel="Abbreviation", pgitype=pg.StringProperty))
+        self.add(WxGuiMapperInfo(fname="name", pgilabel="Name", pgitype=pg.StringProperty))
+        self.add(WxGuiMapperInfo(fname="unit", pgitype=pg.EnumProperty, fcls=Unit, idfldname="unitid", pgilabel="Unit"))
+        self.add(WxGuiMapperInfo(fname="isactive", pgitype=pg.BoolProperty, pgilabel="Is active"))
 
         self.createallprops()
 

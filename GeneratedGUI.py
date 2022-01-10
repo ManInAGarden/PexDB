@@ -1055,6 +1055,9 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_formulaTBX = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		gbSizer11.Add( self.m_formulaTBX, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
+		self.m_staticline2 = wx.StaticLine( self.m_panel6, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		gbSizer11.Add( self.m_staticline2, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND |wx.ALL, 5 )
+
 		self.m_staticText25 = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"Target"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText25.Wrap( -1 )
 
@@ -1064,6 +1067,25 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_targetResponseSTXT.Wrap( -1 )
 
 		gbSizer11.Add( self.m_targetResponseSTXT, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText241 = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"Factors"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText241.Wrap( -1 )
+
+		gbSizer11.Add( self.m_staticText241, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_factorsPGRD = pg.PropertyGrid(self.m_panel6, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE)
+		gbSizer11.Add( self.m_factorsPGRD, wx.GBPosition( 4, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_calcAllBUT = wx.Button( self.m_panel6, wx.ID_ANY, _(u"Calculate All"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer11.Add( self.m_calcAllBUT, wx.GBPosition( 5, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText251 = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"Responses"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText251.Wrap( -1 )
+
+		gbSizer11.Add( self.m_staticText251, wx.GBPosition( 6, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_responsesPGRD = pg.PropertyGrid(self.m_panel6, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE)
+		gbSizer11.Add( self.m_responsesPGRD, wx.GBPosition( 6, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 
 		gbSizer11.AddGrowableCol( 1 )
@@ -1098,6 +1120,7 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_precisionCHOI.Bind( wx.EVT_CHOICE, self.m_precisionCHOIOnChoice )
 		self.doCalcBUT.Bind( wx.EVT_BUTTON, self.doCalcBUTOnButtonClick )
 		self.m_factorPrecisionCHOI.Bind( wx.EVT_CHOICE, self.m_factorPrecisionCHOIOnChoice )
+		self.m_calcAllBUT.Bind( wx.EVT_BUTTON, self.m_calcAllBUTOnButtonClick )
 
 	def __del__( self ):
 		pass
@@ -1120,6 +1143,9 @@ class LinRegrDialog ( wx.Dialog ):
 		event.Skip()
 
 	def m_factorPrecisionCHOIOnChoice( self, event ):
+		event.Skip()
+
+	def m_calcAllBUTOnButtonClick( self, event ):
 		event.Skip()
 
 
