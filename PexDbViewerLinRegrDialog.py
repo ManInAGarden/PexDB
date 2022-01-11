@@ -37,6 +37,18 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 
 		self.m_summaryHTMLWIN.AppendToPage("Calculate to show summary here")
 		self._crea_factnresprops()
+
+	def m_targetCHOIOnChoice(self, event):
+		sel = self.m_targetCHOI.GetSelection()
+
+		if sel == wx.NOT_FOUND:
+			return
+
+		targresp = self._solver.resp_abbreviations[sel]
+		self.m_formulaTBX.SetValue(self._solver.get_formula(self._factorforms, targresp))
+		#self.m_formulaTBX.SetLabelText(self._solver.get_formula(self._factorforms, targresp))
+		
+		
 		
 	def _crea_factnresprops(self):
 		for abbr, factdef in self._solver.factdict.items():
@@ -117,48 +129,88 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 
 		return answ
 
+	def htmlsummary(self, coefs, intercs):
+		answ = "<html>"
+		answ += "<body>"
+		answ += "<table>"
+
+		answ += "<tr>"
+		answ += "<td><b>{}</b></td>".format("/") 
+		answ += "<td><b>{}</b></td>".format("c") 
+
+		for key, fact in self._solver.factdict.items():
+			answ += "<td><b>{}</b></td>".format(fact.name) 
+		answ += "</tr>"
+		fforms = "<td>" + self._forms + "</td>"
+		l = 0
+		for key, resp in self._solver.respdict.items():
+			answ += "<tr>"
+			answ += "<td><b>{}</b></td>".format(resp.name) 
+			c = 0
+
+			answ += fforms.format(intercs[l]) 
+
+			for key, fact in self._solver.factdict.items():
+				answ += fforms.format(coefs[l][c]) 
+				c += 1
+			answ += "</tr>"
+
+			l += 1
+		
+		answ += "</table>"
+		answ += "</body>"
+		answ += "</html>"
+
+		return answ
+
 	def doCalcBUTOnButtonClick(self, event):
-		targsel = self.m_targetCHOI.GetSelection()
-
-		if targsel == wx.NOT_FOUND:
-			return
-		rabbr = self.m_targetCHOI.GetClientData(targsel)
-		predi, sum = self._solver.solve_for(rabbr)
-
-		self._currenttargabbr = rabbr
-
-		self.m_summaryHTMLWIN.SetPage(self._replaceabbr(sum.as_html()))
-		self._predi = predi
-		self._sum = sum
+		self._coefs, self._interc = self._solver.solve_for_all()
+		self.m_summaryHTMLWIN.SetPage(self.htmlsummary(self._coefs, self._interc))
 
 	def m_linRegNBCKOnNotebookPageChanged(self, event):
 		if event.Selection == 1: #we have changed to page 1
 			self._initpredictpage()
 
 	def _initpredictpage(self):
-		if self._currenttargabbr is None:
-			wx.MessageBox("Please execute a calculation first")
+		if self._coefs is None or self._interc is None:
+			wx.MessageBox("Please execute solve first")
 
-		self.m_targetResponseSTXT.SetLabelText(self._solver.respdict[self._currenttargabbr].name)
-		self.m_formulaTBX.SetLabelText(self._solver.get_formula(self._factorforms))
+		firsttarg = self._solver.resp_abbreviations[0]
+		self.m_formulaTBX.SetLabelText(self._solver.get_formula(self._factorforms, firsttarg))
 	
 	def m_factorPrecisionCHOIOnChoice(self, event):
-		if event.Selection is not wx.NOT_FOUND:
-			self._float_factorpreci = event.Selection
-			self._factorforms = "{:." + str(event.Selection) + "f}"
-			self.m_formulaTBX.SetLabelText(self._solver.get_formula(self._factorforms))
+		if event.Selection is wx.NOT_FOUND: #get precision
+			return
+		
+		self._float_factorpreci = event.Selection
+		self._factorforms = "{:." + str(event.Selection) + "f}"
+
+		sel = self.m_targetCHOI.GetSelection() #get target
+		if sel == wx.NOT_FOUND:
+			return
+
+		targresp = self._solver.resp_abbreviations[sel]
+		self.m_formulaTBX.SetLabelText(self._solver.get_formula(self._factorforms, targresp))
+			
 
 	def m_calcAllBUTOnButtonClick(self, event):
-		x = []
-		for abbr, factdef in self._solver.factdict.items():
-			val = self.m_factorsPGRD.GetPropertyValue(abbr)
-			x.append(val)
 
-		for abbr, respdef in self._solver.respdict.items():
-			predi, sum = self._solver.solve_for(abbr)
-			pred = self._solver.predict(x)
-		
-		#preds = self._solver.predict(x)
-		pass
+		if self._coefs is None or self._interc is None:
+			wx.MessageBox("Please do a solve before any predicting")
+
+		l = 0
+		for respabb in self._solver.resp_abbreviations:
+			c = 0
+			const = self._interc[l]
+			cofs = self._coefs[l]
+			y = const
+			for factabb in self._solver.fact_abbreviations:
+				xval = self.m_factorsPGRD.GetPropertyValue(factabb)
+				y += cofs[c] * xval
+				c += 1
+
+			self.m_responsesPGRD.SetPropertyValue(respabb, y)
+			l += 1
+
 			
 		

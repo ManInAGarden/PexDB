@@ -1005,13 +1005,8 @@ class LinRegrDialog ( wx.Dialog ):
 
 		gbSizer13.Add( self.m_inputDataDLCTRL, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
-		self.doCalcBUT = wx.Button( self.m_panel5, wx.ID_ANY, _(u"Calclulate"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.doCalcBUT = wx.Button( self.m_panel5, wx.ID_ANY, _(u"Solve"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		gbSizer13.Add( self.doCalcBUT, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
-
-		m_targetCHOIChoices = []
-		self.m_targetCHOI = wx.Choice( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_targetCHOIChoices, wx.CB_SORT )
-		self.m_targetCHOI.SetSelection( 0 )
-		gbSizer13.Add( self.m_targetCHOI, wx.GBPosition( 3, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 		self.m_staticText16 = wx.StaticText( self.m_panel5, wx.ID_ANY, _(u"Summary"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText16.Wrap( -1 )
@@ -1042,6 +1037,11 @@ class LinRegrDialog ( wx.Dialog ):
 
 		gbSizer11.Add( self.m_staticText24, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
+		m_targetCHOIChoices = []
+		self.m_targetCHOI = wx.Choice( self.m_panel6, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_targetCHOIChoices, 0 )
+		self.m_targetCHOI.SetSelection( 0 )
+		gbSizer11.Add( self.m_targetCHOI, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
 		self.m_staticText27 = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"Factor precision"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText27.Wrap( -1 )
 
@@ -1062,11 +1062,6 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_staticText25.Wrap( -1 )
 
 		gbSizer11.Add( self.m_staticText25, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
-
-		self.m_targetResponseSTXT = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"..."), wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_targetResponseSTXT.Wrap( -1 )
-
-		gbSizer11.Add( self.m_targetResponseSTXT, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		self.m_staticText241 = wx.StaticText( self.m_panel6, wx.ID_ANY, _(u"Factors"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText241.Wrap( -1 )
@@ -1119,6 +1114,7 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_linRegNBCK.Bind( wx.EVT_NOTEBOOK_PAGE_CHANGED, self.m_linRegNBCKOnNotebookPageChanged )
 		self.m_precisionCHOI.Bind( wx.EVT_CHOICE, self.m_precisionCHOIOnChoice )
 		self.doCalcBUT.Bind( wx.EVT_BUTTON, self.doCalcBUTOnButtonClick )
+		self.m_targetCHOI.Bind( wx.EVT_CHOICE, self.m_targetCHOIOnChoice )
 		self.m_factorPrecisionCHOI.Bind( wx.EVT_CHOICE, self.m_factorPrecisionCHOIOnChoice )
 		self.m_calcAllBUT.Bind( wx.EVT_BUTTON, self.m_calcAllBUTOnButtonClick )
 
@@ -1140,6 +1136,9 @@ class LinRegrDialog ( wx.Dialog ):
 		event.Skip()
 
 	def doCalcBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_targetCHOIOnChoice( self, event ):
 		event.Skip()
 
 	def m_factorPrecisionCHOIOnChoice( self, event ):

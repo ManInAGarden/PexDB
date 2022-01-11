@@ -1,5 +1,7 @@
 import pandas as pas
-import statsmodels.api as sma
+from pandas.core.series import Series
+#import statsmodels.api as sma
+from sklearn.linear_model import LinearRegression
 import sqlitepersist as sqp
 from PersistClasses import *
 
@@ -40,6 +42,14 @@ class MultiReg():
             raise Exception("Dataframe has not been built yet")
 
         return self._df
+
+    @property
+    def resp_abbreviations(self):
+        return list(self._respdict.keys())
+
+    @property
+    def fact_abbreviations(self):
+        return list(self._factdict.keys())
         
 
     def _get_experiments(self):
@@ -110,23 +120,36 @@ class MultiReg():
         self._grpdff = self._grpdf.mean(meanl)
         self._grpdff = self._grpdff.reset_index()
 
+    def solve_for_all(self):
+        """solve the linear regression for all dependent variables"""
+        y_names = self.resp_abbreviations
+        y = self.dataframe[y_names]
+        x_names = self.fact_abbreviations
+        X = self.dataframe[x_names]
+        mlr = LinearRegression()
+        self.model = mlr.fit(X, y)
+        return self.model.coef_, self.model.intercept_
+
     def solve_for(self, dependiname : str):
         """solve the lin regression for a given dependent variable"""
         y = self.dataframe[dependiname]
         x_names = list(self._factdict.keys())
         X = self.dataframe[x_names]
-        X = sma.add_constant(X)
-        self.model = sma.OLS(y, X).fit()
-        predictions = self.model.predict(X)
-        summary = self.model.summary()
+        mlr = LinearRegression()
+        self.model = mlr.fit(X, y)
+        return self.model.coef_, self.model.intercept_
 
-        return predictions, summary
+    def get_formula(self, floatforms : str, targresp : str):
+        """get the formula for a single target"""
+        answ = "<{}> = ".format(self.respdict[targresp].name)
 
-    def get_formula(self, floatforms : str):
-        answ = "<{}> = ".format(self.respdict[self.model.model.endog_names].name)
-        answ += floatforms.format(self.model.params["const"])
+        #self.model.coef_, self.model.intercept_
+        l = self.resp_abbreviations.index(targresp)
+        answ += floatforms.format(self.model.intercept_[l])
+        coefs = self.model.coef_[l]
         for abbr, fact in self.factdict.items():
-            flt = self.model.params[abbr]
+            c = self.fact_abbreviations.index(abbr)
+            flt = coefs[c]
             if abs(flt) < 1e-6:
                 continue
 
@@ -140,14 +163,14 @@ class MultiReg():
 
         return answ
 
-    def predict(self, x):
+    def predict(self, x : list):
         """predict a response for a single combination or many combinations of factors
         x is list -> single response value
         x is array -> multiple predictions"""
         if self.model is None:
             raise Exception("Please solve befor predicting")
 
-        return self.model.predict(x)
+        return self.model.predict(x.append(1.0))
 
 
         
