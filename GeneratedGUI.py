@@ -24,7 +24,7 @@ _ = gettext.gettext
 class PexViewerMainFrame ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"PexViewer"), pos = wx.DefaultPosition, size = wx.Size( 741,524 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"PexViewer"), pos = wx.DefaultPosition, size = wx.Size( 741,665 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -109,23 +109,71 @@ class PexViewerMainFrame ( wx.Frame ):
 
 		self.SetMenuBar( self.m_menubar1 )
 
-		main_gsizer = wx.GridSizer( 0, 2, 0, 0 )
+		self.m_menu6 = wx.Menu()
+		self.Bind( wx.EVT_RIGHT_DOWN, self.PexViewerMainFrameOnContextMenu )
+
+		gbSizer12 = wx.GridBagSizer( 0, 0 )
+		gbSizer12.SetFlexibleDirection( wx.BOTH )
+		gbSizer12.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
 		self.m_experimentsDataViewListCtrl = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_sequenceDVLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Sequence #"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		self.m_descriptionDVLC = self.m_experimentsDataViewListCtrl.AppendTextColumn( _(u"Description"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		self.m_descriptionDVLC.GetRenderer().EnableEllipsize( wx.ELLIPSIZE_END );
-		main_gsizer.Add( self.m_experimentsDataViewListCtrl, 0, wx.ALL|wx.EXPAND, 5 )
+		gbSizer12.Add( self.m_experimentsDataViewListCtrl, wx.GBPosition( 0, 0 ), wx.GBSpan( 2, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 		self.m_experimentPG = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_BOLD_MODIFIED|wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.TAB_TRAVERSAL)
-		main_gsizer.Add( self.m_experimentPG, 0, wx.ALL|wx.EXPAND, 5 )
+		self.m_experimentPG.SetMinSize( wx.Size( -1,200 ) )
+
+		gbSizer12.Add( self.m_experimentPG, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		gbSizer13 = wx.GridBagSizer( 0, 0 )
+		gbSizer13.SetFlexibleDirection( wx.BOTH )
+		gbSizer13.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_experimentDocsLCTRL = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT|wx.LC_SINGLE_SEL )
+		gbSizer13.Add( self.m_experimentDocsLCTRL, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_expDocPicBIMP = wx.StaticBitmap( self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer13.Add( self.m_expDocPicBIMP, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_expDocTextTBX = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_BESTWRAP|wx.TE_MULTILINE )
+		self.m_expDocTextTBX.SetMinSize( wx.Size( -1,50 ) )
+
+		gbSizer13.Add( self.m_expDocTextTBX, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+		bSizer10 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_newExpDocBU = wx.Button( self, wx.ID_ANY, _(u"New document"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer10.Add( self.m_newExpDocBU, 0, wx.ALL, 5 )
+
+		self.m_delExpDocBU = wx.Button( self, wx.ID_ANY, _(u"Delete document"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer10.Add( self.m_delExpDocBU, 0, wx.ALL, 5 )
+
+		self.m_expDocAddPicBUT = wx.Button( self, wx.ID_ANY, _(u"Add picture"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer10.Add( self.m_expDocAddPicBUT, 0, wx.ALL, 5 )
+
+		self.m_exüDocSaveBUT = wx.Button( self, wx.ID_ANY, _(u"Save document"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer10.Add( self.m_exüDocSaveBUT, 0, wx.ALL, 5 )
 
 
-		self.SetSizer( main_gsizer )
+		gbSizer13.Add( bSizer10, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+
+		gbSizer13.AddGrowableCol( 1 )
+		gbSizer13.AddGrowableRow( 0 )
+		gbSizer13.AddGrowableRow( 1 )
+
+		gbSizer12.Add( gbSizer13, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+
+		gbSizer12.AddGrowableCol( 0 )
+		gbSizer12.AddGrowableCol( 1 )
+		gbSizer12.AddGrowableRow( 0 )
+		gbSizer12.AddGrowableRow( 1 )
+
+		self.SetSizer( gbSizer12 )
 		self.Layout()
-		self.m_menu6 = wx.Menu()
-		self.Bind( wx.EVT_RIGHT_DOWN, self.PexViewerMainFrameOnContextMenu )
-
 		self.m_mainSBA = self.CreateStatusBar( 2, wx.STB_SIZEGRIP, wx.ID_ANY )
 
 		self.Centre( wx.BOTH )
@@ -146,6 +194,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.edit_response_definitions, id = self.edit_response_definitions_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_linearRegrMEIOnMenuSelection, id = self.m_linearRegrMEI.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
+		self.m_experimentDocsLCTRL.Bind( wx.EVT_LIST_ITEM_SELECTED, self.m_experimentDocsLCTRLOnListItemSelected )
+		self.m_newExpDocBU.Bind( wx.EVT_BUTTON, self.m_newExpDocBUOnButtonClick )
+		self.m_delExpDocBU.Bind( wx.EVT_BUTTON, self.m_delExpDocBUOnButtonClick )
 
 	def __del__( self ):
 		pass
@@ -195,6 +246,15 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def experimentDWLC_selchanged( self, event ):
+		event.Skip()
+
+	def m_experimentDocsLCTRLOnListItemSelected( self, event ):
+		event.Skip()
+
+	def m_newExpDocBUOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_delExpDocBUOnButtonClick( self, event ):
 		event.Skip()
 
 	def PexViewerMainFrameOnContextMenu( self, event ):
