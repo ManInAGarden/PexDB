@@ -19,6 +19,10 @@ select * from projectresponsepreparation;
 
 select * from responsevalue;
 
+select * from experimentdoc;
+
+delete from experimentdoc;
+
 drop table experiment;
 
 select * from factorvalue;
@@ -26,6 +30,7 @@ select * from factorvalue;
 -- drop table catalog;
 -- drop table unit;
 -- drop table responsedefinition;
+-- drop table experimentdoc;
 
 select
     fv.value

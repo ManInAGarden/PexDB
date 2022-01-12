@@ -1,3 +1,6 @@
 utconfig.json
 mongopersist/__pycache__/*
 __pycache__/*
+pexviewersqpdebug.log
+PexDb.sqlite
+sqpdebug.log

@@ -24,6 +24,70 @@ class SQPSeeder(object):
                 s = cls(**dm)
                 self._fact.flush(s)
 
+    def update_seeddata2k(self, uniqkdef1 : BaseVarType, uniqkdef2 : BaseVarType):
+        assert(uniqkdef1 is not None) #we need a unique key-field to find an already stored element in the db
+        assert(uniqkdef2 is not None) #we need a unique key-field to find an already stored element in the db
+
+        unifieldname1 = uniqkdef1.get_fieldname()
+        unifieldname2 = uniqkdef2.get_fieldname()
+        with open(self._filepath, 'r', encoding="utf8") as f:
+            data = json.load(f)
+        
+        ctupd = 0
+        ctins = 0
+        for datk, datlist in data.items():
+            cls = self._getclass(datk)
+            for datmap in datlist:
+                dm = self._doreplacements(cls, datmap)
+                s = cls(**dm)
+                skv1 = s.__getattribute__(unifieldname1)
+                skv2 = s.__getattribute__(unifieldname2)
+                other = SQQuery(self._fact, cls).where((uniqkdef1==skv1) 
+                    & (uniqkdef2==skv2)).first_or_default(None)
+                if other is not None:
+                    #we have a stored version of this - so we have to update this one to keep the original contents of _id and created
+                    self._fact.flush(self._update(other, s))
+                    ctupd += 1
+                else:
+                    self._fact.flush(s)
+                    ctins += 1
+
+        return ctupd, ctins
+
+    def update_seeddata3k(self, uniqkdef1, uniqkdef2, uniqkdef3):
+        assert(uniqkdef1 is not None) #we need a unique key-field to find an already stored element in the db
+        assert(uniqkdef2 is not None) #we need a unique key-field to find an already stored element in the db
+        assert(uniqkdef3 is not None) #we need a unique key-field to find an already stored element in the db
+
+        unifieldname1 = uniqkdef1.get_fieldname()
+        unifieldname2 = uniqkdef2.get_fieldname()
+        unifieldname3 = uniqkdef3.get_fieldname()
+
+        with open(self._filepath, 'r', encoding="utf8") as f:
+            data = json.load(f)
+        
+        ctupd = 0
+        ctins = 0
+        for datk, datlist in data.items():
+            cls = self._getclass(datk)
+            for datmap in datlist:
+                dm = self._doreplacements(cls, datmap)
+                s = cls(**dm)
+
+                skv1 = s.__getattribute__(unifieldname1)
+                skv2 = s.__getattribute__(unifieldname2)
+                skv3 = s.__getattribute__(unifieldname3)
+                other = SQQuery(self._fact, cls).where((uniqkdef1==skv1) & (uniqkdef2==skv2) & (uniqkdef3==skv3)).first_or_default(None)
+                if other is not None:
+                    #we have a stored version of this - so we have to update this one to keep the original contents of _id and created
+                    self._fact.flush(self._update(other, s))
+                    ctupd += 1
+                else:
+                    self._fact.flush(s)
+                    ctins += 1
+
+        return ctupd, ctins
+
     def update_seeddata(self, uniqkdef : BaseVarType):
         assert(uniqkdef is not None) #we need a unique key-field to find an already stored element in the db
 

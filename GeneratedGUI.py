@@ -41,6 +41,11 @@ class PexViewerMainFrame ( wx.Frame ):
 
 		self.file_menu.AppendSeparator()
 
+		self.m_reseedCatsMEIT = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Reseed catalog data"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.file_menu.Append( self.m_reseedCatsMEIT )
+
+		self.file_menu.AppendSeparator()
+
 		self.quit_menuitem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Quit program")+ u"\t" + u"CTRL+Q", wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.Append( self.quit_menuitem )
 
@@ -131,16 +136,48 @@ class PexViewerMainFrame ( wx.Frame ):
 		gbSizer13.SetFlexibleDirection( wx.BOTH )
 		gbSizer13.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-		self.m_experimentDocsLCTRL = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT|wx.LC_SINGLE_SEL )
-		gbSizer13.Add( self.m_experimentDocsLCTRL, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+		gbSizer14 = wx.GridBagSizer( 0, 0 )
+		gbSizer14.SetFlexibleDirection( wx.BOTH )
+		gbSizer14.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-		self.m_expDocPicBIMP = wx.StaticBitmap( self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gbSizer13.Add( self.m_expDocPicBIMP, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+		self.m_prevBUT = wx.Button( self, wx.ID_ANY, _(u"<"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_prevBUT.SetToolTip( _(u"previous document") )
+
+		gbSizer14.Add( self.m_prevBUT, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.m_scrolledWindow1 = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
+		self.m_scrolledWindow1.SetScrollRate( 5, 5 )
+		bSizer11 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_expDocPicBIMP = wx.StaticBitmap( self.m_scrolledWindow1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer11.Add( self.m_expDocPicBIMP, 1, wx.ALL|wx.EXPAND, 5 )
+
+
+		self.m_scrolledWindow1.SetSizer( bSizer11 )
+		self.m_scrolledWindow1.Layout()
+		bSizer11.Fit( self.m_scrolledWindow1 )
+		gbSizer14.Add( self.m_scrolledWindow1, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.EXPAND |wx.ALL, 5 )
+
+		self.m_nextBUT = wx.Button( self, wx.ID_ANY, _(u">"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_nextBUT.SetToolTip( _(u"next document") )
+
+		gbSizer14.Add( self.m_nextBUT, wx.GBPosition( 0, 2 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		self.m_expDocTextTBX = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_BESTWRAP|wx.TE_MULTILINE )
 		self.m_expDocTextTBX.SetMinSize( wx.Size( -1,50 ) )
 
-		gbSizer13.Add( self.m_expDocTextTBX, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer14.Add( self.m_expDocTextTBX, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 3 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_positionSTXT = wx.StaticText( self, wx.ID_ANY, _(u"0/0"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_positionSTXT.Wrap( -1 )
+
+		gbSizer14.Add( self.m_positionSTXT, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+
+		gbSizer14.AddGrowableCol( 1 )
+		gbSizer14.AddGrowableRow( 0 )
+
+		gbSizer13.Add( gbSizer14, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 		bSizer10 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -153,16 +190,12 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.m_expDocAddPicBUT = wx.Button( self, wx.ID_ANY, _(u"Add picture"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer10.Add( self.m_expDocAddPicBUT, 0, wx.ALL, 5 )
 
-		self.m_exüDocSaveBUT = wx.Button( self, wx.ID_ANY, _(u"Save document"), wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer10.Add( self.m_exüDocSaveBUT, 0, wx.ALL, 5 )
+
+		gbSizer13.Add( bSizer10, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 
-		gbSizer13.Add( bSizer10, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
-
-
-		gbSizer13.AddGrowableCol( 1 )
+		gbSizer13.AddGrowableCol( 0 )
 		gbSizer13.AddGrowableRow( 0 )
-		gbSizer13.AddGrowableRow( 1 )
 
 		gbSizer12.Add( gbSizer13, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
@@ -182,6 +215,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.openproject_menuItemOnMenuSelection, id = self.openproject_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.editproject_menuItemOnMenuSelection, id = self.editproject_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.newproj_menutitemOnMenuSelection, id = self.newproj_menutitem.GetId() )
+		self.Bind( wx.EVT_MENU, self.m_reseedCatsMEITOnMenuSelection, id = self.m_reseedCatsMEIT.GetId() )
 		self.Bind( wx.EVT_MENU, self.quit_PexViewer, id = self.quit_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_createFullFactorialMEIOnMenuSelection, id = self.m_createFullFactorialMEI.GetId() )
@@ -194,9 +228,11 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.edit_response_definitions, id = self.edit_response_definitions_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_linearRegrMEIOnMenuSelection, id = self.m_linearRegrMEI.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
-		self.m_experimentDocsLCTRL.Bind( wx.EVT_LIST_ITEM_SELECTED, self.m_experimentDocsLCTRLOnListItemSelected )
+		self.m_prevBUT.Bind( wx.EVT_BUTTON, self.m_prevBUTOnButtonClick )
+		self.m_nextBUT.Bind( wx.EVT_BUTTON, self.m_nextBUTOnButtonClick )
 		self.m_newExpDocBU.Bind( wx.EVT_BUTTON, self.m_newExpDocBUOnButtonClick )
 		self.m_delExpDocBU.Bind( wx.EVT_BUTTON, self.m_delExpDocBUOnButtonClick )
+		self.m_expDocAddPicBUT.Bind( wx.EVT_BUTTON, self.m_expDocAddPicBUTOnButtonClick )
 
 	def __del__( self ):
 		pass
@@ -210,6 +246,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def newproj_menutitemOnMenuSelection( self, event ):
+		event.Skip()
+
+	def m_reseedCatsMEITOnMenuSelection( self, event ):
 		event.Skip()
 
 	def quit_PexViewer( self, event ):
@@ -248,13 +287,19 @@ class PexViewerMainFrame ( wx.Frame ):
 	def experimentDWLC_selchanged( self, event ):
 		event.Skip()
 
-	def m_experimentDocsLCTRLOnListItemSelected( self, event ):
+	def m_prevBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_nextBUTOnButtonClick( self, event ):
 		event.Skip()
 
 	def m_newExpDocBUOnButtonClick( self, event ):
 		event.Skip()
 
 	def m_delExpDocBUOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_expDocAddPicBUTOnButtonClick( self, event ):
 		event.Skip()
 
 	def PexViewerMainFrameOnContextMenu( self, event ):

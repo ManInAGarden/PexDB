@@ -407,8 +407,11 @@ class SQFactory():
             "$gte":">=",
             "$lte":"<=",
             "$nin": "NOT IN",
-            "$in": "IN"}
+            "$in": "IN",
+            "$and" : "AND",
+            "$or": "OR"}
         return mapping[ops]
+
 
     def _get_rightrightpart(self, val):
         t = type(val)
@@ -463,7 +466,7 @@ class SQFactory():
         right = operandl[0][1]
         tr = type(right)
         if self._ismulti(op):
-            return "(....)"
+            return self._getmultipart(op, right)
         else:
             rightl = list(right.items())
             answ = "{0} {1} {2}".format(op, self._backmap(rightl[0][0]), self._getoperand(rightl[0][1]))
@@ -477,7 +480,8 @@ class SQFactory():
                 first = False
                 answ = self._getoperand(operand)
             else:
-                answ += " AND "
+                #answ += " AND "
+                answ += " " + self._backmap(op) + " "
                 answ += self._getoperand(operand)
 
         return answ
@@ -601,6 +605,14 @@ class SQFactory():
             elif declt is Catalog:
                 dbdta = row[key]
                 setattr(inst, key, self._get_fullcatentry(value, dbdta))
+            elif declt is Blob:
+                dbdta = row[key]
+                self._logger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, "blobdata..."))
+                try:
+                    setattr(inst, key, decl.to_innertype(dbdta))
+                except Exception as ex:
+                    self._logger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
+                    raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, "blobdata...", str(ex)))
             else:
                 dbdta = row[key]
                 self._logger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, dbdta))

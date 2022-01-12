@@ -72,9 +72,6 @@ class SQQueryIterator():
         #self._index += 1
         return dco
 
-
-    
-
 class SQQuery():
     opmapping = {"==":"$eq", 
             "!=":"$neq",

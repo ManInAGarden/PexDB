@@ -1,0 +1,9 @@
+{ 
+    "sqlitepersist.SQLitePersistBasicClasses.PCatalog": 
+        [
+            {"type": "PICTURE_TYPE", "code":"JPG", "value":"jpg", "langcode":"GBR"},
+            {"type": "PICTURE_TYPE", "code":"JPEG", "value":"jpeg", "langcode":"GBR"},
+            {"type": "PICTURE_TYPE", "code":"BMP", "value":"bmp", "langcode":"GBR"},
+            {"type": "PICTURE_TYPE", "code":"PNG", "value":"png", "langcode":"GBR"}
+        ]
+}

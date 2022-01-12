@@ -1,7 +1,7 @@
 from datetime import datetime
 import csv
 import wx
-from wx.core import CENTRE, YES_NO, MessageBox
+from wx.core import CENTRE, YES_NO, Bitmap, FileDialog, FileSelector, Image, MessageBox, NullBitmap
 import wx.propgrid as pg
 from PexDbViewerLinRegrDialog import PexDbViewerLinRegrDialog
 import creators as cr
@@ -15,6 +15,7 @@ from PexDbViewerCreateFullDetailsDialog import PexDbViewerCreateFullDetailsDialo
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
+from sqlitepersist.SQLitePersistBasicClasses import PCatalog
 
 # Implementing PexViewerMainFrame
 class PexViewerMain( gg.PexViewerMainFrame ):
@@ -255,16 +256,15 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		if self._currentexperiment is None:
 			return
 
-		self.m_experimentDocsLCTRL.ClearAll()
-		self.m_experimentDocsLCTRL.AppendColumn("#")
-		self.m_experimentDocsLCTRL.AppendColumn("Text")
-		ct = 0
-		for ed in self._currentexperiment.docs:
-			id = self.m_experimentDocsLCTRL.Append([ct+1, ed.text])
-			self.m_experimentDocsLCTRL.SetItemData(id, ct)
-			ct += 1
-
-		self.m_experimentDocsLCTRL.Refresh()
+		if self._currentexperiment.docs is not None and len(self._currentexperiment.docs) > 0:
+			self._currexpdoc = 0
+			self.docnum2gui(self._currexpdoc, len(self._currentexperiment.docs))
+			currdoc = self._currentexperiment.docs[self._currexpdoc]
+			self.m_expDocTextTBX.SetValue(currdoc.text)
+		else:
+			self._currexpdoc = None
+			self.docnum2gui(None, None)
+			self.m_expDocTextTBX.Clear()
 
 	def refresh_expview(self, exp, expgui : WxGuiMapperExperiment):
 		"""refresh the experiment data on the gui with the data of the given experiment"""
@@ -467,7 +467,20 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		if updct > 0 or insct > 0:
 			wx.MessageBox("{0} factor defintions were updated and {1} defintions were inserted".format(updct, insct))
 		else:
-			wx.MessageBox("No factor defintions were update or inserted")
+			wx.MessageBox("No factor defintions were updated or inserted")
+
+	def m_reseedCatsMEITOnMenuSelection(self, event):
+		fpath = wx.FileSelector("Select catalog definitions seed file", default_extension="json")
+
+		if fpath is None:
+			return
+
+		seeder = sqp.SQPSeeder(self._fact, fpath)
+		updct, insct = seeder.update_seeddata3k(PCatalog.Type, PCatalog.Code, PCatalog.LangCode)
+		if updct > 0 or insct > 0:
+			wx.MessageBox("{0} catalog defintions were updated and {1} defintions were inserted".format(updct, insct))
+		else:
+			wx.MessageBox("No catalog defintions were updated or inserted")
 
 	def get_crea_sequence(self):
 		"""get the sequence value as an enum from the configuration"""
@@ -576,27 +589,100 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self.refresh_exp_docs()
 
 	def m_delExpDocBUOnButtonClick(self, event):
-		selidx = self.m_experimentDocsLCTRL.GetFirstSelected()
-		if selidx == wx.NOT_FOUND:
-			MessageBox("Select document to be deleted first")
+		docnum = self._currexpdoc
+		if not docnum is None:
+			doc = self._currentexperiment.docs[docnum]
+			self._fact.delete(doc)
+			self._currentexperiment.docs.remove(doc)
+			self.refresh_exp_docs()
+
+	def docnum2gui(self, dnum, max):
+		if dnum is None:
+			self.m_positionSTXT.SetLabelText(".../...")
+		else:
+			self.m_positionSTXT.SetLabelText("{}/{}".format(dnum + 1, max))
+
+		self.m_positionSTXT.Refresh()
+
+	def doc2gui(self, doc : ExperimentDoc):
+		"""show contents of document on the gui"""
+
+		if doc is None:
+			self.m_expDocTextTBX.SetValue(None)
+			self.m_expDocPicBIMP.SetBitmap(NullBitmap)
+		else:
+			self.m_expDocTextTBX.SetLabelText(doc.text)
+			if doc.picture is not None:
+				img = Image(100,100)
+				img.SetData(doc.picture)
+				bmp = img.ConvertToBitmap()
+				self.m_expDocPicBIMP.SetBitmap(bmp)
+			else:
+				self.m_expDocPicBIMP.SetBitmap(NullBitmap)
+
+
+	def savedoc(self, doc):
+		haschanges = False
+		txt = self.m_expDocTextTBX.GetValue()
+		if txt != doc.text:
+			doc.text = txt
+			haschanges = True
+
+		bmp = self.m_expDocPicBIMP.GetBitmap()
+		if not bmp is None and bmp.IsOk():
+			img = bmp.ConvertToImage()
+			picdta = img.GetData()
+		else:
+			picdta = None
+
+		if picdta != doc.picture:
+			doc.picture = picdta
+			doc.picturetype = self._fact.getcat(PictureTypeCat, "JPG")
+			haschanges = True
+
+		if haschanges:
+			self._fact.flush(doc)
+
+	def m_prevBUTOnButtonClick(self, event):
+		if self._currexpdoc is None:
 			return
 
-		docnum = self.m_experimentDocsLCTRL.GetItemData(selidx)
-		doc = self._currentexperiment.docs[docnum]
-		self._fact.delete(doc)
-		self._currentexperiment.docs.remove(doc)
-		self.refresh_exp_docs()
+		if self._currexpdoc <= 0:
+			return
+		
+		self.savedoc(self._currentexperiment.docs[self._currexpdoc])
+		self._currexpdoc -= 1
+		self.docnum2gui(self._currexpdoc, len(self._currentexperiment.docs))
+		self.doc2gui(self._currentexperiment.docs[self._currexpdoc])
 
-	def m_experimentDocsLCTRLOnListItemSelected(self, event):
-		selidx = self.m_experimentDocsLCTRL.GetFirstSelected()
-
-		if selidx == wx.NOT_FOUND:
+	def m_nextBUTOnButtonClick(self, event):
+		if self._currexpdoc is None or self._currentexperiment is None or self._currentexperiment.docs is None:
 			return
 
-		dnum = self.m_experimentDocsLCTRL.GetItemData(selidx)
-		doc = self._currentexperiment.docs[dnum]
+		if self._currexpdoc >= len(self._currentexperiment.docs)-1:
+			return
 
-		self.m_expDocTextTBX.SetValue(doc.text)
+		self.savedoc(self._currentexperiment.docs[self._currexpdoc])
+		self._currexpdoc += 1
+		self.docnum2gui(self._currexpdoc, len(self._currentexperiment.docs))
+		self.doc2gui(self._currentexperiment.docs[self._currexpdoc])
+
+	def m_expDocAddPicBUTOnButtonClick(self, event):
+		if self._currentexperiment is None or self._currentexperiment.docs is None or len(self._currentexperiment.docs) <= 0:
+			return
+
+		if self._currexpdoc is None:
+			MessageBox("Create or select a document first")
+
+		fpath = FileSelector("Select Bitmap file",
+			wildcard="jpg files (*.jpg)|*.jpg",
+			parent = self)
+
+		bmp = wx.Bitmap(10,10)
+		bmp.LoadFile(fpath)
+		self.m_expDocPicBIMP.SetBitmap(bmp)
+		
+
 
 if __name__ == '__main__':
 	app = wx.App()

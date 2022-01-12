@@ -37,6 +37,13 @@ class ProjectStatusCat(sqp.PCatalog):
     def __str__(self):
         return self.value
 
+class PictureTypeCat(sqp.PCatalog):
+    _cattype = "PICTURE_TYPE"
+    _langsensitive = False
+    Type = sqp.String(default="PICTURE_TYPE") #override type default
+
+    def __str__(self):
+        return self.value
 
 class Modification(sqp.PBase):
     """a modification applied to a printer or to an extruder"""
@@ -126,6 +133,7 @@ class ExperimentDoc(sqp.PBase):
     ExperimentId = sqp.UUid()
     Text = sqp.String()
     Picture = sqp.Blob()
+    PictureType = sqp.Catalog(catalogtype=PictureTypeCat)
 
 class Experiment(sqp.PBase):
     ProjectId = sqp.UUid()
