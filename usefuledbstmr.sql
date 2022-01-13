@@ -21,9 +21,10 @@ select * from responsevalue;
 
 select * from experimentdoc;
 
-delete from experimentdoc;
+select * from catalog order by type;
 
-drop table experiment;
+delete from catalog where type == "PICTURE_TYPE";
+
 
 select * from factorvalue;
 
@@ -31,6 +32,7 @@ select * from factorvalue;
 -- drop table unit;
 -- drop table responsedefinition;
 -- drop table experimentdoc;
+-- drop table experiment;
 
 select
     fv.value

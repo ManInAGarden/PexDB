@@ -256,15 +256,17 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		if self._currentexperiment is None:
 			return
 
+		self.m_expDocsDVLCTR.DeleteAllItems()
 		if self._currentexperiment.docs is not None and len(self._currentexperiment.docs) > 0:
-			self._currexpdoc = 0
-			self.docnum2gui(self._currexpdoc, len(self._currentexperiment.docs))
-			currdoc = self._currentexperiment.docs[self._currexpdoc]
-			self.m_expDocTextTBX.SetValue(currdoc.text)
-		else:
-			self._currexpdoc = None
-			self.docnum2gui(None, None)
-			self.m_expDocTextTBX.Clear()
+			ct = 0
+			for doc in self._currentexperiment.docs:
+				att = None
+				if doc.attachmenttype is not None:
+					att = doc.attachmenttype.value
+
+				line = [doc.name, doc.filepath, att]
+				self.m_expDocsDVLCTR.AppendItem(line, ct)
+				ct += 1
 
 	def refresh_expview(self, exp, expgui : WxGuiMapperExperiment):
 		"""refresh the experiment data on the gui with the data of the given experiment"""
@@ -580,7 +582,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			return
 
 		doc = ExperimentDoc(experimentid=self._currentexperiment._id,
-			text = "New document")
+			name = "New document")
 		self._fact.flush(doc)
 		if self._currentexperiment.docs is None:
 			self._currentexperiment.docs = []
@@ -596,92 +598,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self._currentexperiment.docs.remove(doc)
 			self.refresh_exp_docs()
 
-	def docnum2gui(self, dnum, max):
-		if dnum is None:
-			self.m_positionSTXT.SetLabelText(".../...")
-		else:
-			self.m_positionSTXT.SetLabelText("{}/{}".format(dnum + 1, max))
-
-		self.m_positionSTXT.Refresh()
-
-	def doc2gui(self, doc : ExperimentDoc):
-		"""show contents of document on the gui"""
-
-		if doc is None:
-			self.m_expDocTextTBX.SetValue(None)
-			self.m_expDocPicBIMP.SetBitmap(NullBitmap)
-		else:
-			self.m_expDocTextTBX.SetLabelText(doc.text)
-			if doc.picture is not None:
-				img = Image(100,100)
-				img.SetData(doc.picture)
-				bmp = img.ConvertToBitmap()
-				self.m_expDocPicBIMP.SetBitmap(bmp)
-			else:
-				self.m_expDocPicBIMP.SetBitmap(NullBitmap)
-
-
-	def savedoc(self, doc):
-		haschanges = False
-		txt = self.m_expDocTextTBX.GetValue()
-		if txt != doc.text:
-			doc.text = txt
-			haschanges = True
-
-		bmp = self.m_expDocPicBIMP.GetBitmap()
-		if not bmp is None and bmp.IsOk():
-			img = bmp.ConvertToImage()
-			picdta = img.GetData()
-		else:
-			picdta = None
-
-		if picdta != doc.picture:
-			doc.picture = picdta
-			doc.picturetype = self._fact.getcat(PictureTypeCat, "JPG")
-			haschanges = True
-
-		if haschanges:
-			self._fact.flush(doc)
-
-	def m_prevBUTOnButtonClick(self, event):
-		if self._currexpdoc is None:
-			return
-
-		if self._currexpdoc <= 0:
-			return
-		
-		self.savedoc(self._currentexperiment.docs[self._currexpdoc])
-		self._currexpdoc -= 1
-		self.docnum2gui(self._currexpdoc, len(self._currentexperiment.docs))
-		self.doc2gui(self._currentexperiment.docs[self._currexpdoc])
-
-	def m_nextBUTOnButtonClick(self, event):
-		if self._currexpdoc is None or self._currentexperiment is None or self._currentexperiment.docs is None:
-			return
-
-		if self._currexpdoc >= len(self._currentexperiment.docs)-1:
-			return
-
-		self.savedoc(self._currentexperiment.docs[self._currexpdoc])
-		self._currexpdoc += 1
-		self.docnum2gui(self._currexpdoc, len(self._currentexperiment.docs))
-		self.doc2gui(self._currentexperiment.docs[self._currexpdoc])
-
-	def m_expDocAddPicBUTOnButtonClick(self, event):
-		if self._currentexperiment is None or self._currentexperiment.docs is None or len(self._currentexperiment.docs) <= 0:
-			return
-
-		if self._currexpdoc is None:
-			MessageBox("Create or select a document first")
-
-		fpath = FileSelector("Select Bitmap file",
-			wildcard="jpg files (*.jpg)|*.jpg",
-			parent = self)
-
-		bmp = wx.Bitmap(10,10)
-		bmp.LoadFile(fpath)
-		self.m_expDocPicBIMP.SetBitmap(bmp)
-		
+	
 
 
 if __name__ == '__main__':
