@@ -37,10 +37,10 @@ class ProjectStatusCat(sqp.PCatalog):
     def __str__(self):
         return self.value
 
-class PictureTypeCat(sqp.PCatalog):
-    _cattype = "PICTURE_TYPE"
+class ExpAttachmentTypeCat(sqp.PCatalog):
+    _cattype = "EXP_ATTACH_TYPE"
     _langsensitive = False
-    Type = sqp.String(default="PICTURE_TYPE") #override type default
+    Type = sqp.String(default="EXP_ATTACH_TYPE") #override type default
 
     def __str__(self):
         return self.value
@@ -130,10 +130,11 @@ class ProjectResponsePreparation(sqp.PBase):
     ResponseDefinition = sqp.JoinedEmbeddedObject(targettype=ResponseDefinition, localid=ResponseDefinitionId, autofill=True)
 
 class ExperimentDoc(sqp.PBase):
+    """Doc attachments to an experiment"""
     ExperimentId = sqp.UUid()
-    Text = sqp.String()
-    Picture = sqp.Blob()
-    PictureType = sqp.Catalog(catalogtype=PictureTypeCat)
+    Name = sqp.String()
+    FilePath = sqp.String()
+    AttachmentType = sqp.Catalog(catalogtype=ExpAttachmentTypeCat)
 
 class Experiment(sqp.PBase):
     ProjectId = sqp.UUid()
