@@ -7,9 +7,10 @@ from PersistClasses import *
 
 class MultiReg():
     """class to solve a multi linear regression problem based on data from a project"""
-    def __init__(self, fact : sqp.SQFactory	, project : Project):
+    def __init__(self, fact : sqp.SQFactory	, project : Project, normed = False):
         self._f = fact
         self._p = project
+        self._normed = normed
         self._pid = project._id
         self._df = None #ras data frame
         self._grpdf = None #grouped dataframe
@@ -17,6 +18,7 @@ class MultiReg():
         self._experiments = None
         self._factdict = {}
         self._respdict = {}
+        self._fprep_minmax = {}
 
     @property
     def factdict(self):
@@ -65,6 +67,7 @@ class MultiReg():
         for fprep in fpreps_q:
             bname = fprep.factordefinition.abbreviation
             self._factdict[bname] = fprep.factordefinition
+            self._fprep_minmax[bname] = (fprep.minvalue, fprep.maxvalue)
             answ[bname] = []
 
         rpreps_q = sqp.SQQuery(self._f, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._pid)
@@ -76,6 +79,19 @@ class MultiReg():
 
         return answ
 
+    def get_factval(self, factor : FactorValue):
+        """get the value itself or the normalized value, depending on the state of self._normed"""
+        if not self._normed:
+            return factor.value
+
+        bname = factor.factordefinition.abbreviation
+        min = self._fprep_minmax[bname][0]
+        max = self._fprep_minmax[bname][1]
+        l = (max-min)/2
+        val = (factor.value - min)/l - 1.0
+        return val
+
+        
     def _get_dataframe(self):
         """creates the dataframe used for linerar regression
             -> new dataframe with columns for all factors, responses, and
@@ -94,12 +110,13 @@ class MultiReg():
             factkey = None
             first = True
             for fact in exp.factors:
-                data[fact.factordefinition.abbreviation].append(fact.value)
+                fval = self.get_factval(fact)
+                data[fact.factordefinition.abbreviation].append(fval)
                 if first:
-                    factkey = str(fact.value)
+                    factkey = str(fval)
                     first = False
                 else:
-                    factkey += "#" + str(fact.value)
+                    factkey += "#" + str(fval)
 
             data["#factkey"].append(factkey)
 

@@ -24,7 +24,7 @@ _ = gettext.gettext
 class PexViewerMainFrame ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"PexViewer"), pos = wx.DefaultPosition, size = wx.Size( 741,665 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"PexViewer"), pos = wx.DefaultPosition, size = wx.Size( 933,665 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -137,9 +137,6 @@ class PexViewerMainFrame ( wx.Frame ):
 		gbSizer13.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
 		self.m_expDocsDVLCTR = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_dataViewListColumn3 = self.m_expDocsDVLCTR.AppendTextColumn( _(u"Name"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.m_dataViewListColumn4 = self.m_expDocsDVLCTR.AppendTextColumn( _(u"File path"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.m_dataViewListColumn5 = self.m_expDocsDVLCTR.AppendTextColumn( _(u"Document type"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		gbSizer13.Add( self.m_expDocsDVLCTR, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 		bSizer10 = wx.BoxSizer( wx.HORIZONTAL )
@@ -150,8 +147,11 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.m_delExpDocBU = wx.Button( self, wx.ID_ANY, _(u"Delete document"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer10.Add( self.m_delExpDocBU, 0, wx.ALL, 5 )
 
-		self.m_expDocAddPicBUT = wx.Button( self, wx.ID_ANY, _(u"Add picture"), wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer10.Add( self.m_expDocAddPicBUT, 0, wx.ALL, 5 )
+		self.m_uploadExpDocBUT = wx.Button( self, wx.ID_ANY, _(u"Upload attachment"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer10.Add( self.m_uploadExpDocBUT, 0, wx.ALL, 5 )
+
+		self.m_openExpDocAttachmntBUT = wx.Button( self, wx.ID_ANY, _(u"Open attachment"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer10.Add( self.m_openExpDocAttachmntBUT, 0, wx.ALL, 5 )
 
 
 		gbSizer13.Add( bSizer10, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
@@ -191,9 +191,11 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.edit_response_definitions, id = self.edit_response_definitions_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_linearRegrMEIOnMenuSelection, id = self.m_linearRegrMEI.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
+		self.m_expDocsDVLCTR.Bind( wx.dataview.EVT_DATAVIEW_ITEM_EDITING_DONE, self.m_expDocsDVLCTROnDataViewListCtrlItemEditingDone, id = wx.ID_ANY )
 		self.m_newExpDocBU.Bind( wx.EVT_BUTTON, self.m_newExpDocBUOnButtonClick )
 		self.m_delExpDocBU.Bind( wx.EVT_BUTTON, self.m_delExpDocBUOnButtonClick )
-		self.m_expDocAddPicBUT.Bind( wx.EVT_BUTTON, self.m_expDocAddPicBUTOnButtonClick )
+		self.m_uploadExpDocBUT.Bind( wx.EVT_BUTTON, self.m_uploadExpDocBUTOnButtonClick )
+		self.m_openExpDocAttachmntBUT.Bind( wx.EVT_BUTTON, self.m_openExpDocAttachmntBUTOnButtonClick )
 
 	def __del__( self ):
 		pass
@@ -248,13 +250,19 @@ class PexViewerMainFrame ( wx.Frame ):
 	def experimentDWLC_selchanged( self, event ):
 		event.Skip()
 
+	def m_expDocsDVLCTROnDataViewListCtrlItemEditingDone( self, event ):
+		event.Skip()
+
 	def m_newExpDocBUOnButtonClick( self, event ):
 		event.Skip()
 
 	def m_delExpDocBUOnButtonClick( self, event ):
 		event.Skip()
 
-	def m_expDocAddPicBUTOnButtonClick( self, event ):
+	def m_uploadExpDocBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_openExpDocAttachmntBUTOnButtonClick( self, event ):
 		event.Skip()
 
 	def PexViewerMainFrameOnContextMenu( self, event ):
@@ -1055,6 +1063,9 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_precisionCHOI.SetSelection( 3 )
 		gbSizer13.Add( self.m_precisionCHOI, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
+		self.m_normalzedCHKB = wx.CheckBox( self.m_panel5, wx.ID_ANY, _(u"Normalised"), wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT|wx.CHK_2STATE )
+		gbSizer13.Add( self.m_normalzedCHKB, wx.GBPosition( 0, 2 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
 		self.m_staticText19 = wx.StaticText( self.m_panel5, wx.ID_ANY, _(u"Revised input data"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText19.Wrap( -1 )
 
@@ -1063,7 +1074,7 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_inputDataDLCTRL = wx.dataview.DataViewListCtrl( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_inputDataDLCTRL.SetMinSize( wx.Size( 100,200 ) )
 
-		gbSizer13.Add( self.m_inputDataDLCTRL, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer13.Add( self.m_inputDataDLCTRL, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 3 ), wx.ALL|wx.EXPAND, 5 )
 
 		self.doCalcBUT = wx.Button( self.m_panel5, wx.ID_ANY, _(u"Solve"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		gbSizer13.Add( self.doCalcBUT, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
@@ -1076,10 +1087,10 @@ class LinRegrDialog ( wx.Dialog ):
 		self.m_summaryHTMLWIN = wx.html.HtmlWindow( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.html.HW_SCROLLBAR_AUTO )
 		self.m_summaryHTMLWIN.SetMinSize( wx.Size( 100,100 ) )
 
-		gbSizer13.Add( self.m_summaryHTMLWIN, wx.GBPosition( 5, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer13.Add( self.m_summaryHTMLWIN, wx.GBPosition( 5, 0 ), wx.GBSpan( 1, 3 ), wx.ALL|wx.EXPAND, 5 )
 
 
-		gbSizer13.AddGrowableCol( 1 )
+		gbSizer13.AddGrowableCol( 2 )
 		gbSizer13.AddGrowableRow( 2 )
 		gbSizer13.AddGrowableRow( 5 )
 
@@ -1173,6 +1184,7 @@ class LinRegrDialog ( wx.Dialog ):
 		self.Bind( wx.EVT_SHOW, self.LinRegrDialogOnShow )
 		self.m_linRegNBCK.Bind( wx.EVT_NOTEBOOK_PAGE_CHANGED, self.m_linRegNBCKOnNotebookPageChanged )
 		self.m_precisionCHOI.Bind( wx.EVT_CHOICE, self.m_precisionCHOIOnChoice )
+		self.m_normalzedCHKB.Bind( wx.EVT_CHECKBOX, self.m_normalzedCHKBOnCheckBox )
 		self.doCalcBUT.Bind( wx.EVT_BUTTON, self.doCalcBUTOnButtonClick )
 		self.m_targetCHOI.Bind( wx.EVT_CHOICE, self.m_targetCHOIOnChoice )
 		self.m_factorPrecisionCHOI.Bind( wx.EVT_CHOICE, self.m_factorPrecisionCHOIOnChoice )
@@ -1193,6 +1205,9 @@ class LinRegrDialog ( wx.Dialog ):
 		event.Skip()
 
 	def m_precisionCHOIOnChoice( self, event ):
+		event.Skip()
+
+	def m_normalzedCHKBOnCheckBox( self, event ):
 		event.Skip()
 
 	def doCalcBUTOnButtonClick( self, event ):

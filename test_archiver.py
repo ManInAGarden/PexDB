@@ -30,7 +30,7 @@ class TestArchiver(unittest.TestCase):
             assert path.isdir(subp)
 
 
-    def test_simple_archiving(self):
+    def test_simple_archiving(self): 
         archi = DocArchiver(self._bpath)
 
         assert archi is not None
@@ -39,6 +39,26 @@ class TestArchiver(unittest.TestCase):
         assert archname is not None
         assert fext == ".jpg"
         assert path.exists(archname)
+
+    def test_delete_doc(self):
+        archi = DocArchiver(self._bpath)
+        archname1, fext1 = archi.archive_file("./testfiles/QXP_HTAM_Filamentum_ABS_100_0_0001.jpg")
+        archname2, fext2 = archi.archive_file("./testfiles/QXP_HTAM_Filamentum_ABS_100_0_0001.jpg")
+        archname3, fext3 = archi.archive_file("./testfiles/QXP_HTAM_Filamentum_ABS_100_0_0001.jpg")
+        archi.remove_file(archname1)
+
+        assert not path.exists(archname1)
+        assert path.exists(archname2)
+        assert path.exists(archname3)
+
+    def test_extract_doc(self):
+        archi = DocArchiver(self._bpath)
+        archname1, fext1 = archi.archive_file("./testfiles/QXP_HTAM_Filamentum_ABS_100_0_0001.jpg")
+        tpath = "./testfiles/extracted"
+        fname = archi.extract_file(archname1, tpath)
+        assert fname is not None
+        assert path.exists(fname)
+        remove(fname)
 
     def doCleanups(self) -> None:
         for bp in self._cleanups:

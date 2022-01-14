@@ -1,12 +1,17 @@
 from datetime import datetime
+import os
+import tempfile as tmpf
 import csv
 import wx
 from wx.core import CENTRE, YES_NO, Bitmap, FileDialog, FileSelector, Image, MessageBox, NullBitmap
+from wx.dataview import DATAVIEW_CELL_EDITABLE
 import wx.propgrid as pg
+from ExtOpener import ExtOpener
 from PexDbViewerLinRegrDialog import PexDbViewerLinRegrDialog
 import creators as cr
 import GeneratedGUI as gg #import generated GUI
 from ConfigReader import *
+from DocArchiver import *
 from PexDbViewerEditFactorDefinitions import PexDbViewerEditFactorDefinitions
 from PexDbViewerEditProjectDialog import PexDbViewerEditProjectDialog
 from PexDbViewerEditResponseDefinitions import PexDbViewerEditResponseDefinitions
@@ -24,11 +29,34 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		#gg.PexViewerMainFrame.__init__( self, parent )
 		super().__init__(parent)
 		self.init_prog()
+		self.init_archive()
 		self.init_db()
 		self.init_gui()
 
 	def init_prog(self):
 		self._configuration = ConfigReader("./PexDb.conf")
+
+	def init_archive(self):
+		tdir = tmpf.gettempdir()
+		extdir = tdir + path.sep + "PexDbExtr"
+		if not path.exists(extdir):
+			mkdir(extdir)
+
+		self._extractionpath = extdir
+
+		apath = self._configuration.get_value_interp("archivestore","path")
+		if os.path.exists(apath):
+			self._docarchive = DocArchiver(apath) #use existing archive
+			return
+
+		dnum = self._configuration.get_value("archivestore", "dirnum")
+		if dnum <= 0:
+			raise Exception("Configuration Error - dirnum must be a positive integer")
+		
+		#we are starting for the first time, so we initialize the document archive here
+		DocArchiver.prepare_archive(apath, dnum)
+		self._docarchive = DocArchiver(apath) #use neew archive
+
 
 	def init_db(self):
 		dbfilename = self._configuration.get_value("database", "filename")
@@ -72,6 +100,17 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self.displayprojinsb()
 		self.create_exp_gui()
 		self._experiments = self.get_experiments()
+
+		self.m_docNameDVLC = self.m_expDocsDVLCTR.AppendTextColumn( "Name", wx.dataview.DATAVIEW_CELL_EDITABLE, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE|wx.dataview.DATAVIEW_COL_SORTABLE)
+		self.m_docNameDVLC.GetRenderer().EnableEllipsize( wx.ELLIPSIZE_END )
+		self.m_filePathDVLC = self.m_expDocsDVLCTR.AppendTextColumn("File path", 
+			wx.dataview.DATAVIEW_CELL_INERT, 
+			-1, 
+			wx.ALIGN_LEFT, 
+			wx.dataview.DATAVIEW_COL_RESIZABLE)
+		self.m_filePathDVLC.GetRenderer().EnableEllipsize( wx.ELLIPSIZE_START )
+		self.m_docTypeDVLC = self.m_expDocsDVLCTR.AppendTextColumn( "Document type", wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE|wx.dataview.DATAVIEW_COL_SORTABLE)
+		self.m_docTypeDVLC.GetRenderer().EnableEllipsize( wx.ELLIPSIZE_END )
 
 		self.refresh_dash()
 
@@ -590,16 +629,88 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self._currentexperiment.docs.append(doc)
 		self.refresh_exp_docs()
 
+	def _getseldocnum(self):
+		seldoci = self.m_expDocsDVLCTR.GetSelection()
+		if not seldoci.IsOk():
+			return None
+
+		return self.m_expDocsDVLCTR.GetItemData(seldoci)
+
 	def m_delExpDocBUOnButtonClick(self, event):
-		docnum = self._currexpdoc
+		if self._currentexperiment is None or self._currentexperiment.docs is None or len(self._currentexperiment.docs) <= 0:
+			return
+
+		docnum = self._getseldocnum()
 		if not docnum is None:
 			doc = self._currentexperiment.docs[docnum]
+			if doc.filepath is not None and len(doc.filepath) > 0:
+				self._docarchive.remove_file(doc.filepath)
+
 			self._fact.delete(doc)
 			self._currentexperiment.docs.remove(doc)
 			self.refresh_exp_docs()
 
-	
+	def m_uploadExpDocBUTOnButtonClick(self, event):
+		if self._currentexperiment is None or self._currentexperiment.docs is None:
+			return
+		if len(self._currentexperiment.docs) <= 0:
+			return
 
+		selidx = self._getseldocnum()
+		if selidx is None:
+			MessageBox("Select a document entry fist to upload a fle document to")
+			return
+		
+		selexpdoc = self._currentexperiment.docs[selidx]
+		fname = FileSelector("Select a document",
+			flags = wx.FD_OPEN)
+
+		if fname is None:
+			return
+
+		archipath, ext = self._docarchive.archive_file(fname)
+		selexpdoc.filepath = archipath
+		selexpdoc.attachmenttype = self.get_attach_type(ext)
+		self._fact.flush(selexpdoc)
+		self.refresh_exp_docs()
+
+	def get_attach_type(self, ext):
+		tstr = ext.removeprefix(".")
+		tstr = tstr.upper()
+		return self._fact.getcat(ExpAttachmentTypeCat, tstr)
+
+	def m_openExpDocAttachmntBUTOnButtonClick(self, event):
+		"""open attachment of an experiment doc"""
+		if self._currentexperiment is None or self._currentexperiment.docs is None:
+			return
+		if len(self._currentexperiment.docs) <= 0:
+			return
+
+		selidx = self._getseldocnum()
+		if selidx is None:
+			MessageBox("Select a document entry first to open the attachment of that document")
+			return
+
+		seldoc = self._currentexperiment.docs[selidx]
+		if seldoc.filepath is not None and len(seldoc.filepath) > 0:
+			extrname = self._docarchive.extract_file(seldoc.filepath, self._extractionpath)
+			opn = ExtOpener(extrname).open(showshell=True)
+
+	def m_expDocsDVLCTROnDataViewListCtrlItemEditingDone(self, event):
+		edicol = event.Column
+		newval = event.Value
+		selidx = event.Selection
+
+		docidx = self.m_expDocsDVLCTR.GetItemData(event.Item)
+		doc = self._currentexperiment.docs[docidx]
+		dosave = False
+		if edicol==0:
+			doc.name = newval
+			dosave = True
+
+		self.m_expDocsDVLCTR.SetValue(newval, docidx, edicol)		
+		if dosave:
+			self._fact.flush(doc)
 
 if __name__ == '__main__':
 	app = wx.App()

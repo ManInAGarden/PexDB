@@ -17,11 +17,12 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		self._float_factorpreci = 2
 		self._factorforms = "{:." + str(self._float_factorpreci) + "f}" 
 		self._currenttargabbr = None
+		self._normalized = False
 
 	def LinRegrDialogOnInitDialog( self, event ):
 		self.m_projectNameSTXT.SetLabelText(self._p.name)
 		self.m_linRegNBCK.SetSelection(0)
-		self._solver = MultiReg(self._f, self._p)
+		self._solver = MultiReg(self._f, self._p, self._normalized)
 		self._solver.read_data()
 
 		done = False
@@ -162,6 +163,13 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		answ += "</html>"
 
 		return answ
+
+	def m_normalzedCHKBOnCheckBox(self, event):
+		self._normalized = self.m_normalzedCHKB.GetValue()
+		self._solver = MultiReg(self._f, self._p, self._normalized)
+		self._solver.read_data()
+		self.show_input()
+		self.m_inputDataDLCTRL.Refresh()
 
 	def doCalcBUTOnButtonClick(self, event):
 		self._coefs, self._interc = self._solver.solve_for_all()

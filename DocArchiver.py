@@ -83,9 +83,61 @@ class DocArchiver:
 
         return fullarchname, extname
 
-       
+    def remove_file(self, fullarchname : str):
+        if not path.exists(fullarchname):
+            return
 
+        if not path.isfile(fullarchname):
+            raise Exception("<{}> is not an archive file".format(fullarchname))
+
+        if pl.Path(fullarchname).suffix != ".zip":
+            raise Exception("<{}> is not an archive file".format(fullarchname))
+
+        remove(fullarchname)
+
+    def extract_file(self, fullarchname : str, targpath : str) -> str:
+        """extracts a file to the given target name
+           return: filename of the extracted file"""
+
+        if not path.exists(fullarchname):
+            raise Exception("archive file <{}> does not exist in archive")
+
+        if not path.isfile(fullarchname):
+            raise Exception("<{}> is not an archive file".format(fullarchname))
+
+        if pl.Path(fullarchname).suffix != ".zip":
+            raise Exception("<{}> is not an archive file".format(fullarchname))
         
+        ok = DocArchiver._assure_path(targpath)
+        if not ok:
+            raise Exception("path for file extraction does not exist an cannot be created under <{}>".format(targpath))
+
+        zp = zf.ZipFile(fullarchname, mode="r")
+
+        if len(zp.filelist) != 1:
+            raise Exception("Archive <{}> does not contain exactly one file! Cannot extract!".format(fullarchname))
+
+        extracted = None
+        for finfo in zp.filelist:
+            newfname = targpath + path.sep + finfo.filename
+            if path.exists(newfname): #prepare for extract
+                remove(newfname)
+
+            ext = zp.extract(finfo, path=targpath)
+            extracted = ext
+
+        return extracted
+
+    @classmethod
+    def _assure_path(cls, pname):
+        if path.exists(pname):
+            if path.isdir(pname):
+                return True
+            else:
+                return False
+        else:
+            makedirs(pname)
+            return True
 
     @classmethod
     def _subname(self, num : int):
@@ -94,8 +146,9 @@ class DocArchiver:
     @classmethod
     def prepare_archive(cls, basepath : str, dirnum: int = 10):
         """prepare an empty archive"""
-        if not path.exists(basepath):
-            makedirs(basepath)
+        ok = cls._assure_path(basepath)
+        if not ok:
+            raise Exception("path <{}> does not exist and could not be created")
 
         for i in range(dirnum):
             subpath = basepath + "/" + cls._subname(i)
