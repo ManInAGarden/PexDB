@@ -1,4 +1,5 @@
 
+from distutils.filelist import findall
 import sqlite3 as sq3
 from sqlite3.dbapi2 import Error, OperationalError
 from typing import Type
@@ -16,7 +17,6 @@ class SQFactory():
     def __init__(self, name, dbfilename):
         self._name = name
         self._dbfilename = dbfilename
-        self.__in_transaction = None
         sq3.register_adapter(uuid.UUID, SQFactory.adapt_uuid)
         sq3.register_converter("uuid", SQFactory.convert_uuid)
         self.conn = sq3.connect(dbfilename, detect_types=sq3.PARSE_DECLTYPES | sq3.PARSE_COLNAMES)
@@ -24,6 +24,60 @@ class SQFactory():
         self.lang = "GBR"
         self._catcache = {}
         self._logger = SQPLogger("./doesntmatter", DbgStmtLevel.NONE) #switch off debugging by default
+        self._transafterdels = []
+        self._intrans = False
+
+
+    @property
+    def InTransaction(self):
+        return self._intrans
+
+    def begin_transaction(self, loginfo : str = None):
+        if self._intrans:
+            raise Exception("A transaction has already benn started")
+
+        self._transafterdels.clear()
+        curs = self.conn.cursor()
+        try:
+            curs.execute("BEGIN")
+            self._intrans = True
+        finally:
+            curs.close()
+
+        if loginfo is not None:
+            self._logger.log_stmt("TRANSACTION BEGIN {0}".format(loginfo))
+
+    def commit_transaction(self, loginfo : str = None):
+        if not self._intrans:
+            raise Exception("No transaction started in commit_transaction()")
+        curs = self.conn.cursor()
+        try:
+            curs.execute("COMMIT")
+            self._intrans = False
+        finally:
+            curs.close()
+
+        for dco in self._transafterdels:
+            self._doafterdel(dco)
+            
+        self._transafterdels.clear()
+
+        if loginfo is not None:
+            self._logger.log_stmt("TRANSACTION COMMIT {0}".format(loginfo))
+
+    def rollback_transaction(self, loginfo : str = None):
+        if not self._intrans:
+            raise Exception("No transaction started in rollback_transaction()")
+        
+        curs = self.conn.cursor()
+        try:    
+            curs.execute("ROLLBACK")
+            self._intrans = False
+        finally:
+            curs.close()
+            
+        if loginfo is not None:
+            self._logger.log_stmt("TRANSACTION ROLLBACK {0}".format(loginfo))
 
     def _gettablename(self, pinst : PBase):
         return pinst.__class__._getclstablename()
@@ -135,23 +189,27 @@ class SQFactory():
         finally:
             cursor.close()
 
-    # def _deleteinst(self, pinst):
-    #     pass
-
+    def _doafterdel(self, dco):
+        cls = dco.__class__
+        if hasattr(cls, "on_after_delete") and callable(getattr(cls, "on_after_delete")):
+            dco.on_after_delete()
+            
     def delete(self, dco):
         """Delete the given persitent instance and do all the casscading deletes (if any). 
         Make sure that neither all the deletes du execute or none by using transactions behind the
         scenes"""
         curs = self.conn.cursor()
+        microtrans = not self._intrans
+        if microtrans:
+            self.begin_transaction("delete cascade")
         try:
-            curs.execute("BEGIN")
             try:
                 self._notransdeletecascaded(curs, dco)
-                curs.execute("COMMIT")
-                self._logger.log_stmt("COMMITED {0}".format("delte cascade"))
+                if microtrans:
+                    self.commit_transaction("delete cascade")
             except Exception as err:
-                curs.execute("ROLLBACK")
-                self._logger.log_stmt("ERR {0} - rollback executed".format(str(err)))
+                if microtrans:
+                    self.rollback_transaction(str(err))
                 raise Exception(str(err))
         finally:
             curs.close()
@@ -203,7 +261,7 @@ class SQFactory():
         stmt = "DELETE FROM {0} WHERE _id=?".format(tablename)
         self._logger.log_stmt("EXEC: {0}", stmt)
         curs.execute(stmt, (dco._id,))
-
+        self._transafterdels.append(dco)
 
     def _get_dbtypename(self, val):
         ot = val.get_outertype()
@@ -247,8 +305,11 @@ class SQFactory():
     def flush(self, pinst : PBase):
         """write the instance to the database inserting or updating as needed"""
         curs = self.conn.cursor()
+        microtrans = not self._intrans
         try:
-            curs.execute("BEGIN")
+            curs = self.conn.cursor()
+            if microtrans:
+                self.begin_transaction("flush")
             try:
                 if pinst._id is None: #we need to insert
                     pinst._id = uuid.uuid4()
@@ -259,9 +320,11 @@ class SQFactory():
                     pinst.lastupdate = dt.datetime.now()
                     self._update(curs, pinst)
 
-                curs.execute("COMMIT")
+                if microtrans:
+                    self.commit_transaction("flush")
             except sq3.Error as err:
-                curs.execute("ROLLBACK")
+                if microtrans:
+                    self.rollback_transaction(str(err))
                 raise Error(str(err))
         finally:
             curs.close()
@@ -274,7 +337,6 @@ class SQFactory():
         valtuplst = []
         for key, val in memd.items():
             propvalue = pinst.__getattribute__(key)
-
             
             if propvalue is not None:
                 dt = val.get_declaration()

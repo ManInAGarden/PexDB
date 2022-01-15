@@ -643,8 +643,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		docnum = self._getseldocnum()
 		if not docnum is None:
 			doc = self._currentexperiment.docs[docnum]
-			if doc.filepath is not None and len(doc.filepath) > 0:
-				self._docarchive.remove_file(doc.filepath)
+			#NICHT NÖTIG ES GIBT on_after_delete!
+			# if doc.filepath is not None and len(doc.filepath) > 0:
+			# 	self._docarchive.remove_file(doc.filepath)
 
 			self._fact.delete(doc)
 			self._currentexperiment.docs.remove(doc)

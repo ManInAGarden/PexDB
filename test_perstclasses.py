@@ -1,5 +1,7 @@
+from ast import excepthandler
 import datetime as dt
 import unittest
+from uuid import uuid4
 from PersistClasses import *
 from TestBase import *
 import sqlitepersist as sqp
@@ -89,22 +91,36 @@ class TestAllCrud(TestBase):
             assert(oldcd < rexp.carriedoutdt)
             oldcd = rexp.carriedoutdt
 
-    def test_blob(self):
-        tstfile = "./testfiles/QXP_HTAM_Filamentum_ABS_100_0_0001.jpg"
-        with open(tstfile, mode="rb") as pf:
-            bs = pf.read()
+    def test_experiment_doc(self):
+        #special treatment becaus we know we have a on_after_delete in ExperimentDoc
+        expdo = ExperimentDoc(name="QUARK", filepath="Nonexitent.zip")
+        self.Spf.flush(expdo)
 
-        expdoc = ExperimentDoc(text="Testtext", 
-            picture=bs,
-            picturetype=self.Spf.getcat(PictureTypeCat, "JPG"))
-        self.Spf.flush(expdoc)
+        assert expdo._id is not None
 
-        rexpdoc = SQQuery(self.Spf, ExperimentDoc).where(ExperimentDoc.Id==expdoc._id).first_or_default(None)
-        assert(rexpdoc is not None)
-        assert(rexpdoc.picture is not None)
-        assert(rexpdoc.picture == expdoc.picture)
-        assert(rexpdoc.picturetype.code=="JPG")
-        
+        rexpdo = sqp.SQQuery(self.Spf, ExperimentDoc).where(ExperimentDoc.Id == expdo._id).first_or_default(None)
+        assert rexpdo is not None
+
+        self.Spf.delete(rexpdo)
+        r_rexpdo = sqp.SQQuery(self.Spf, ExperimentDoc).where(ExperimentDoc.Id == expdo._id).first_or_default(None)
+        assert r_rexpdo is None
+
+    def test_outer_transactions(self):
+        self.Spf.begin_transaction("Testing transactions")
+        try:
+            pr = Printer(abbreviation=uuid4().hex, name="Transaction test printer")
+            self.Spf.flush(pr)
+            pr2 = sqp.SQQuery(self.Spf, Printer).where(Printer.Id==pr._id).first_or_default(None)
+            assert pr2 is not None
+            raise Exception("No real exception but a test of transactions")
+            #we never get to this
+            self.Spf.commit_transaction("useless commit")
+        except:
+            self.Spf.rollback_transaction("Testing transactions rollback")
+
+        #now the new printer should be gone
+        pr3 = sqp.SQQuery(self.Spf, Printer).where(Printer.Id==pr._id).first_or_default(None)
+        assert pr3 is None
 
 
 if __name__ == '__main__':

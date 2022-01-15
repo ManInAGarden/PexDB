@@ -1,3 +1,4 @@
+import os # needed for on_after_delete of ExperimentDocs
 from datetime import datetime
 from enum import unique
 import sqlitepersist as sqp
@@ -135,6 +136,15 @@ class ExperimentDoc(sqp.PBase):
     Name = sqp.String()
     FilePath = sqp.String()
     AttachmentType = sqp.Catalog(catalogtype=ExpAttachmentTypeCat)
+
+    def on_after_delete(self):
+        #make sure that archive files are also deleted when refernce exists and is valid
+        print("in method ExperimentDoc().on_after_delete()".format(self.filepath))
+        if self.filepath is not None and len(self.filepath)>0:
+            if os.path.exists(self.filepath) and os.path.isfile(self.filepath):
+                os.remove(self.filepath)
+                print("removed file <{}> by ExperimentDoc().on_after_delete()".format(self.filepath))
+
 
 class Experiment(sqp.PBase):
     ProjectId = sqp.UUid()
