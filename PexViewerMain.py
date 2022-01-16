@@ -1,4 +1,5 @@
 from datetime import datetime
+from genericpath import isdir
 import os
 import tempfile as tmpf
 import csv
@@ -38,7 +39,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 	def init_archive(self):
 		tdir = tmpf.gettempdir()
-		extdir = tdir + path.sep + "PexDbExtr"
+		extdir = tdir + path.sep + self._configuration.get_value("archivestore", "localtemp")
 		if not path.exists(extdir):
 			mkdir(extdir)
 
@@ -241,10 +242,32 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			newproj = Project(name="std", status=self._fact.getcat(ProjectStatusCat, "INIT"))
 			self._fact.flush(newproj)
 
+	def cleanup_temp(self):
+		if not os.path.exists(self._extractionpath):
+			return
+
+		if not os.path.isdir(self._extractionpath):
+			return
+
+		list_of_files = []
+		for root, dirs, files in os.walk(self._extractionpath):
+			for filename in files:
+				list_of_files.append(os.path.join(root,filename))
+
+		for filename in list_of_files:
+			if os.path.isfile(filename):
+				os.remove(filename)
+			elif os.path.isdir(filename):
+				os.rmdir(filename)
+
+		#lastly remove the temp-dir used for temporary extraction
+		os.rmdir(self._extractionpath)
+
 	# Handlers for PexViewerMainFrame events.
 	def quit_PexViewer( self, event ):
 		"""The user selected the menu item "close PexDbViewer"
 		"""
+		self.cleanup_temp()
 		self.Close()
 		
 	def create_new_experiment( self, event ):

@@ -34,7 +34,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		connr_q = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._project._id)
 		self._responsepreps = list(connr_q)
 
-		self.fill_gui(self._project, self._factorpreps, self._responsepreps)
+		self.fill_gui(self._project)
 
 	def get_txtval(self, text):
 		if text is None:
@@ -42,7 +42,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		else:
 			return text
 
-	def fill_gui(self, pro, factpreps, resppreps):
+	def fill_gui(self, pro : Project):
 		self.m_nameTB.SetValue(pro.name)
 		self.m_isArchivedCBX.SetValue(pro.isarchived)
 		self.m_descriptionTBX.SetValue(self.get_txtval(pro.description))
@@ -115,7 +115,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 		self._fact.flush(newprep)
 		self._factorpreps.append(newprep)
-		self.fill_gui(self._project, self._factorpreps, self._responsepreps)
+		self.fill_gui(self._project)
 
 
 	def m_removefactorBUOnButtonClick( self, event ):
@@ -147,7 +147,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 		self._fact.flush(dial.editedprep)
 		self._factorpreps[idx] = dial.editedprep
-		self.fill_gui(self._project, self._factorpreps, self._responsepreps)
+		self.fill_gui(self._project)
 
 	def m_addRespPrepBUTOnButtonClick(self, event):
 		dial = PexDbViewerAddResponseDialog(self, self._fact, list(map(lambda pr : pr.responsedefinitionid, self._responsepreps)))
@@ -164,7 +164,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 		self._fact.flush(newprep)
 		self._responsepreps.append(newprep)
-		self.fill_gui(self._project, self._factorpreps, self._responsepreps)
+		self.fill_gui(self._project)
 
 	def m_deleteRespPrepBUTOnButtonClick(self, event):
 		selidx = self.m_respPrepsLCTR.GetFirstSelected()
@@ -177,5 +177,5 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		remoprep = self._responsepreps.pop(idx)
 
 		self._fact.delete(remoprep)		
-		self.fill_gui(self._project, self._factorpreps, self._responsepreps)
+		self.fill_gui(self._project)
 

@@ -38,6 +38,7 @@ class ProjectStatusCat(sqp.PCatalog):
     def __str__(self):
         return self.value
 
+
 class ExpAttachmentTypeCat(sqp.PCatalog):
     _cattype = "EXP_ATTACH_TYPE"
     _langsensitive = False

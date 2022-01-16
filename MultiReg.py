@@ -80,16 +80,25 @@ class MultiReg():
         return answ
 
     def get_factval(self, factor : FactorValue):
-        """get the value itself or the normalized value, depending on the state of self._normed"""
-        if not self._normed:
-            return factor.value
-
+        """ get the value itself or the normalized value, depending on the state of self._normed"""
         bname = factor.factordefinition.abbreviation
+        return self.get_factval_r(bname, factor.value)
+
+    def get_factval_r(self, bname : str, val : float):
+        """ get a value normalized/standardized in case normalized is set
+            for the solver. Otherwise get the val itself
+            bname : abbreviation/name of the factor
+            val : the value to eventually be normalized
+        """
+        if not self._normed:
+            return val
+
         min = self._fprep_minmax[bname][0]
         max = self._fprep_minmax[bname][1]
         l = (max-min)/2
-        val = (factor.value - min)/l - 1.0
+        val = (val - min)/l - 1.0
         return val
+    
 
         
     def _get_dataframe(self):
@@ -180,14 +189,85 @@ class MultiReg():
 
         return answ
 
-    def predict(self, x : list):
-        """predict a response for a single combination or many combinations of factors
-        x is list -> single response value
-        x is array -> multiple predictions"""
+    def predict(self, repabbr : str, facts : dict, donormal=True) -> float:
+        """ predict a response for a single combination of factors
+            repname : name of the response to be predicted
+            facts : dictionary containing the names and values of all responses
+            donormal : when true normalization will be done when the model is normalized,
+            if false values will be used as given in facts
+        """
         if self.model is None:
             raise Exception("Please solve befor predicting")
 
-        return self.model.predict(x.append(1.0))
+        l = self.resp_abbreviations.index(repabbr)
+        cofs = self.model.coef_[l] #get the coefficients for prediction of response repabbr
+        y = self.model.intercept_[l] #start with the constant part
+        c = 0
+        for fabbr in self.fact_abbreviations:
+            if donormal:
+                y += cofs[c] * self.get_factval_r(fabbr, facts[fabbr])
+            else:
+                y += cofs[c] * facts[fabbr]
+            c += 1
+
+        return y
+
+    def _get_allfacts(self, df, lnum) -> dict:
+        """ get all facts from a dataframe for a given line#
+            df : the dataframe
+            lnum : the line number
+            returns a dict with key=names of factors and values = values of the factors fpr the given line number
+        """
+        answ = {}
+        for fabbr in self.fact_abbreviations:
+            answ[fabbr] = df[fabbr][lnum]
+
+        return answ
+
+    def _get_allresponses(self, df, lnum):
+        """ get all responses from a dataframe for a given line #
+            df : the dataframe
+            lnum : the number of the line from which data shall be returned
+            returns: a dict filled with the values organized by key=name of response, value=value of response for the given line """
+        answ = {}
+        for rabbr in self.resp_abbreviations:
+            answ[rabbr] = df[rabbr][lnum]
+
+        return answ
+
+    def get_residuals(self, respabbr, dataf = None):
+        """ get the residuals on the already set factor data
+            for a given response
+            respabb : name of the response in the solver data
+            dataf : datafram for factor data for which the residuals shall be calculated, if None the already known factors will be used
+        """
+
+        if not hasattr(self, "model") or self.model is None:
+            raise Exception("Please solve before calculating residuals")
+
+        if dataf is None: #use already knonw fact data
+            df = self.dataframe
+        else:
+            df = dataf
+
+        maxl = len(df)
+        respv = []
+        yv = []
+        rv = []
+        r2v = []
+        for i in range(maxl):
+            facts = self._get_allfacts(df, i)
+            resps = self._get_allresponses(df, i)
+            y = self.predict(respabbr, facts, False)
+            realy = resps[respabbr]
+            r = realy - y
+            r2 = r**2
+            respv.append(realy)
+            yv.append(y)
+            rv.append(r)
+            r2v.append(r2)
+
+        return pas.DataFrame({"realval": respv, "predval":yv, "res": rv, "resqd": r2v})
 
 
         

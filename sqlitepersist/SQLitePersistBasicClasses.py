@@ -399,6 +399,13 @@ class PBase(object):
         decl = md.get_declaration()
         return issubclass(type(decl), Catalog)
 
+    @classmethod
+    def additional_where(cls):
+        """ adds an additional whereclause to every where for this class
+            override to add your own additional where for your derived class
+            mybe like: MyCls.MyProp=="something" """
+        return None
+
 
     def __init__(self, **kwargs):
         self._valuesdict = {}
@@ -449,6 +456,13 @@ class PCatalog(PBase):
     @classmethod
     def is_langsensitive(cls):
         return cls._langsensitive
+
+    @classmethod
+    def additional_where(cls):
+        if cls._cattype is not None:
+            return cls.Type == cls._cattype #this adds where type=<myclastype> to any call 
+        else:
+            return None
 
 def getvarname(decl: BaseVarType):
     """get the name used for a field of a declaration 

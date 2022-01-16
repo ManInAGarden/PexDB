@@ -96,10 +96,23 @@ class SQQuery():
     def where(self, express = None):
         """Creates data to store the where part.
            This gets used when the db select statement is produced and executed later on"""
+        addw = self._cls.additional_where()
         if issubclass(type(express), SpecialWhereInfo):
-            self._whereop = OperationStackElement(express.get_left(), express.get_op(), express.get_right())
+            wo = OperationStackElement(express.get_left(), express.get_op(), express.get_right())
         else:
-            self._whereop = express
+            wo = express
+
+        if wo is not None:
+            if addw is not None:
+                self._whereop = OperationStackElement(wo, "&", addw)
+            else:
+                self._whereop = wo
+        else:
+            if addw is not None:
+                self._whereop = addw
+            else:
+                self._whereop = None
+
         return self
 
     def first_or_default(self, default):
