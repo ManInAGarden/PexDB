@@ -129,6 +129,7 @@ class ProjectFactorPreparation(sqp.PBase):
 class ProjectResponsePreparation(sqp.PBase):
     ProjectId = sqp.UUid()
     ResponseDefinitionId = sqp.UUid()
+    CombinationWeight = sqp.Float()
     ResponseDefinition = sqp.JoinedEmbeddedObject(targettype=ResponseDefinition, localid=ResponseDefinitionId, autofill=True)
 
 class ExperimentDoc(sqp.PBase):

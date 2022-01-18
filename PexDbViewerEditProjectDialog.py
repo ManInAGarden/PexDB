@@ -7,6 +7,7 @@ from PersistClasses import *
 from PexDbViewerAddFactorDialog import PexDbViewerAddFactorDialog
 from PexDbViewerAddResponseDialog import PexDbViewerAddResponseDialog
 from PexDbViewerEditPreparation import PexDbViewerEditPreparation
+from PexDbViewerEditResponsePreparation import PexDbViewerEditResponsePreparation
 import sqlitepersist as sqp
 
 # Implementing EditProjectDialog
@@ -76,11 +77,13 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 		self.m_respPrepsLCTR.ClearAll()
 		self.m_respPrepsLCTR.InsertColumn(0, "Response", width=200)
+		self.m_respPrepsLCTR.InsertColumn(1, "Combi Weight", width=80)
 
 		ct = 0
 		for rprep in self._responsepreps:
 			idx = self.m_respPrepsLCTR.InsertItem(self.m_prepsLCTRL.GetColumnCount(), rprep.responsedefinition.name)
 			self.m_respPrepsLCTR.SetItemData(idx, ct)
+			self.m_respPrepsLCTR.SetItem(idx, 1, str(rprep.combinationweight))
 			ct += 1
 		
 
@@ -148,6 +151,24 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self._fact.flush(dial.editedprep)
 		self._factorpreps[idx] = dial.editedprep
 		self.fill_gui(self._project)
+
+	def m_editRespPrepBUTOnButtonClick(self, event):
+		selit = self.m_respPrepsLCTR.GetFirstSelected()
+		if selit is wx.NOT_FOUND:
+			return
+
+		selidx = self.m_respPrepsLCTR.GetItemData(selit)
+		rprep = self._responsepreps[selidx]
+		dial = PexDbViewerEditResponsePreparation(self, rprep)
+		res = dial.ShowModal()
+
+		if res != wx.ID_OK:
+			return
+
+		self._responsepreps[selidx] = dial.respprep
+		self._fact.flush(dial.respprep)
+		self.fill_gui(self._project)
+
 
 	def m_addRespPrepBUTOnButtonClick(self, event):
 		dial = PexDbViewerAddResponseDialog(self, self._fact, list(map(lambda pr : pr.responsedefinitionid, self._responsepreps)))

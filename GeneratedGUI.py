@@ -595,8 +595,11 @@ class EditProjectDialog ( wx.Dialog ):
 		self.m_addRespPrepBUT = wx.Button( self, wx.ID_ANY, _(u"Add response preparation"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer8.Add( self.m_addRespPrepBUT, 0, wx.ALL, 5 )
 
-		self.m_deleteRespPrepBUT = wx.Button( self, wx.ID_ANY, _(u"Delete preparation"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_deleteRespPrepBUT = wx.Button( self, wx.ID_ANY, _(u"Remove preparation"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer8.Add( self.m_deleteRespPrepBUT, 0, wx.ALL, 5 )
+
+		self.m_editRespPrepBUT = wx.Button( self, wx.ID_ANY, _(u"Edit preperation"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer8.Add( self.m_editRespPrepBUT, 0, wx.ALL, 5 )
 
 
 		gbSizer3.Add( bSizer8, wx.GBPosition( 9, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 5 )
@@ -626,6 +629,7 @@ class EditProjectDialog ( wx.Dialog ):
 		self.editPrepBU.Bind( wx.EVT_BUTTON, self.editPrepBUOnButtonClick )
 		self.m_addRespPrepBUT.Bind( wx.EVT_BUTTON, self.m_addRespPrepBUTOnButtonClick )
 		self.m_deleteRespPrepBUT.Bind( wx.EVT_BUTTON, self.m_deleteRespPrepBUTOnButtonClick )
+		self.m_editRespPrepBUT.Bind( wx.EVT_BUTTON, self.m_editRespPrepBUTOnButtonClick )
 		self.m_okcancelBUTSOK.Bind( wx.EVT_BUTTON, self.m_okcancelBUTSOnOKButtonClick )
 
 	def __del__( self ):
@@ -649,6 +653,9 @@ class EditProjectDialog ( wx.Dialog ):
 		event.Skip()
 
 	def m_deleteRespPrepBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_editRespPrepBUTOnButtonClick( self, event ):
 		event.Skip()
 
 	def m_okcancelBUTSOnOKButtonClick( self, event ):
@@ -1268,6 +1275,61 @@ class LinRegrDialog ( wx.Dialog ):
 		event.Skip()
 
 	def m_calcAllBUTOnButtonClick( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class EditResponsePreparation
+###########################################################################
+
+class EditResponsePreparation ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Response Preparation"), pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer15 = wx.GridBagSizer( 0, 0 )
+		gbSizer15.SetFlexibleDirection( wx.BOTH )
+		gbSizer15.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText26 = wx.StaticText( self, wx.ID_ANY, _(u"Combination Weight"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText26.Wrap( -1 )
+
+		gbSizer15.Add( self.m_staticText26, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_combiWeightTCTRL = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer15.Add( self.m_combiWeightTCTRL, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		m_sdbSizer8 = wx.StdDialogButtonSizer()
+		self.m_sdbSizer8OK = wx.Button( self, wx.ID_OK )
+		m_sdbSizer8.AddButton( self.m_sdbSizer8OK )
+		self.m_sdbSizer8Cancel = wx.Button( self, wx.ID_CANCEL )
+		m_sdbSizer8.AddButton( self.m_sdbSizer8Cancel )
+		m_sdbSizer8.Realize();
+
+		gbSizer15.Add( m_sdbSizer8, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+
+		self.SetSizer( gbSizer15 )
+		self.Layout()
+		gbSizer15.Fit( self )
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.Bind( wx.EVT_INIT_DIALOG, self.EditResponsePreparationOnInitDialog )
+		self.m_sdbSizer8OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer8OnOKButtonClick )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def EditResponsePreparationOnInitDialog( self, event ):
+		event.Skip()
+
+	def m_sdbSizer8OnOKButtonClick( self, event ):
 		event.Skip()
 
 

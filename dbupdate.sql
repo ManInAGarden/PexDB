@@ -1,0 +1,3 @@
+ALTER TABLE projectresponsepreparation ADD COLUMN combinationweight REAL;
+
+.schema projectresponsepreparation

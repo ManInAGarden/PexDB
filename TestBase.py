@@ -18,7 +18,10 @@ class TestBase(unittest.TestCase):
         Printer, 
         Extruder,
         Experiment,
-        ExperimentDoc]
+        ExperimentDoc,
+        Project,
+        ProjectFactorPreparation,
+        ProjectResponsePreparation]
     
     @classmethod
     def setUpClass(cls):
