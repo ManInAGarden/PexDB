@@ -61,6 +61,21 @@ class WxGuiMapperExperiment(WxGuiMapper):
             elif resd.disptype == "BOOLEAN":
                 self.add(WxGuiMapperInfo(fname=resd.name, pgitype=pg.BoolProperty, unit=un, isenabled=resd.isactive))
 
+        self.add(WxGuiMapperInfo(fname="enviros_category", pgitype=pg.PropertyCategory, pgilabel="Environment"))
+        envprep_q = sqp.SQQuery(fact, ProjectEnviroPreparation).where(ProjectEnviroPreparation.ProjectId==proj._id)
+        for envprep in envprep_q:
+            envd = envprep.envirodefinition
+            if resd.unit is not None:
+                un = envd.unit.abbreviation
+            else:
+                un = None
+            
+            self.add(WxGuiMapperInfo(fname="#ENV#"+envd.name, 
+                pgilabel=envd.name,
+                pgitype=pg.FloatProperty, 
+                unit=un, 
+                isenabled=envd.isactive))
+
         self.createallprops()
 
     def object2gui(self, obj : dict):

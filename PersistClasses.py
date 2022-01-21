@@ -124,6 +124,7 @@ class EnviroValue(sqp.PBase):
     EnviroDefinitionId = sqp.UUid()
     ExperimentId = sqp.UUid()
     EnviroDefinition = sqp.JoinedEmbeddedObject(targettype=EnviroDefinition, localid=EnviroDefinitionId, autofill=True)
+    Value = sqp.Float()
 
 class Project(sqp.PBase):
     Name = sqp.String()

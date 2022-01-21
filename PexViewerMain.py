@@ -187,6 +187,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self._fact.fill_joins(exp,
 				Experiment.Factors,
 				Experiment.Responses,
+				Experiment.Enviros,
 				Experiment.Docs)
 
 			experiments.append(exp)
@@ -361,6 +362,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		for respg in exp.responses:
 			vd[respg.responsedefinition.name] = respg.value
 
+		for enviro in exp.enviros:
+			vd["#ENV#" + enviro.envirodefinition.name] = enviro.value
+
 		expgui.object2gui(vd)
 			
 	def get_typed_factor_value(self, vals : str, disptype : str):
@@ -427,6 +431,10 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		for setg in exp.responses:
 			key = setg.responsedefinition.name
+			setg.value = valdict[key]
+
+		for setg in exp.enviros:
+			key = "#ENV#"+setg.envirodefinition.name
 			setg.value = valdict[key]
 		
 

@@ -21,6 +21,11 @@ select * from responsevalue;
 
 select * from experimentdoc;
 
+update envirodefinition set name = 'case temperature' where name = 'case temperatur';
+
+select * from envirodefinition;
+
+
 select * from catalog order by type;
 
 delete from catalog where type == "PICTURE_TYPE";

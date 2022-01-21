@@ -87,7 +87,8 @@ class _CreaBase:
         for envprep in self._envpreps:
             envval = EnviroValue(experimentid = exp._id,
                     envirodefinitionid = envprep.envirodefinitionid,
-                    envirodefinition=envprep.envirodefinition)
+                    envirodefinition=envprep.envirodefinition,
+                    value = 0.0)
             self._fact.flush(envval)
             exp.enviros.append(envval)
 

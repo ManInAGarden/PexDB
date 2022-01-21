@@ -7,6 +7,50 @@ from PersistClasses import *
 from .CreaBasics import _CreaBase, _CreaSequential, CreaSequenceEnum, LevelCounter, LevelOverflow
 
 
+class RandHelper:
+    def __init__(self, results : list, num_of_reps : int):
+        self._results = results
+        self._num_of_reps = num_of_reps
+        
+
+    def __iter__(self):
+        self._ranmem = []
+        i = 0
+        for res in self._results:
+            self._ranmem.append([])
+            for j in range(self._num_of_reps):
+                self._ranmem[i].append(res)
+
+            i += 1
+
+        return self
+
+    def __next__(self):
+        ll = len(self._ranmem)
+
+        if ll == 0:
+            raise StopIteration
+
+        if ll == 1:
+            l = 0
+        else:
+            l = random.randint(0, ll - 1)
+
+        lc = len(self._ranmem[l])
+        if lc <= 1:
+            c = 0
+        else:
+            c = random.randint(0, lc - 1)
+
+        print("getting l={}, c={}".format(l, c))
+        answ = self._ranmem[l][c]
+        
+        self._ranmem[l].pop(c)
+        if len(self._ranmem[l])==0:
+            self._ranmem.pop(l)
+
+        return answ
+
 class CreaFullFactorial(_CreaSequential):
     """creates one experiment for every combination of factor levels defined in the given 
     project's factor preparations"""
@@ -101,31 +145,31 @@ class CreaFullFactorial(_CreaSequential):
 
     def write_mixed(self, result):
         expct = 0
-        for i in range(self._repetitions):
-            while len(result) > 0:
-                residx = random.randint(0, len(result)-1) #randomize the sequence!
-                res = result[residx]
+        rnum = 0
+        for res in RandHelper(result, self._repetitions):
+            exp = Experiment(sequence=expct + 1, 
+                repnum = rnum + 1,
+                description="Exp #{}".format(expct+1),
+                project = self._proj,
+                projectid = self._proj._id,
+                printerused = self._printer,
+                printerusedid = self._printer._id,
+                extruderused = self._extruder,
+                extruderusedid = self._extruder._id)
+            self._fact.flush(exp) #we need the _id
 
-                exp = Experiment(sequence=expct + 1, 
-                    repnum = i + 1,
-                    description="Exp #{}".format(expct+1),
-                    project = self._proj,
-                    projectid = self._proj._id,
-                    printerused = self._printer,
-                    printerusedid = self._printer._id,
-                    extruderused = self._extruder,
-                    extruderusedid = self._extruder._id)
-                self._fact.flush(exp) #we need the _id
+            for factval in res:
+                factval.experimentid = exp._id
+                self._fact.flushcopy(factval)
 
-                for factval in res:
-                    factval.experimentid = exp._id
-                    self._fact.flush(factval)
+            self.write_resps(exp) #write the prepared responses
+            self.write_enviros(exp)
 
-                self.write_resps(exp) #write the prepared responses
-                self.write_enviros(exp)
-
-                result.pop(residx)
-                expct += 1
+            expct += 1
+            if expct % len(result) == 0:
+                rnum = 0
+            else:
+                rnum += 1
         
         return expct
 
