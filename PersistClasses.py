@@ -1,3 +1,4 @@
+from email.policy import default
 import os # needed for on_after_delete of ExperimentDocs
 from datetime import datetime
 from enum import unique
@@ -116,6 +117,9 @@ class Project(sqp.PBase):
     Status = sqp.Catalog(catalogtype=ProjectStatusCat)
     IsArchived = sqp.Boolean(default=False)
     Description = sqp.String()
+    #merge calculation calcalutes a merged response from the other responses by merging them with a given formula
+    DoMergeCalculation = sqp.Boolean(default=False)
+    MergeFormula = sqp.String()
 
 
 class ProjectFactorPreparation(sqp.PBase):

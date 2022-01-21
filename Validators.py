@@ -2,6 +2,8 @@ from email.message import Message
 import locale
 import wx
 
+from Evaluator import Evaluator
+
 class FloatValidator(wx.Validator):
     ''' validates that  '''
 
@@ -9,7 +11,7 @@ class FloatValidator(wx.Validator):
     def __init__(self, minmax : tuple):
         wx.Validator.__init__(self)
         self.minmax = minmax
-        #self.Bind(wx.EVT_CHAR, self.OnChar)
+        self.Bind(wx.EVT_CHAR, self.OnChar)
 
     #----------------------------------------------------------------------
     def Clone(self):
@@ -50,16 +52,6 @@ class FloatValidator(wx.Validator):
                 wx.MessageBox("Cannot convert your inpupt to a valid float number")
                 return False
 
-
-            
-
-            
-            
-        if self.minmax is None:
-            return True
-        else:
-            return True
-
     #----------------------------------------------------------------------
     def TransferToWindow(self):
         return True
@@ -80,5 +72,78 @@ class FloatValidator(wx.Validator):
                 event.Skip()
             if key==",":
                 event.Skip()
+
+        return
+
+
+class MergeFormulaValidator(wx.Validator):
+    ''' validates that a merge formula even hast the chance to work properly  '''
+
+    #----------------------------------------------------------------------
+    def __init__(self, globals : dict):
+        wx.Validator.__init__(self)
+        self.globals = globals
+        self.Bind(wx.EVT_CHAR, self.OnChar)
+
+
+    #----------------------------------------------------------------------
+    def Clone(self):
+        '''Required Validator method'''
+        return MergeFormulaValidator(self.globals)
+
+    #----------------------------------------------------------------------
+    def Validate(self, parentwin):
+        textCtrl = self.GetWindow()
+        text = textCtrl.GetValue()
+
+        if text is None or len(text) == 0:
+            return True
+
+        return self.is_formulaok(text)
+
+    def is_formulaok(self, formula):
+        """check the formula with a lambda"""
+
+        try:
+            evalu = Evaluator()
+            erg = evalu.eval_formula(formula, self.globals)
+            terg = type(erg)
+            if not terg is float:
+                wx.MessageBox("Result will not be float but of type {}. Check usage of commas instead of decimal dots.".format(str(terg)))
+                answ = False
+            else:
+                answ = True
+        except Exception as sexc:
+            wx.MessageBox("Syntax error in formula - {}".format(str(sexc)))
+            answ = False
+
+        return answ
+    #----------------------------------------------------------------------
+    def TransferToWindow(self):
+        return True
+
+    #----------------------------------------------------------------------
+    def TransferFromWindow(self):
+        return True
+
+    #----------------------------------------------------------------------
+    def OnChar(self, event):
+        keycode = int(event.GetKeyCode())
+        key = chr(keycode)
+
+        if keycode>=314 and keycode<=317:
+            event.Skip()
+
+        if keycode >= 256:
+            return
+
+        if keycode == 127 or keycode==8: #del and backspace
+            event.Skip()
+
+        if key.isalnum():
+            event.Skip()
+
+        if key in ",.*+-()/ _":
+            event.Skip()
 
         return

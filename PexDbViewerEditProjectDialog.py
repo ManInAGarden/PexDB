@@ -9,6 +9,7 @@ from PexDbViewerAddResponseDialog import PexDbViewerAddResponseDialog
 from PexDbViewerEditPreparation import PexDbViewerEditPreparation
 from PexDbViewerEditResponsePreparation import PexDbViewerEditResponsePreparation
 import sqlitepersist as sqp
+from Validators import MergeFormulaValidator
 
 # Implementing EditProjectDialog
 class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
@@ -22,31 +23,57 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 		self._fact = fact
 		self._project = proj
-
-	def EditProjectDialogOnShow( self, event ):
-		if event.Show is False:
-			return
-
 		self._factorpreps = []
 		self._responsepreps = []
+
+	def replace_spaces(self, inps : str) -> str:
+		if inps is None:
+			return None
+
+		return inps.replace(" ", "_")
+
+	def EditProjectDialogOnInitDialog(self, event):
 		connf_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._project._id)
 		self._factorpreps = list(connf_q)
 
 		connr_q = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._project._id)
 		self._responsepreps = list(connr_q)
 
+		globals = {}
+		for respprep in self._responsepreps:
+			globals[self.replace_spaces(respprep.responsedefinition.name)] = 1.0
+
+		self.m_mergeFormulaTBX.SetValidator(MergeFormulaValidator(globals))
+
+	def EditProjectDialogOnShow( self, event ):
+		if event.Show is False:
+			return
+
 		self.fill_gui(self._project)
 
-	def get_txtval(self, text):
+	def get_txtval(self, text, default=""):
 		if text is None:
-			return ""
+			return default
 		else:
 			return text
+
+	def get_boolval(self, bo, default=False):
+		if bo is None:
+			return default
+		else:
+			return bo
 
 	def fill_gui(self, pro : Project):
 		self.m_nameTB.SetValue(pro.name)
 		self.m_isArchivedCBX.SetValue(pro.isarchived)
 		self.m_descriptionTBX.SetValue(self.get_txtval(pro.description))
+		self.m_doMergeCBX.SetValue(self.get_boolval(pro.domergecalculation))
+		self.m_mergeFormulaTBX.SetValue(self.get_txtval(pro.mergeformula))
+		if pro.domergecalculation is not None:
+			self.m_mergeFormulaTBX.Enable(pro.domergecalculation)
+		else:
+			self.m_mergeFormulaTBX.Enable(False)
+
 		ps_q = sqp.SQQuery(self._fact, ProjectStatusCat).where(ProjectStatusCat.LangCode==self._fact.lang)
 		self._pstatcat = []
 		ct = 0
@@ -88,9 +115,14 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		
 
 	def m_okcancelBUTSOnOKButtonClick( self, event ):
+		if not self.Validate():
+			return
+
 		self._project.name = self.m_nameTB.GetValue()
 		self._project.isarchived = self.m_isArchivedCBX.GetValue()
 		self._project.description = self.m_descriptionTBX.GetValue()
+		self._project.domergecalculation = self.m_doMergeCBX.GetValue()
+		self._project.mergeformula = self.m_mergeFormulaTBX.GetValue()
 
 		statidx = self.m_projectstatusCOB.GetSelection()
 		if statidx == wx.NOT_FOUND:
@@ -99,6 +131,13 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 			self._project.status = self._pstatcat[statidx]
 
 		self.EndModal(wx.ID_OK)
+
+	def m_doMergeCBXOnCheckBox(self, event):
+		formactive = self.m_doMergeCBX.GetValue()
+		if formactive is not None and formactive==True:
+			self.m_mergeFormulaTBX.Enable(True)
+		else:
+			self.m_mergeFormulaTBX.Enable(False)
 
 	def m_connfactorBUOnButtonClick( self, event ):
 		dial = PexDbViewerAddFactorDialog(self, self._fact, list(map(lambda pr : pr.factordefinitionid, self._factorpreps)))

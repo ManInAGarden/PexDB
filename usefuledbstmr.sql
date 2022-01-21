@@ -42,10 +42,12 @@ from
 where
     fv.factordefinitionid==fd._id;
 
-.schema experimentdoc;
+.schema experimentdoc
 
 .schema projectfactorpreparation
 
 .schema projectresponsepreparation
+
+.schema project
 
 .tables

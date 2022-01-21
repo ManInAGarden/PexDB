@@ -519,7 +519,7 @@ class EditResponseDefinitions ( wx.Dialog ):
 class EditProjectDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 478,752 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 482,826 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -602,7 +602,7 @@ class EditProjectDialog ( wx.Dialog ):
 		bSizer8.Add( self.m_editRespPrepBUT, 0, wx.ALL, 5 )
 
 
-		gbSizer3.Add( bSizer8, wx.GBPosition( 9, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 5 )
+		gbSizer3.Add( bSizer8, wx.GBPosition( 9, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 7 )
 
 		m_okcancelBUTS = wx.StdDialogButtonSizer()
 		self.m_okcancelBUTSOK = wx.Button( self, wx.ID_OK )
@@ -611,7 +611,23 @@ class EditProjectDialog ( wx.Dialog ):
 		m_okcancelBUTS.AddButton( self.m_okcancelBUTSCancel )
 		m_okcancelBUTS.Realize();
 
-		gbSizer3.Add( m_okcancelBUTS, wx.GBPosition( 10, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+		gbSizer3.Add( m_okcancelBUTS, wx.GBPosition( 12, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_staticText27 = wx.StaticText( self, wx.ID_ANY, _(u"Calculate merged response"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText27.Wrap( -1 )
+
+		gbSizer3.Add( self.m_staticText27, wx.GBPosition( 10, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText28 = wx.StaticText( self, wx.ID_ANY, _(u"Merge formula"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText28.Wrap( -1 )
+
+		gbSizer3.Add( self.m_staticText28, wx.GBPosition( 11, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_mergeFormulaTBX = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_BESTWRAP|wx.TE_MULTILINE )
+		gbSizer3.Add( self.m_mergeFormulaTBX, wx.GBPosition( 11, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_doMergeCBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.CHK_2STATE )
+		gbSizer3.Add( self.m_doMergeCBX, wx.GBPosition( 10, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 
 		gbSizer3.AddGrowableCol( 1 )
@@ -623,6 +639,7 @@ class EditProjectDialog ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
+		self.Bind( wx.EVT_INIT_DIALOG, self.EditProjectDialogOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.EditProjectDialogOnShow )
 		self.m_connfactorBU.Bind( wx.EVT_BUTTON, self.m_connfactorBUOnButtonClick )
 		self.m_removefactorBU.Bind( wx.EVT_BUTTON, self.m_removefactorBUOnButtonClick )
@@ -631,12 +648,16 @@ class EditProjectDialog ( wx.Dialog ):
 		self.m_deleteRespPrepBUT.Bind( wx.EVT_BUTTON, self.m_deleteRespPrepBUTOnButtonClick )
 		self.m_editRespPrepBUT.Bind( wx.EVT_BUTTON, self.m_editRespPrepBUTOnButtonClick )
 		self.m_okcancelBUTSOK.Bind( wx.EVT_BUTTON, self.m_okcancelBUTSOnOKButtonClick )
+		self.m_doMergeCBX.Bind( wx.EVT_CHECKBOX, self.m_doMergeCBXOnCheckBox )
 
 	def __del__( self ):
 		pass
 
 
 	# Virtual event handlers, override them in your derived class
+	def EditProjectDialogOnInitDialog( self, event ):
+		event.Skip()
+
 	def EditProjectDialogOnShow( self, event ):
 		event.Skip()
 
@@ -659,6 +680,9 @@ class EditProjectDialog ( wx.Dialog ):
 		event.Skip()
 
 	def m_okcancelBUTSOnOKButtonClick( self, event ):
+		event.Skip()
+
+	def m_doMergeCBXOnCheckBox( self, event ):
 		event.Skip()
 
 
@@ -1299,6 +1323,8 @@ class EditResponsePreparation ( wx.Dialog ):
 		gbSizer15.Add( self.m_staticText26, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		self.m_combiWeightTCTRL = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_combiWeightTCTRL.SetToolTip( _(u"enter a float to be used as a weight for the combined response") )
+
 		gbSizer15.Add( self.m_combiWeightTCTRL, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		m_sdbSizer8 = wx.StdDialogButtonSizer()

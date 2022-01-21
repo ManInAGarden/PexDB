@@ -2,10 +2,13 @@ import pandas as pas
 from pandas.core.series import Series
 #import statsmodels.api as sma
 from sklearn.linear_model import LinearRegression
+from Evaluator import Evaluator
 import sqlitepersist as sqp
 from PersistClasses import *
 
 class MultiReg():
+    MERGENAME = "#MERGEDRESPS#"
+
     """class to solve a multi linear regression problem based on data from a project"""
     def __init__(self, fact : sqp.SQFactory	, project : Project, normed = False):
         self._f = fact
@@ -19,6 +22,7 @@ class MultiReg():
         self._factdict = {}
         self._respdict = {}
         self._fprep_minmax = {}
+        self._mergeformula = None # None means we do no response merging
 
     @property
     def factdict(self):
@@ -77,6 +81,12 @@ class MultiReg():
             self._respdict[bname] = respdef.responsedefinition
             answ[bname] = []
 
+        if self._p.domergecalculation is True and self._p.mergeformula is not None and len(self._p.mergeformula)>0:
+            self._mergeformula = self._p.mergeformula
+            bname = MultiReg.MERGENAME
+            self._respdict[bname] = ResponseDefinition(name="merged_responses", abbreviation=bname) #we never flush this!
+            answ[bname] = []
+
         return answ
 
     def get_factval(self, factor : FactorValue):
@@ -108,6 +118,7 @@ class MultiReg():
                 latter are only non zero when repetitions are in the experiments
         """
         data = self._get_emptydf() #create the empty dataframe
+        ev = Evaluator()
 
         for exp in self._experiments:
             self._f.fill_joins(exp, Experiment.Factors, Experiment.Responses)
@@ -128,13 +139,30 @@ class MultiReg():
                     factkey += "#" + str(fval)
 
             data["#factkey"].append(factkey)
-
+            merge_respvalues = {}
             for resp in exp.responses:
                 rnam = resp.responsedefinition.abbreviation
                 data[rnam].append(resp.value)
+                merge_respvalues[self._replace_spaces(resp.responsedefinition.name)] = resp.value
+
+            if self._mergeformula is not None:
+                self._fillmissing(merge_respvalues, 0.0)
+                data[MultiReg.MERGENAME].append(ev.eval_formula(self._mergeformula,
+                    merge_respvalues))
 
         return data
 
+    def _fillmissing(self, valdict, default):
+        for fabbr, respdef in self._respdict.items():
+            kexn = self._replace_spaces(respdef.name)
+            if fabbr != MultiReg.MERGENAME and kexn not in valdict.keys():
+                valdict[kexn] = default
+
+    def _replace_spaces(self, ins : str) -> str:
+        if ins is None:
+            return None
+
+        return ins.replace(" ", "_")
 
     def read_data(self):
         """read the data for indipendent and dependent variables to an internal dataframe"""

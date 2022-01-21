@@ -140,6 +140,12 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 	def htmlsummary(self, coefs, intercs):
 		answ = "<html>"
 		answ += "<body>"
+		answ += "<h1>Summary for project: " + self._p.name + "</h1>"
+
+		answ += "<h2>{}</h2>".format("Coefficients and constants")
+		if self._p.domergecalculation == True:
+			answ += "Formula for merged_response: {}".format(self._p.mergeformula)
+
 		answ += "<table>"
 
 		answ += "<tr>"
