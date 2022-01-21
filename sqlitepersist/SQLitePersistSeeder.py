@@ -8,7 +8,7 @@ from .SQLitePersistQueryParts import *
 
 
 class SQPSeeder(object):
-    def __init__(self, fact, filepath) -> None:
+    def __init__(self, fact : SQFactory, filepath : str) -> None:
         self._filepath = filepath
         self._fact = fact
         super().__init__()
@@ -17,12 +17,19 @@ class SQPSeeder(object):
         with open(self._filepath, 'r', encoding="utf8") as f:
             data = json.load(f)
         
-        for datk, datlist in data.items():
-            cls = self._getclass(datk)
-            for datmap in datlist:
-                dm = self._doreplacements(cls, datmap)
-                s = cls(**dm)
-                self._fact.flush(s)
+        self._fact.begin_transaction()
+        try:
+            for datk, datlist in data.items():
+                cls = self._getclass(datk)
+                for datmap in datlist:
+                    dm = self._doreplacements(cls, datmap)
+                    s = cls(**dm)
+                    self._fact.flush(s)
+
+            self._fact.commit_transaction()
+        except Exception as exc:
+            self._fact.rollback_transaction()
+            raise exc
 
     def update_seeddata2k(self, uniqkdef1 : BaseVarType, uniqkdef2 : BaseVarType):
         assert(uniqkdef1 is not None) #we need a unique key-field to find an already stored element in the db

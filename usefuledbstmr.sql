@@ -28,11 +28,14 @@ delete from catalog where type == "PICTURE_TYPE";
 
 select * from factorvalue;
 
+select * from envirodefinition;
+
 -- drop table catalog;
 -- drop table unit;
 -- drop table responsedefinition;
 -- drop table experimentdoc;
 -- drop table experiment;
+-- drop TABLE envirodefinition;
 
 select
     fv.value

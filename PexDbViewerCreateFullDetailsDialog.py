@@ -44,7 +44,7 @@ class PexDbViewerCreateFullDetailsDialog( GeneratedGUI.CreateFullDetailsDialog )
 			return None
 
 	def m_sdbSizer6OnOKButtonClick(self, event):
-		"""User clicked OK which measn we have to do the creation now"""
+		"""User clicked OK which means we have to do the creation now"""
 		self._sequence = self._get_sequence()
 		self._repetitions = self._get_repetions()
 		self._planneddt = self._get_planneddt()

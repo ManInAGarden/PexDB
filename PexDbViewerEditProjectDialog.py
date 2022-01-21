@@ -4,8 +4,7 @@ import wx
 from wx.core import NOT_FOUND
 import GeneratedGUI
 from PersistClasses import *
-from PexDbViewerAddFactorDialog import PexDbViewerAddFactorDialog
-from PexDbViewerAddResponseDialog import PexDbViewerAddResponseDialog
+from PexDbViewerAddSubElementDialog import PexDbViewerAddSubElementDialog
 from PexDbViewerEditPreparation import PexDbViewerEditPreparation
 from PexDbViewerEditResponsePreparation import PexDbViewerEditResponsePreparation
 import sqlitepersist as sqp
@@ -25,6 +24,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self._project = proj
 		self._factorpreps = []
 		self._responsepreps = []
+		self._enviropreps = []
 
 	def replace_spaces(self, inps : str) -> str:
 		if inps is None:
@@ -44,6 +44,9 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 			globals[self.replace_spaces(respprep.responsedefinition.name)] = 1.0
 
 		self.m_mergeFormulaTBX.SetValidator(MergeFormulaValidator(globals))
+
+		enviro_q = sqp.SQQuery(self._fact, ProjectEnviroPreparation).where(ProjectEnviroPreparation.ProjectId==self._project._id)
+		self._enviropreps = list(enviro_q)
 
 	def EditProjectDialogOnShow( self, event ):
 		if event.Show is False:
@@ -102,15 +105,20 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 			self.m_prepsLCTRL.SetItem(idx, 3, str(fprep.levelnum))
 			ct += 1
 
-		self.m_respPrepsLCTR.ClearAll()
-		self.m_respPrepsLCTR.InsertColumn(0, "Response", width=200)
-		self.m_respPrepsLCTR.InsertColumn(1, "Combi Weight", width=80)
+		#self._fill_list(self.m_prepsLCTRL, self._factorpreps)
+		self._fill_list(self.m_respPrepsLCTR, self._responsepreps)
+		self._fill_list(self.m_envoroPrepsLCTRL, self._enviropreps)
+
+	def _fill_list(self, lctr, litems : list):
+		lctr.ClearAll()
+		lctr.InsertColumn(0, "Name", width=200)
+		lctr.InsertColumn(1, "Unit", width=80)
 
 		ct = 0
-		for rprep in self._responsepreps:
-			idx = self.m_respPrepsLCTR.InsertItem(self.m_prepsLCTRL.GetColumnCount(), rprep.responsedefinition.name)
-			self.m_respPrepsLCTR.SetItemData(idx, ct)
-			self.m_respPrepsLCTR.SetItem(idx, 1, str(rprep.combinationweight))
+		for litem in litems:
+			idx = lctr.InsertItem(lctr.GetColumnCount(), litem.name)
+			lctr.SetItemData(idx, ct)
+			lctr.SetItem(idx, 1, str(litem.unit))
 			ct += 1
 		
 
@@ -140,13 +148,16 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 			self.m_mergeFormulaTBX.Enable(False)
 
 	def m_connfactorBUOnButtonClick( self, event ):
-		dial = PexDbViewerAddFactorDialog(self, self._fact, list(map(lambda pr : pr.factordefinitionid, self._factorpreps)))
-		res = dial.ShowModal()
+		dial = PexDbViewerAddSubElementDialog(self, self._fact,
+			FactorDefinition,
+			"factor definition",
+			list(map(lambda pr : pr.factordefinitionid, self._factorpreps)) )
 
+		res = dial.ShowModal()
 		if res == wx.ID_CANCEL:
 			return
 
-		newfact = dial.selectedfactor
+		newfact = dial.selected
 
 		newprep = ProjectFactorPreparation(projectid=self._project._id, 
 			factordefinitionid = newfact._id,
@@ -171,7 +182,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		remoprep = self._factorpreps.pop(idx)
 
 		self._fact.delete(remoprep)		
-		self.fill_gui(self._project, self._factorpreps, self._responsepreps)
+		self.fill_gui(self._project)
 
 	def editPrepBUOnButtonClick(self, event):
 		selidx = self.m_prepsLCTRL.GetFirstSelected()
@@ -210,13 +221,17 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 
 	def m_addRespPrepBUTOnButtonClick(self, event):
-		dial = PexDbViewerAddResponseDialog(self, self._fact, list(map(lambda pr : pr.responsedefinitionid, self._responsepreps)))
+		dial = PexDbViewerAddSubElementDialog(self,
+			self._fact,
+			ResponseDefinition,
+			"response definition",
+			list(map(lambda pr : pr.responsedefinitionid, self._responsepreps)))
 		res = dial.ShowModal()
 
 		if res == wx.ID_CANCEL:
 			return
 
-		selresp = dial.selectedresponse
+		selresp = dial.selected
 
 		newprep = ProjectResponsePreparation(projectid=self._project._id, 
 		 	responsedefinitionid = selresp._id,
@@ -239,3 +254,29 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self._fact.delete(remoprep)		
 		self.fill_gui(self._project)
 
+	def m_editEnviroBUTOnButtonClick(self, event):
+		pass
+
+	def m_addEnviroBUTOnButtonClick(self, event):
+		dial = PexDbViewerAddSubElementDialog(self, 
+			self._fact, 
+			EnviroDefinition, 
+			"environment definition",
+			list(map(lambda envp : envp.envirodefinitionid, self._enviropreps)))
+		res = dial.ShowModal()
+
+		if res != wx.ID_OK:
+			return
+
+		evp = ProjectEnviroPreparation(projectid=self._project._id,
+			envirodefinition=dial.selected,
+			envirodefinitionid = dial.selected._id)
+
+		self._fact.flush(evp)
+		self._enviropreps.append(evp)
+		self.fill_gui(self._project)
+
+
+
+	def m_removeEnviroBUTOnButtonClick(self, event):
+		pass

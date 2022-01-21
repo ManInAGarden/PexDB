@@ -84,7 +84,7 @@ class MultiReg():
         if self._p.domergecalculation is True and self._p.mergeformula is not None and len(self._p.mergeformula)>0:
             self._mergeformula = self._p.mergeformula
             bname = MultiReg.MERGENAME
-            self._respdict[bname] = ResponseDefinition(name="merged_responses", abbreviation=bname) #we never flush this!
+            self._respdict[bname] = ResponseDefinition(name="merged_response", abbreviation=bname) #we never flush this!
             answ[bname] = []
 
         return answ

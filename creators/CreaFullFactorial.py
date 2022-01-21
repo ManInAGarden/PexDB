@@ -94,7 +94,7 @@ class CreaFullFactorial(_CreaSequential):
                     self._fact.flushcopy(factval)
 
                 self.write_resps(exp) #write the prepared responses
-            
+                self.write_enviros(exp)
                 expct += 1
             
         return expct
@@ -122,6 +122,7 @@ class CreaFullFactorial(_CreaSequential):
                     self._fact.flush(factval)
 
                 self.write_resps(exp) #write the prepared responses
+                self.write_enviros(exp)
 
                 result.pop(residx)
                 expct += 1

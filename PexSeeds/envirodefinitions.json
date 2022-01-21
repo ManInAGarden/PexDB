@@ -1,0 +1,15 @@
+{"PersistClasses.EnviroDefinition": 
+    [
+        {"abbreviation" : "ENVTEMP", "name": "environment temperatur", "unitid": "${PersistClasses.Unit.name:temperature Celsius:_id}"},
+        {"abbreviation" : "CASETEMP", "name": "case temperatur", "unitid": "${PersistClasses.Unit.name:temperature Celsius:_id}"},
+
+        {"abbreviation" : "LAYERHEIGHT", "name": "layer height", "unitid":"${PersistClasses.Unit.name:millimeter:_id}"},
+        {"abbreviation" : "PRISP", "name": "print speed", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}"},
+        {"abbreviation" : "PRISPTOBO", "name": "print speed top bottom", "unitid":"${PersistClasses.Unit.name:millimeter speed:_id}"},
+        {"abbreviation" : "PRINOZZTEMP", "name": "print temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}"},
+        {"abbreviation" : "MATBEDTEMP", "name": "bed temperature", "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}"},
+        {"abbreviation" : "MATFLOW", "name": "material flow", "unitid":"${PersistClasses.Unit.name:percent:_id}"},
+        {"abbreviation" : "MATFLOWLAY0", "name": "top level material flow",  "unitid":"${PersistClasses.Unit.name:percent:_id}"},
+        {"abbreviation" : "FANSPEED", "name": "fan speed", "unitid":"${PersistClasses.Unit.name:percent:_id}"}
+    ]
+    }

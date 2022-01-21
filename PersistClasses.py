@@ -79,7 +79,8 @@ class _NamedValue(AbbreviatedThing):
     DispType = sqp.String(default="FLOAT")
 
 class FactorDefinition(_NamedValue):
-    """definition for a factor - i.e. a parameter in the sclicing process"""
+    """ definition for a factor - i.e. a parameter in the sclicing process
+    """
     CuraName = sqp.Catalog(catalogtype=CuraNameCat)
     DefaultMin = sqp.Float()
     DefaultMax = sqp.Float()
@@ -87,7 +88,14 @@ class FactorDefinition(_NamedValue):
     
 
 class ResponseDefinition(_NamedValue):
-    """definition for a result - a measrurement/rating"""
+    """ definition for a result - a measrurement/rating
+    """
+    pass
+
+class EnviroDefinition(_NamedValue):
+    """ definition of an environmental value to be surveyed in experimnents
+        in addition to the factors
+    """
     pass
 
 class FactorValue(sqp.PBase):
@@ -112,6 +120,11 @@ class ResponseValue(sqp.PBase):
     ResponseDefinition = sqp.JoinedEmbeddedObject(targettype=ResponseDefinition, localid=ResponseDefinitionId, autofill=True)
     Value = sqp.Float()
 
+class EnviroValue(sqp.PBase):
+    EnviroDefinitionId = sqp.UUid()
+    ExperimentId = sqp.UUid()
+    EnviroDefinition = sqp.JoinedEmbeddedObject(targettype=EnviroDefinition, localid=EnviroDefinitionId, autofill=True)
+
 class Project(sqp.PBase):
     Name = sqp.String()
     Status = sqp.Catalog(catalogtype=ProjectStatusCat)
@@ -135,6 +148,39 @@ class ProjectResponsePreparation(sqp.PBase):
     ResponseDefinitionId = sqp.UUid()
     CombinationWeight = sqp.Float()
     ResponseDefinition = sqp.JoinedEmbeddedObject(targettype=ResponseDefinition, localid=ResponseDefinitionId, autofill=True)
+
+    @property
+    def name(self):
+        if self.responsedefinition is not None:
+            return self.responsedefinition.name
+        else:
+            return None
+
+    @property
+    def unit(self):
+        if self.responsedefinition is not None and self.responsedefinition.unit:
+            return self.responsedefinition.unit.abbreviation
+        else:
+            return "-unitless-"
+
+class ProjectEnviroPreparation(sqp.PBase):
+    ProjectId = sqp.UUid()
+    EnviroDefinitionId = sqp.UUid()
+    EnviroDefinition =  sqp.JoinedEmbeddedObject(targettype=EnviroDefinition, localid=EnviroDefinitionId, autofill=True)
+
+    @property
+    def name(self):
+        if self.envirodefinition is not None:
+            return self.envirodefinition.name
+        else:
+            return None
+
+    @property
+    def unit(self):
+        if self.envirodefinition is not None and self.envirodefinition.unit:
+            return self.envirodefinition.unit.abbreviation
+        else:
+            return "-unitless-"
 
 class ExperimentDoc(sqp.PBase):
     """Doc attachments to an experiment"""
@@ -166,6 +212,7 @@ class Experiment(sqp.PBase):
     Description = sqp.String()
     Factors = sqp.JoinedEmbeddedList(targettype=FactorValue, foreignid=FactorValue.ExperimentId, cascadedelete=True)
     Responses = sqp.JoinedEmbeddedList(targettype=ResponseValue, foreignid=ResponseValue.ExperimentId, cascadedelete=True)
+    Enviros = sqp.JoinedEmbeddedList(targettype=EnviroValue, foreignid=EnviroValue.ExperimentId, cascadedelete=True)
     Docs = sqp.JoinedEmbeddedList(targettype=ExperimentDoc, foreignid=ExperimentDoc.ExperimentId, cascadedelete=True)
 
 

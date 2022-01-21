@@ -60,6 +60,8 @@ class _CreaBase:
         self._factpreps = list(factpreps_q) #we store the preps which we will need more than once
         resppreps_q = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._proj._id)
         self._resppreps = list(resppreps_q)
+        envpreps_q = sqp.SQQuery(self._fact, ProjectEnviroPreparation).where(ProjectEnviroPreparation.ProjectId==self._proj._id)
+        self._envpreps = list(envpreps_q)
 
     def write_resps(self, exp : Experiment):
         """ Writes the responses (one for each prepared response) for the current experiment.
@@ -77,6 +79,17 @@ class _CreaBase:
 
             self._fact.flush(resp)
             exp.responses.append(resp)
+
+    def write_enviros(self, exp : Experiment):
+        if exp.enviros is None:
+            exp.enviros = []
+            
+        for envprep in self._envpreps:
+            envval = EnviroValue(experimentid = exp._id,
+                    envirodefinitionid = envprep.envirodefinitionid,
+                    envirodefinition=envprep.envirodefinition)
+            self._fact.flush(envval)
+            exp.enviros.append(envval)
 
     def create(self):
         raise Exception("override create in your own class, do not use method in _CreaBase!!!!")

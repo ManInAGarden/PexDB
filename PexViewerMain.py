@@ -206,6 +206,9 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			ResponseDefinition, 
 			ProjectResponsePreparation,
 			ResponseValue,
+			ProjectEnviroPreparation,
+			EnviroDefinition,
+			EnviroValue,
 			ExperimentDoc]
 
 		createds = []
@@ -236,6 +239,10 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		if ResponseDefinition in createds:
 			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/responsedefinitions.json")
+			sdr.create_seeddata()
+
+		if EnviroDefinition in createds:
+			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/envirodefinitions.json")
 			sdr.create_seeddata()
 
 		if Project in createds:

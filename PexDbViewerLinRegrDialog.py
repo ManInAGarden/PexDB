@@ -142,12 +142,13 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		answ += "<body>"
 		answ += "<h1>Summary for project: " + self._p.name + "</h1>"
 
-		answ += "<h2>{}</h2>".format("Coefficients and constants")
 		if self._p.domergecalculation == True:
-			answ += "Formula for merged_response: {}".format(self._p.mergeformula)
+			answ += "<h2>{}</h2>".format("Response Merge")
+			answ += "Formula: <pre>{}</pre>".format(self._p.mergeformula)
+
+		answ += "<h2>{}</h2>".format("Coefficients and constants")
 
 		answ += "<table>"
-
 		answ += "<tr>"
 		answ += "<td><b>{}</b></td>".format("/") 
 		answ += "<td><b>{}</b></td>".format("c") 
