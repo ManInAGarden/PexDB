@@ -2,10 +2,8 @@ from datetime import datetime
 from genericpath import isdir
 import os
 import tempfile as tmpf
-import csv
 import wx
 from wx.core import CENTRE, YES_NO, Bitmap, FileDialog, FileSelector, Image, MessageBox, NullBitmap
-from wx.dataview import DATAVIEW_CELL_EDITABLE
 import wx.propgrid as pg
 from ExtOpener import ExtOpener
 from PexDbViewerLinRegrDialog import PexDbViewerLinRegrDialog
@@ -21,6 +19,7 @@ from PexDbViewerCreateFullDetailsDialog import PexDbViewerCreateFullDetailsDialo
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
+from ExportProject2Csv import *
 from sqlitepersist.SQLitePersistBasicClasses import PCatalog
 
 # Implementing PexViewerMainFrame
@@ -613,42 +612,15 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			flags=wx.FD_SAVE,
 			parent=self)
 
-		header = ["experiment"]
-		fprep_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._currentproject._id)
-		fpreps = list(fprep_q)
-		rprep_q = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._currentproject._id)
-		rpreps = list(rprep_q)
+		p2csv = Project2CsvExporter(self._fact, 
+			self._currentproject,
+			self._experiments)
 
-		for fprep in fpreps:
-			fdef = fprep.factordefinition
-			head = fdef.name
-			if fdef.unit is not None:
-				head += "[{}]".format(fdef.unit.abbreviation)
+		try:
+			p2csv.export(filename)
+		except Exception as exc:
+			wx.MessageBox("A problem occured during export to csv. Original message: {}".format(str(exc)))
 
-			header.append(head)
-
-		for rprep in rpreps:
-			fdef = rprep.responsedefinition
-			head = fdef.name
-			if fdef.unit is not None:
-				head += "[{}]".format(fdef.unit.abbreviation)
-
-			header.append(head)
-
-
-		with open(filename, mode="w", encoding="UTF-8", newline="\n") as f:
-			cwr = csv.writer(f)
-			cwr.writerow(header)
-
-			for exp in self._experiments:
-				data = []
-				data.append(exp.description)
-				for fv in exp.factors:
-					data.append(fv.value)
-				for rv in exp.responses:
-					data.append(rv.value)
-
-				cwr.writerow(data)
 
 	def m_linearRegrMEIOnMenuSelection(self, event):
 		dial = PexDbViewerLinRegrDialog(self, self._fact, self._currentproject)

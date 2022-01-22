@@ -105,11 +105,30 @@ class _CreaSequential(_CreaBase):
             extruder : Extruder,
             sequence : CreaSequenceEnum = CreaSequenceEnum.LINEAR,
             planneddt: datetime = None,
-            repetitions : int=1):
+            repetitions : int=1,
+            docentre : bool=False):
 
         super().__init__(fact, project, printer, extruder)
         self._sequence = sequence
         self._planneddt = planneddt
         self._repetitions = repetitions
+        self._docentre = docentre
 
+    def _getcentre(self):
+        """ get the factors for a centre experiment
+            i.e. a list of all factors at their centred (middle of [min,max]) values
+        """
+        answ = []
+        for p in self._factpreps:
+            min = p.minvalue
+            max = p.maxvalue
+            lvls = p.levelnum
+
+            currval = min + (max - min)/2.0
+
+            answ.append(FactorValue(factordefinition=p.factordefinition,
+                factordefinitionid=p.factordefinitionid,
+                value = currval))
+
+        return answ
     

@@ -62,9 +62,15 @@ class CreaFullFactorial(_CreaSequential):
         extruder: Extruder, 
         sequence: CreaSequenceEnum = CreaSequenceEnum.LINEAR,
         planneddt: datetime = None,
-        repetitions : int=1):
+        repetitions : int=1,
+        docentre : bool=False):
         
-        super().__init__(fact, project, printer, extruder, sequence=sequence, planneddt=planneddt, repetitions=repetitions)
+        super().__init__(fact, 
+            project, printer, extruder, 
+            sequence=sequence, 
+            planneddt=planneddt, 
+            repetitions=repetitions,
+            docentre = docentre)
 
     def _getfactors(self, idxes : list):
         answ = []
@@ -98,7 +104,7 @@ class CreaFullFactorial(_CreaSequential):
         lvlct = LevelCounter(self._factpreps)
         try:
             idxes = lvlct.currlevels
-            while True: #do this until we get the level overflow esception
+            while True: #do this until we get the level overflow exception
                 idxhistory.append(idxes)
                 factline = self._getfactors(idxes)
                 # self._dbgprint(idxes, factline)
@@ -107,6 +113,10 @@ class CreaFullFactorial(_CreaSequential):
         except LevelOverflow:
             pass
 
+        if self._docentre:
+            factline = self._getcentre()
+            result.append(factline)
+            
         if self._sequence is CreaSequenceEnum.MIXED:
             expct = self.write_mixed(result)
         elif self._sequence is CreaSequenceEnum.LINEAR:

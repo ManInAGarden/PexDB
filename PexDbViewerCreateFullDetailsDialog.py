@@ -43,12 +43,21 @@ class PexDbViewerCreateFullDetailsDialog( GeneratedGUI.CreateFullDetailsDialog )
 		else:
 			return None
 
+	def _get_do_centre(self):
+		return self.m_createCentreExpCKBX.GetValue()
+
 	def m_sdbSizer6OnOKButtonClick(self, event):
 		"""User clicked OK which means we have to do the creation now"""
 		self._sequence = self._get_sequence()
 		self._repetitions = self._get_repetions()
 		self._planneddt = self._get_planneddt()
-		self._do_create()
+		self._docenctre = self._get_do_centre()
+		
+		try:
+			self._do_create()
+		except Exception as exc:
+			wx.MessageBox("A problem occured during creation of the experiments. Original msg: {}".format(str(exc)))
+			
 		self.EndModal(wx.ID_OK)
 
 	def _do_create(self):
@@ -65,7 +74,8 @@ class PexDbViewerCreateFullDetailsDialog( GeneratedGUI.CreateFullDetailsDialog )
 			self._extruder,
 			self._sequence,
 			self._planneddt,
-			self._repetitions)
+			self._repetitions,
+			self._docenctre)
 
 		self.numexps = crea.create()
 

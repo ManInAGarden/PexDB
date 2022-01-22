@@ -29,7 +29,7 @@ _ = gettext.gettext
 class PexViewerMainFrame ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"PexViewer"), pos = wx.DefaultPosition, size = wx.Size( 933,665 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"PexViewer"), pos = wx.DefaultPosition, size = wx.Size( 933,801 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -339,7 +339,7 @@ class EditFactorDefinitions ( wx.Dialog ):
 		bSizer4.Add( self.m_show_inactiveBU, 0, wx.ALL, 5 )
 
 
-		gbSizer1.Add( bSizer4, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.EXPAND, 5 )
+		gbSizer1.Add( bSizer4, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.EXPAND|wx.ALIGN_RIGHT, 5 )
 
 
 		gbSizer1.AddGrowableCol( 0 )
@@ -458,7 +458,7 @@ class EditResponseDefinitions ( wx.Dialog ):
 		bSizer4.Add( self.m_show_inactiveBU, 0, wx.ALL, 5 )
 
 
-		gbSizer1.Add( bSizer4, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.EXPAND, 5 )
+		gbSizer1.Add( bSizer4, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.EXPAND|wx.ALIGN_RIGHT, 5 )
 
 
 		gbSizer1.AddGrowableCol( 0 )
@@ -592,9 +592,10 @@ class EditProjectDialog ( wx.Dialog ):
 
 		bSizer11.Add( self.m_removeEnviroBUT, 0, wx.ALL, 5 )
 
-		self.m_editEnviroBUT = wx.Button( self, wx.ID_ANY, _(u"MyButton"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
+		self.m_editEnviroBUT = wx.Button( self, wx.ID_ANY, _(u"Edit envoronment value"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
 
 		self.m_editEnviroBUT.SetBitmap( wx.Bitmap( u"ressources/edit-icon.png", wx.BITMAP_TYPE_ANY ) )
+		self.m_editEnviroBUT.Hide()
 		self.m_editEnviroBUT.SetToolTip( _(u"Edit selected envoironmental factor") )
 
 		bSizer11.Add( self.m_editEnviroBUT, 0, wx.ALL, 5 )
@@ -655,21 +656,13 @@ class EditProjectDialog ( wx.Dialog ):
 		self.m_editRespPrepBUT = wx.Button( self, wx.ID_ANY, _(u"Edit preperation"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
 
 		self.m_editRespPrepBUT.SetBitmap( wx.Bitmap( u"ressources/edit-icon.png", wx.BITMAP_TYPE_ANY ) )
+		self.m_editRespPrepBUT.Hide()
 		self.m_editRespPrepBUT.SetToolTip( _(u"Edit selected response preparation") )
 
 		bSizer8.Add( self.m_editRespPrepBUT, 0, wx.ALL, 5 )
 
 
 		gbSizer3.Add( bSizer8, wx.GBPosition( 9, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 7 )
-
-		m_okcancelBUTS = wx.StdDialogButtonSizer()
-		self.m_okcancelBUTSOK = wx.Button( self, wx.ID_OK )
-		m_okcancelBUTS.AddButton( self.m_okcancelBUTSOK )
-		self.m_okcancelBUTSCancel = wx.Button( self, wx.ID_CANCEL )
-		m_okcancelBUTS.AddButton( self.m_okcancelBUTSCancel )
-		m_okcancelBUTS.Realize();
-
-		gbSizer3.Add( m_okcancelBUTS, wx.GBPosition( 12, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 		self.m_staticText27 = wx.StaticText( self, wx.ID_ANY, _(u"Calculate merged response"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText27.Wrap( -1 )
@@ -686,6 +679,15 @@ class EditProjectDialog ( wx.Dialog ):
 
 		self.m_doMergeCBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.CHK_2STATE )
 		gbSizer3.Add( self.m_doMergeCBX, wx.GBPosition( 10, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		m_okcancelBUTS = wx.StdDialogButtonSizer()
+		self.m_okcancelBUTSOK = wx.Button( self, wx.ID_OK )
+		m_okcancelBUTS.AddButton( self.m_okcancelBUTSOK )
+		self.m_okcancelBUTSCancel = wx.Button( self, wx.ID_CANCEL )
+		m_okcancelBUTS.AddButton( self.m_okcancelBUTSCancel )
+		m_okcancelBUTS.Realize();
+
+		gbSizer3.Add( m_okcancelBUTS, wx.GBPosition( 12, 0 ), wx.GBSpan( 1, 4 ), wx.ALL|wx.EXPAND, 5 )
 
 
 		gbSizer3.AddGrowableCol( 1 )
@@ -709,8 +711,8 @@ class EditProjectDialog ( wx.Dialog ):
 		self.m_addRespPrepBUT.Bind( wx.EVT_BUTTON, self.m_addRespPrepBUTOnButtonClick )
 		self.m_deleteRespPrepBUT.Bind( wx.EVT_BUTTON, self.m_deleteRespPrepBUTOnButtonClick )
 		self.m_editRespPrepBUT.Bind( wx.EVT_BUTTON, self.m_editRespPrepBUTOnButtonClick )
-		self.m_okcancelBUTSOK.Bind( wx.EVT_BUTTON, self.m_okcancelBUTSOnOKButtonClick )
 		self.m_doMergeCBX.Bind( wx.EVT_CHECKBOX, self.m_doMergeCBXOnCheckBox )
+		self.m_okcancelBUTSOK.Bind( wx.EVT_BUTTON, self.m_okcancelBUTSOnOKButtonClick )
 
 	def __del__( self ):
 		pass
@@ -750,10 +752,10 @@ class EditProjectDialog ( wx.Dialog ):
 	def m_editRespPrepBUTOnButtonClick( self, event ):
 		event.Skip()
 
-	def m_okcancelBUTSOnOKButtonClick( self, event ):
+	def m_doMergeCBXOnCheckBox( self, event ):
 		event.Skip()
 
-	def m_doMergeCBXOnCheckBox( self, event ):
+	def m_okcancelBUTSOnOKButtonClick( self, event ):
 		event.Skip()
 
 
@@ -1029,12 +1031,16 @@ class CreateFullDetailsDialog ( wx.Dialog ):
 		self.m_sequenceCHOI.SetSelection( 0 )
 		gbSizer8.Add( self.m_sequenceCHOI, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
-		self.m_progressGAUGE = wx.Gauge( self, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL )
-		self.m_progressGAUGE.SetValue( 0 )
-		gbSizer8.Add( self.m_progressGAUGE, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.ALL, 5 )
+		self.m_staticText29 = wx.StaticText( self, wx.ID_ANY, _(u"Create centre exp."), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText29.Wrap( -1 )
+
+		gbSizer8.Add( self.m_staticText29, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		self.m_staticline1 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		gbSizer8.Add( self.m_staticline1, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_createCentreExpCKBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.CHK_2STATE )
+		gbSizer8.Add( self.m_createCentreExpCKBX, wx.GBPosition( 3, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		m_sdbSizer6 = wx.StdDialogButtonSizer()
 		self.m_sdbSizer6OK = wx.Button( self, wx.ID_OK )

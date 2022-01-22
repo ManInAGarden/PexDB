@@ -255,7 +255,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self.fill_gui(self._project)
 
 	def m_editEnviroBUTOnButtonClick(self, event):
-		pass
+		event.Skip()
 
 	def m_addEnviroBUTOnButtonClick(self, event):
 		dial = PexDbViewerAddSubElementDialog(self, 
@@ -276,7 +276,15 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self._enviropreps.append(evp)
 		self.fill_gui(self._project)
 
-
-
 	def m_removeEnviroBUTOnButtonClick(self, event):
-		pass
+		selidx = self.m_envoroPrepsLCTRL.GetFirstSelected()
+
+		if selidx==wx.NOT_FOUND:
+			wx.MessageBox("please select an environment factor preparation to be removed")
+			return
+
+		idx = self.m_envoroPrepsLCTRL.GetItemData(selidx)
+		remoenv = self._enviropreps.pop(idx)
+
+		self._fact.delete(remoenv)
+		self.fill_gui(self._project)
