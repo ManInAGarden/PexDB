@@ -6,30 +6,33 @@ import json
 from Properties import Properties
 
 class TestBase(unittest.TestCase):
-    
+
     Spf : sqp.SQFactory = None #the persitence factory
     Mck : mocking.Mocker = None #the Mocker-Factory
-    PersTables = [sqp.PCatalog, 
-        Unit, 
-        FactorDefinition, 
+    PersTables = [sqp.PCatalog,
+        Unit,
+        FactorDefinition,
         FactorValue,
         ResponseDefinition,
         ResponseValue,
-        Printer, 
+        EnviroDefinition,
+        EnviroValue,
+        Printer,
         Extruder,
         Experiment,
         ExperimentDoc,
         Project,
         ProjectFactorPreparation,
-        ProjectResponsePreparation]
-    
+        ProjectResponsePreparation,
+        ProjectEnviroPreparation]
+
     @classmethod
     def setUpClass(cls):
         fact = sqp.SQFactory("PexDb", "PexDbTest.sqlite")
         fact.lang = "DEU"
         cls.Spf = fact
         fact.set_db_dbglevel("./sqpdebug.log", "DATAFILL") # use "STMTS for statements only or NONE for no sqlite-debugging at all"
-        
+
         for tablec in cls.PersTables:
             cls.Spf.try_createtable(tablec)
 
@@ -37,8 +40,8 @@ class TestBase(unittest.TestCase):
         try:
             sqp.SQPSeeder(fact, "./PexSeeds/catalogs.json").create_seeddata()
             sqp.SQPSeeder(fact, "./PexSeeds/units.json").create_seeddata()
-            sqp.SQPSeeder(fact, "./PexSeeds/factordefintions.json").create_seeddata()
-            sqp.SQPSeeder(fact, "./PexSeeds/responsedefintions.json").create_seeddata()
+            sqp.SQPSeeder(fact, "./PexSeeds/factordefinitions.json").create_seeddata()
+            sqp.SQPSeeder(fact, "./PexSeeds/responsedefinitions.json").create_seeddata()
         except Exception as exc:
             print("Data seeding failed with {0}".format(str(exc)))
 
@@ -50,4 +53,4 @@ class TestBase(unittest.TestCase):
             cls.Spf.try_droptable(tablec)
 
 
-    
+
