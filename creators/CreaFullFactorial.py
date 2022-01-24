@@ -4,14 +4,15 @@ import random
 import sqlitepersist as sqp
 from PersistClasses import *
 
-from .CreaBasics import _CreaBase, _CreaSequential, CreaSequenceEnum, LevelCounter, LevelOverflow
+from .CreaBasics import CreaSequenceEnum, _CreaSequential
+from pyDOE2 import *
 
 
 class RandHelper:
     def __init__(self, results : list, num_of_reps : int):
         self._results = results
         self._num_of_reps = num_of_reps
-        
+
 
     def __iter__(self):
         self._ranmem = []
@@ -44,7 +45,7 @@ class RandHelper:
 
         print("getting l={}, c={}".format(l, c))
         answ = self._ranmem[l][c]
-        
+
         self._ranmem[l].pop(c)
         if len(self._ranmem[l])==0:
             self._ranmem.pop(l)
@@ -52,23 +53,23 @@ class RandHelper:
         return answ
 
 class CreaFullFactorial(_CreaSequential):
-    """creates one experiment for every combination of factor levels defined in the given 
+    """creates one experiment for every combination of factor levels defined in the given
     project's factor preparations"""
 
-    def __init__(self, 
-        fact: sqp.SQFactory, 
-        project: Project, 
-        printer: Printer, 
-        extruder: Extruder, 
+    def __init__(self,
+        fact: sqp.SQFactory,
+        project: Project,
+        printer: Printer,
+        extruder: Extruder,
         sequence: CreaSequenceEnum = CreaSequenceEnum.LINEAR,
         planneddt: datetime = None,
         repetitions : int=1,
         docentre : bool=False):
-        
-        super().__init__(fact, 
-            project, printer, extruder, 
-            sequence=sequence, 
-            planneddt=planneddt, 
+
+        super().__init__(fact,
+            project, printer, extruder,
+            sequence=sequence,
+            planneddt=planneddt,
             repetitions=repetitions,
             docentre = docentre)
 
@@ -95,28 +96,22 @@ class CreaFullFactorial(_CreaSequential):
         for fact in factline:
             print("{}, ".format(fact.value))
 
+    
 
     def create(self):
         """create all factors in combinations of values according to all their defined levels"""
         result = []
-        idxhistory = []
 
-        lvlct = LevelCounter(self._factpreps)
-        try:
-            idxes = lvlct.currlevels
-            while True: #do this until we get the level overflow exception
-                idxhistory.append(idxes)
-                factline = self._getfactors(idxes)
-                # self._dbgprint(idxes, factline)
-                result.append(factline)
-                idxes = lvlct.increment()
-        except LevelOverflow:
-            pass
+        allidxes = fullfact(self._get_level_arr())
+        for idxes in allidxes:
+            factline = self._getfactors(idxes)
+            # self._dbgprint(idxes, factline)
+            result.append(factline)
 
         if self._docentre:
             factline = self._getcentre()
             result.append(factline)
-            
+
         if self._sequence is CreaSequenceEnum.MIXED:
             expct = self.write_mixed(result)
         elif self._sequence is CreaSequenceEnum.LINEAR:
@@ -128,7 +123,7 @@ class CreaFullFactorial(_CreaSequential):
 
     def write_linear(self, result):
         expct = 0
-        
+
         for i in range(self._repetitions):
             for res in result:
                 exp = Experiment(sequence=expct + 1,
@@ -150,14 +145,14 @@ class CreaFullFactorial(_CreaSequential):
                 self.write_resps(exp) #write the prepared responses
                 self.write_enviros(exp)
                 expct += 1
-            
+
         return expct
 
     def write_mixed(self, result):
         expct = 0
         rnum = 0
         for res in RandHelper(result, self._repetitions):
-            exp = Experiment(sequence=expct + 1, 
+            exp = Experiment(sequence=expct + 1,
                 repnum = rnum + 1,
                 description="Exp #{}".format(expct+1),
                 project = self._proj,
@@ -180,10 +175,9 @@ class CreaFullFactorial(_CreaSequential):
                 rnum = 0
             else:
                 rnum += 1
-        
+
         return expct
 
-    
 
-        
-        
+
+

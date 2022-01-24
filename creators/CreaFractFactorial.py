@@ -3,7 +3,9 @@ from PersistClasses import *
 from .CreaBasics import *
 from .CreaBasics import _CreaSequential, _CreaBase
 
-class CreaPartlyFactorial(_CreaSequential):
+class CreaFractFactorial(_CreaSequential):
+    """ class for creation of fractional factorial experiment schemes
+    """
     
     def __init__(self, 
         fact: sqp.SQFactory, 
@@ -33,7 +35,9 @@ class CreaPartlyFactorial(_CreaSequential):
 
 
     def create(self):
-        """create all factors in combinations not in ommite factors of values according to all their defined levels"""
+        """ create all factors in combinations not in ommit-factors of values 
+            according to all their defined levels
+        """
         result = []
         idxhistory = []
 
