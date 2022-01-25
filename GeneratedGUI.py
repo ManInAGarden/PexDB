@@ -64,6 +64,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.m_createFullFactorialMEI = wx.MenuItem( self.m_menu1, wx.ID_ANY, _(u"Create full factorial"), _(u"Creates experiments for all combinations of facor-levels."), wx.ITEM_NORMAL )
 		self.m_menu1.Append( self.m_createFullFactorialMEI )
 
+		self.m_creaFractFactMEI = wx.MenuItem( self.m_menu1, wx.ID_ANY, _(u"Create fractional factorial"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu1.Append( self.m_creaFractFactMEI )
+
 		self.experiment_menu.AppendSubMenu( self.m_menu1, _(u"Create experiments") )
 
 		self.dupicate_experiment_menuitem = wx.MenuItem( self.experiment_menu, wx.ID_ANY, _(u"Duplicate Experiment"), wx.EmptyString, wx.ITEM_NORMAL )
@@ -187,6 +190,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.quit_PexViewer, id = self.quit_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_createFullFactorialMEIOnMenuSelection, id = self.m_createFullFactorialMEI.GetId() )
+		self.Bind( wx.EVT_MENU, self.m_creaFractFactMEIOnMenuSelection, id = self.m_creaFractFactMEI.GetId() )
 		self.Bind( wx.EVT_MENU, self.dupicate_experiment_menuitemOnMenuSelection, id = self.dupicate_experiment_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.delete_experiment_menuItemOnMenuSelection, id = self.delte_experiment_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_deleteAllExperimentsMEIOnMenuSelection, id = self.m_deleteAllExperimentsMEI.GetId() )
@@ -226,6 +230,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def m_createFullFactorialMEIOnMenuSelection( self, event ):
+		event.Skip()
+
+	def m_creaFractFactMEIOnMenuSelection( self, event ):
 		event.Skip()
 
 	def dupicate_experiment_menuitemOnMenuSelection( self, event ):
@@ -1366,6 +1373,238 @@ class EditResponsePreparation ( wx.Dialog ):
 		event.Skip()
 
 	def m_sdbSizer8OnOKButtonClick( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class CreateFractDetail
+###########################################################################
+
+class CreateFractDetail ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Create fractional factoial details"), pos = wx.DefaultPosition, size = wx.Size( 515,551 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer8 = wx.GridBagSizer( 0, 0 )
+		gbSizer8.SetFlexibleDirection( wx.BOTH )
+		gbSizer8.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText13 = wx.StaticText( self, wx.ID_ANY, _(u"Repetitions"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText13.Wrap( -1 )
+
+		self.m_staticText13.SetToolTip( _(u"Number of repetitions for each combinations of factors") )
+
+		gbSizer8.Add( self.m_staticText13, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_repetitionsSPCTRL = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 20, 1 )
+		gbSizer8.Add( self.m_repetitionsSPCTRL, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText14 = wx.StaticText( self, wx.ID_ANY, _(u"Planned date"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText14.Wrap( -1 )
+
+		gbSizer8.Add( self.m_staticText14, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_datePicker1 = wx.adv.DatePickerCtrl( self, wx.ID_ANY, wx.DefaultDateTime, wx.DefaultPosition, wx.DefaultSize, wx.adv.DP_ALLOWNONE|wx.adv.DP_DEFAULT|wx.adv.DP_DROPDOWN )
+		gbSizer8.Add( self.m_datePicker1, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText15 = wx.StaticText( self, wx.ID_ANY, _(u"Sequence"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText15.Wrap( -1 )
+
+		gbSizer8.Add( self.m_staticText15, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		m_sequenceCHOIChoices = [ _(u"linear"), _(u"random mixed") ]
+		self.m_sequenceCHOI = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_sequenceCHOIChoices, wx.CB_SORT )
+		self.m_sequenceCHOI.SetSelection( 0 )
+		gbSizer8.Add( self.m_sequenceCHOI, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText29 = wx.StaticText( self, wx.ID_ANY, _(u"Create centre exp."), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText29.Wrap( -1 )
+
+		gbSizer8.Add( self.m_staticText29, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_createCentreExpCKBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.CHK_2STATE )
+		gbSizer8.Add( self.m_createCentreExpCKBX, wx.GBPosition( 3, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText38 = wx.StaticText( self, wx.ID_ANY, _(u"Factor combinations"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText38.Wrap( -1 )
+
+		gbSizer8.Add( self.m_staticText38, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_combiPrepsLCTR = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT )
+		gbSizer8.Add( self.m_combiPrepsLCTR, wx.GBPosition( 4, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		bSizer11 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_addCombiBUT = wx.Button( self, wx.ID_ANY, _(u"MyButton"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
+
+		self.m_addCombiBUT.SetBitmap( wx.Bitmap( u"ressources/Data-Add-Row-icon.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer11.Add( self.m_addCombiBUT, 0, wx.ALL, 5 )
+
+		self.m_removeCombiBUT = wx.Button( self, wx.ID_ANY, _(u"MyButton"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
+
+		self.m_removeCombiBUT.SetBitmap( wx.Bitmap( u"ressources/Actions-file-close-icon.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer11.Add( self.m_removeCombiBUT, 0, wx.ALL, 5 )
+
+		self.m_editCombiBUT = wx.Button( self, wx.ID_ANY, _(u"MyButton"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
+
+		self.m_editCombiBUT.SetBitmap( wx.Bitmap( u"ressources/edit-icon.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer11.Add( self.m_editCombiBUT, 0, wx.ALL, 5 )
+
+
+		gbSizer8.Add( bSizer11, wx.GBPosition( 5, 1 ), wx.GBSpan( 1, 1 ), wx.EXPAND, 5 )
+
+		self.m_staticline1 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		gbSizer8.Add( self.m_staticline1, wx.GBPosition( 6, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+		m_sdbSizer6 = wx.StdDialogButtonSizer()
+		self.m_sdbSizer6OK = wx.Button( self, wx.ID_OK )
+		m_sdbSizer6.AddButton( self.m_sdbSizer6OK )
+		self.m_sdbSizer6Cancel = wx.Button( self, wx.ID_CANCEL )
+		m_sdbSizer6.AddButton( self.m_sdbSizer6Cancel )
+		m_sdbSizer6.Realize();
+
+		gbSizer8.Add( m_sdbSizer6, wx.GBPosition( 7, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+
+		gbSizer8.AddGrowableCol( 1 )
+		gbSizer8.AddGrowableRow( 4 )
+
+		self.SetSizer( gbSizer8 )
+		self.Layout()
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.Bind( wx.EVT_INIT_DIALOG, self.CreateFractDetailOnInitDialog )
+		self.Bind( wx.EVT_SHOW, self.CreateFractDetailOnShow )
+		self.m_addCombiBUT.Bind( wx.EVT_BUTTON, self.m_addCombiBUTOnButtonClick )
+		self.m_removeCombiBUT.Bind( wx.EVT_BUTTON, self.m_removeCombiBUTOnButtonClick )
+		self.m_editCombiBUT.Bind( wx.EVT_BUTTON, self.m_editCombiBUTOnButtonClick )
+		self.m_sdbSizer6OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer6OnOKButtonClick )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def CreateFractDetailOnInitDialog( self, event ):
+		event.Skip()
+
+	def CreateFractDetailOnShow( self, event ):
+		event.Skip()
+
+	def m_addCombiBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_removeCombiBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_editCombiBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_sdbSizer6OnOKButtonClick( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class EditFactCombi
+###########################################################################
+
+class EditFactCombi ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit factor combination"), pos = wx.DefaultPosition, size = wx.Size( 492,347 ), style = wx.DEFAULT_DIALOG_STYLE )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer16 = wx.GridBagSizer( 0, 0 )
+		gbSizer16.SetFlexibleDirection( wx.BOTH )
+		gbSizer16.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText35 = wx.StaticText( self, wx.ID_ANY, _(u"Combination name"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText35.Wrap( -1 )
+
+		gbSizer16.Add( self.m_staticText35, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_combiNameTXTC = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer16.Add( self.m_combiNameTXTC, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_staticText37 = wx.StaticText( self, wx.ID_ANY, _(u"Negated"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText37.Wrap( -1 )
+
+		gbSizer16.Add( self.m_staticText37, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_isNegatedCBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.CHK_2STATE )
+		gbSizer16.Add( self.m_isNegatedCBX, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_staticText36 = wx.StaticText( self, wx.ID_ANY, _(u"Combined factors"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText36.Wrap( -1 )
+
+		gbSizer16.Add( self.m_staticText36, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_factCombisLCTRL = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT )
+		gbSizer16.Add( self.m_factCombisLCTRL, wx.GBPosition( 2, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
+		bSizer12 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_addFactorBUT = wx.Button( self, wx.ID_ANY, _(u"MyButton"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
+
+		self.m_addFactorBUT.SetBitmap( wx.Bitmap( u"ressources/Data-Add-Row-icon.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer12.Add( self.m_addFactorBUT, 0, wx.ALL, 5 )
+
+		self.m_removeFactorBUT = wx.Button( self, wx.ID_ANY, _(u"MyButton"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
+
+		self.m_removeFactorBUT.SetBitmap( wx.Bitmap( u"ressources/Actions-file-close-icon.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer12.Add( self.m_removeFactorBUT, 0, wx.ALL, 5 )
+
+
+		gbSizer16.Add( bSizer12, wx.GBPosition( 3, 1 ), wx.GBSpan( 1, 1 ), wx.EXPAND, 5 )
+
+		m_mainBTNBAR = wx.StdDialogButtonSizer()
+		self.m_mainBTNBAROK = wx.Button( self, wx.ID_OK )
+		m_mainBTNBAR.AddButton( self.m_mainBTNBAROK )
+		self.m_mainBTNBARCancel = wx.Button( self, wx.ID_CANCEL )
+		m_mainBTNBAR.AddButton( self.m_mainBTNBARCancel )
+		m_mainBTNBAR.Realize();
+
+		gbSizer16.Add( m_mainBTNBAR, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+
+		gbSizer16.AddGrowableCol( 1 )
+		gbSizer16.AddGrowableRow( 2 )
+
+		self.SetSizer( gbSizer16 )
+		self.Layout()
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.Bind( wx.EVT_INIT_DIALOG, self.EditFactCombiOnInitDialog )
+		self.Bind( wx.EVT_SHOW, self.EditFactCombiOnShow )
+		self.m_addFactorBUT.Bind( wx.EVT_BUTTON, self.m_addFactorBUTOnButtonClick )
+		self.m_removeFactorBUT.Bind( wx.EVT_BUTTON, self.m_removeFactorBUTOnButtonClick )
+		self.m_mainBTNBAROK.Bind( wx.EVT_BUTTON, self.m_mainBTNBAROnOKButtonClick )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def EditFactCombiOnInitDialog( self, event ):
+		event.Skip()
+
+	def EditFactCombiOnShow( self, event ):
+		event.Skip()
+
+	def m_addFactorBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_removeFactorBUTOnButtonClick( self, event ):
+		event.Skip()
+
+	def m_mainBTNBAROnOKButtonClick( self, event ):
 		event.Skip()
 
 

@@ -122,6 +122,74 @@ class TestAllCrud(TestBase):
         pr3 = sqp.SQQuery(self.Spf, Printer).where(Printer.Id==pr._id).first_or_default(None)
         assert pr3 is None
 
+    def _get_facts_by_lst(self, abbrs : list):
+        fdef_q = sqp.SQQuery(self.Spf, FactorDefinition).where(sqp.IsIn(FactorDefinition.Abbreviation, abbrs))
+        answ = {}
+        for fdef in fdef_q:
+            answ[fdef.abbreviation] = fdef
+
+        return answ
+
+    def test_factcombipreps(self):
+        myproj = self.Mck.create_project()
+        fpreps = {
+            "PRINOZZTEMP": [190, 220, 2], #factorabbr : [min, max, levels]
+            "MATFLOW" : [80, 110, 2],
+            "PRISP" : [40.0, 60.0, 2]
+        }
+        rpreps = {
+            "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
+            "SURFQUAL" : [1.0]
+        }
+        #get me the full info for the factor definitions
+        fdict = self._get_facts_by_lst(list(fpreps.keys()))
+
+        #add some factor- and response-preparations
+        self.Mck.add_factor_preps(myproj, fpreps)
+        self.Mck.add_response_preps(myproj, rpreps)
+
+        cbp1 = FactorCombiPreparation(name="COMBI1", abbreviation="TSTFCMBP#1", projectid=myproj._id)
+        self.Spf.flush(cbp1)
+        #now some intersects, let's combine PRISP WITH PRINOZZTEM
+
+        cmb1 = FactorCombiDefInter(topid=cbp1._id, downid=fdict["PRISP"]._id)
+        self.Spf.flush(cmb1)
+        cmb2 = FactorCombiDefInter(topid=cbp1._id, downid=fdict["PRINOZZTEMP"]._id)
+        self.Spf.flush(cmb2)
+
+        cbp2 = FactorCombiPreparation(name="COMBI2", abbreviation="TSTFCMBP#2", projectid = myproj._id)
+        self.Spf.flush(cbp2)
+        cmb3 = FactorCombiDefInter(topid=cbp2._id, downid=fdict["MATFLOW"]._id)
+        self.Spf.flush(cmb3)
+
+        cbp1_R = sqp.SQQuery(self.Spf, FactorCombiPreparation).where(FactorCombiPreparation.Id == cbp1._id).first_or_default(None)
+        self.Spf.fill_joins(cbp1_R, FactorCombiPreparation.FactorDefs)
+
+        assert cbp1_R is not None
+        assert cbp1_R.factordefs is not None and len(cbp1_R.factordefs) == 2
+
+    def test_factcombipreps_multiselect(self):
+        myproj = self.Mck.create_project()
+        fpreps = {
+            "PRINOZZTEMP": [190, 220, 2], #factorabbr : [min, max, levels]
+            "MATFLOW" : [80, 110, 2],
+            "PRISP" : [40.0, 60.0, 2]
+        }
+        rpreps = {
+            "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
+            "SURFQUAL" : [1.0]
+        }
+        #get me the full info for the factor definitions
+        fdict = self._get_facts_by_lst(list(fpreps.keys()))
+
+        #add some factor- and response-preparations
+        self.Mck.add_factor_preps(myproj, fpreps)
+        self.Mck.add_response_preps(myproj, rpreps)
+
+        #we expect to find nothing here!
+        combi_q = sqp.SQQuery(self.Spf, FactorCombiPreparation).where(FactorCombiPreparation.ProjectId==myproj._id)
+        combipreps = list(combi_q)
+        assert len(combipreps) == 0
 
 if __name__ == '__main__':
     unittest.main()

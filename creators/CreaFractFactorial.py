@@ -2,6 +2,7 @@ import sqlitepersist as sqp
 from PersistClasses import *
 from .CreaBasics import *
 from .CreaBasics import _CreaSequential, _CreaBase
+from pyDOE2 import *
 
 class CreaFractFactorial(_CreaSequential):
     """ class for creation of fractional factorial experiment schemes
@@ -15,16 +16,19 @@ class CreaFractFactorial(_CreaSequential):
         sequence: CreaSequenceEnum = CreaSequenceEnum.LINEAR,
         planneddt: datetime = None,
         repetitions : int=1,
-        ommitfactors : list = None):
+        combidef : str = None):
         
         super().__init__(fact, project, printer, extruder, sequence=sequence, planneddt=planneddt, repetitions=repetitions)
 
-        if ommitfactors is None:
-            raise Exception("Partly factorial with no ommits makes no sense!")
+        if combidef is None or len(combidef)==0:
+            raise Exception("A fractional factorial with no combination directives makes no sense!")
 
-        self._ommitfactors = ommitfactors
+        self._combidef = self._trans_cd(combidef)
         
 
+    def _trans_cd(self, cdefs):
+        pass
+    
     def _preparethepreps(self):
         super()._preparethepreps()
 
@@ -35,23 +39,16 @@ class CreaFractFactorial(_CreaSequential):
 
 
     def create(self):
-        """ create all factors in combinations not in ommit-factors of values 
-            according to all their defined levels
+        """ create all experiments in a "fractional factorial 2 level each" schema
         """
         result = []
-        idxhistory = []
 
-        lvlct = LevelCounter(self._redfactpreps)
-        try:
-            idxes = lvlct.currlevels
-            while True: #do this until we get the level overflow esception
-                idxhistory.append(idxes)
-                factline = self._getfactors(idxes)
-                # self._dbgprint(idxes, factline)
-                result.append(factline)
-                idxes = lvlct.increment()
-        except LevelOverflow:
-            pass
+       
+        allidxes = fracfact(self._combidef) #_combidef is already translated from fact_abbreviations to A,B,C... form
+        for idxes in allidxes:
+            factline = self._getfactors(idxes)
+            # self._dbgprint(idxes, factline)
+            result.append(factline)
 
         if self._sequence is CreaSequenceEnum.MIXED:
             expct = self.write_mixed(result)

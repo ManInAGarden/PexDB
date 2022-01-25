@@ -6,6 +6,8 @@ from typing import Type
 import uuid
 import datetime as dt
 
+from sqlitepersist.SQLiteQueryDictGenerator import SQQueryDictGenerator
+
 from .SQLitePersistBasicClasses import *
 from .SQLitePPersistLogging import *
 
@@ -651,6 +653,7 @@ class SQFactory():
 
         jembs = []
         jlists = []
+        ilists = []
         for key, value in vd.items():
             #if hasattr(inst, key) and getattr(inst, key) is not None:
             #    continue
@@ -664,6 +667,9 @@ class SQFactory():
             elif declt is JoinedEmbeddedList:
                 if (not hasattr(inst, key) or getattr(inst, key) is None) and decl.get_autofill():
                     jlists.append(decl)
+            elif declt is IntersectedList:
+                if (not hasattr(inst, key) or getattr(inst, key) is None) and decl.get_autofill():
+                    ilists.append(decl)
             elif declt is Catalog:
                 dbdta = row[key]
                 setattr(inst, key, self._get_fullcatentry(value, dbdta))
@@ -690,7 +696,21 @@ class SQFactory():
         for jlist in jlists:
             self._fill_embedded_list(inst, jlist)
 
+        for ilist in ilists:
+            self._fill_intersected_list(inst, ilist)
+
         return inst
+
+    def get_contents(self, pinst, chk):
+        """ get the contents of a field when chk is a field definition or the
+            contents of the member when chk is a member name"""
+        if type(chk) is str:
+            return pinst.__getattribute__(chk)
+        elif issubclass(type(chk), BaseVarType):
+            localidfieldname = chk.get_fieldname()
+            return pinst.__getattribute__(localidfieldname)
+        else:
+            raise Exception("Definition error for class {}. Field must be named by its name as a string or by its definition".format(str(type(pinst))))
 
     def _fill_embedded_object(self, pinst : PBase, jdef : JoinedEmbeddedObject):
         tgtfieldname = jdef.get_fieldname()
@@ -704,9 +724,10 @@ class SQFactory():
         if tgtcls is None:
             raise Exception("missing targettype in JonedEmbeddedObject during fill")
 
-        localidfielddef = jdef._localid
-        localidfieldname = localidfielddef.get_fieldname()
-        localid = pinst.__getattribute__(localidfieldname)
+        localid = self.get_contents(pinst, jdef._localid)
+        # localidfielddef = jdef._localid
+        # localidfieldname = localidfielddef.get_fieldname()
+        # localid = pinst.__getattribute__(localidfieldname)
         if localid is None:
             return
 
@@ -732,6 +753,49 @@ class SQFactory():
             pinst.__setattr__(tgtfieldname, tgtinst)
         finally:
             curs.close()
+
+    def _fill_intersected_list(self, pinst : PBase, idef : IntersectedList):
+        tgtfieldname = idef.get_fieldname()
+        if tgtfieldname is None:
+            raise Exception("targetfield name cannot be derived during fill of a joined embedded list")
+
+        if pinst.__getattribute__(tgtfieldname) is not None:
+            return
+
+        tgtcls = idef.get_targettype()
+
+        localid = self.get_contents(pinst, idef._localid)
+        if localid is None:
+            pinst.__setattr__(tgtfieldname, [])
+            return
+
+        intertablename = tgtcls._getclstablename()
+        upfieldname = idef.get_up_keyname()
+
+        stmt = "SELECT * from {} where {}=?".format(intertablename,
+            upfieldname)
+
+        addw = tgtcls.additional_where()
+        if addw is not None:
+            qdg = SQQueryDictGenerator()
+            qdict = qdg.getquerydict(addw)
+            stmt += " AND " +  self._create_where(qdict)
+
+        self._logger.log_stmt("EXEC: {0}", stmt)
+        curs = self.conn.cursor()
+        try:
+            rows = curs.execute(stmt, (localid,)) #self._getoperand(localid)
+            ct = 0
+            scratchl = []
+            for row in rows:
+                tgtinst = self._create_instance(tgtcls, row)
+                scratchl.append(tgtinst)
+
+            pinst.__setattr__(tgtfieldname, scratchl)
+            
+        finally:
+            curs.close()
+
 
     def _fill_embedded_list(self, pinst : PBase, jdef : JoinedEmbeddedList):
         tgtfieldname = jdef.get_fieldname()
@@ -785,6 +849,8 @@ class SQFactory():
                 self._fill_embedded_list(pinst, arg)
             elif targ is JoinedEmbeddedObject:
                 self._fill_embedded_object(pinst, arg)
+            elif targ is IntersectedList:
+                self._fill_intersected_list(pinst, arg)
             else:
                 raise Exception("argument {0} is no joined definition".format(str(arg)))
 

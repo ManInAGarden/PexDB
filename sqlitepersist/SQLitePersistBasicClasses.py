@@ -1,4 +1,5 @@
 import datetime as dt
+from email.policy import default
 import uuid
 import inspect
 from enum import Enum, unique
@@ -239,6 +240,44 @@ class Catalog(BaseVarType):
     def get_catalogtype(self):
         return self._catalogtype
 
+# classes for queries
+class SpecialWhereInfo(object):
+    def __init__(self, field, infotype, infodata):
+        self._field = field
+        self._infotype = infotype
+        self._infodata = infodata
+
+    def __and__(self, other):
+        return OperationStackElement(self, "&", other)
+
+    def __or__(self, other):
+        return OperationStackElement(self, "|", other)
+
+    def __invert__(self):
+        return OperationStackElement(None, "~", self)
+
+    def get_left(self):
+        return self._field
+
+    def get_right(self):
+        return self._infodata
+
+    def get_op(self):
+        return self._infotype
+
+class IsIn(SpecialWhereInfo):
+    def __init__(self, field, infodata):
+        super().__init__(field, infotype="ISIN", infodata=infodata)
+
+class NotIsIn(SpecialWhereInfo):
+    def __init__(self, field, infodata):
+        super().__init__(field, infotype="NOTISIN", infodata=infodata)
+
+class Regex(SpecialWhereInfo):
+    def __init__(self, field, infodata):
+        super().__init__(field, infotype="REGEX", infodata=infodata)
+
+# special data declarations
 
 class _EmbeddedObject(BaseVarType):
     _innertype = object
@@ -305,6 +344,18 @@ class IntersectedList(_EmbeddedList):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._getpara(kwargs, "autofill", default=False)
+        self._getpara(kwargs, "cascadedelete", default=True)
+        self._getpara(kwargs, "localid", default="_id") 
+        self._getpara(kwargs, "foreignid", default="_id")
+        self._getpara(kwargs, "interupid", default="upid") 
+        self._getpara(kwargs, "interdownid", default="downid")
+
+    def get_down_keyname(self):
+        return self._interdownid
+
+    def get_up_keyname(self):
+        return self._interupid
+
 
 class JoinedEmbeddedObject(_EmbeddedObject):
     _innertype = object
@@ -463,6 +514,26 @@ class PCatalog(PBase):
             return cls.Type == cls._cattype #this adds where type=<myclastype> to any call 
         else:
             return None
+
+class CommonInter(PBase):
+    """derivew from this if you want to have all your intersections reside in just one
+    collection identified by a type str"""
+    _collectionname = "commoninter"
+    _intertype = None  #override in your derived class to distinguish your intersection from all of the others
+    UpId = UUid(uniquegrp="_COMN_INTER_UNI")
+    DownId = UUid(uniquegrp="_COMN_INTER_UNI")
+    InterType = String(uniquegrp="_COMN_INTER_UNI")
+
+    @classmethod
+    def additional_where(cls):
+        if cls._intertype is not None:
+            return cls.InterType == cls._intertype #this adds where type=<myintertype> to any call of where
+        else:
+            return None
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.intertype=self.__class__._intertype
 
 def getvarname(decl: BaseVarType):
     """get the name used for a field of a declaration 

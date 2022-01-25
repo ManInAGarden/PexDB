@@ -148,10 +148,11 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 			self.m_mergeFormulaTBX.Enable(False)
 
 	def m_connfactorBUOnButtonClick( self, event ):
-		dial = PexDbViewerAddSubElementDialog(self, self._fact,
-			FactorDefinition,
-			"factor definition",
-			list(map(lambda pr : pr.factordefinitionid, self._factorpreps)) )
+		not_these_ids = list(map(lambda pr : pr.factordefinitionid, self._factorpreps))
+		dial = PexDbViewerAddSubElementDialog(self, 
+			self._fact,
+			sqp.SQQuery(self._fact, FactorDefinition).where((FactorDefinition.IsActive==True) & sqp.NotIsIn(FactorDefinition.Id, not_these_ids)),
+			"factor definition")
 
 		res = dial.ShowModal()
 		if res == wx.ID_CANCEL:
@@ -221,11 +222,13 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 
 	def m_addRespPrepBUTOnButtonClick(self, event):
+		not_these_ids = list(map(lambda pr : pr.responsedefinitionid, self._responsepreps))
+		q = sqp.SQQuery(self._fact, ResponseDefinition).where((ResponseDefinition.IsActive==True) & sqp.NotIsIn(ResponseDefinition.Id, not_these_ids))
 		dial = PexDbViewerAddSubElementDialog(self,
 			self._fact,
-			ResponseDefinition,
-			"response definition",
-			list(map(lambda pr : pr.responsedefinitionid, self._responsepreps)))
+			q,
+			"response definition")
+			
 		res = dial.ShowModal()
 
 		if res == wx.ID_CANCEL:

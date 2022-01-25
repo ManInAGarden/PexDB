@@ -6,6 +6,7 @@ import wx
 from wx.core import CENTRE, YES_NO, Bitmap, FileDialog, FileSelector, Image, MessageBox, NullBitmap
 import wx.propgrid as pg
 from ExtOpener import ExtOpener
+from PexDbViewerCreateFractDetailDialog import PexDbViewerCreateFractDetailDialog
 from PexDbViewerLinRegrDialog import PexDbViewerLinRegrDialog
 import creators as cr
 import GeneratedGUI as gg #import generated GUI
@@ -194,7 +195,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		return experiments
 
 	def _initandseeddb(self):
-		pclasses = [sqp.PCatalog, 
+		pclasses = [sqp.PCatalog, sqp.CommonInter,
 			Unit, 
 			Project,
 			ProjectFactorPreparation,
@@ -209,7 +210,10 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			ProjectEnviroPreparation,
 			EnviroDefinition,
 			EnviroValue,
-			ExperimentDoc]
+			ExperimentDoc,
+			#FactorCombiDefInter, data are in table of CommonInter
+			FactorCombiPreparation
+			]
 
 		createds = []
 		for pclass in pclasses:
@@ -722,6 +726,18 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self.m_expDocsDVLCTR.SetValue(newval, docidx, edicol)		
 		if dosave:
 			self._fact.flush(doc)
+
+	def m_creaFractFactMEIOnMenuSelection(self, event):
+		dial = PexDbViewerCreateFractDetailDialog(self,
+			self._fact,
+			self._currentproject,
+			self._prefprinter,
+			self._prefextruder)
+
+		res = dial.ShowModal()
+		if res != wx.ID_OK:
+			return
+
 
 if __name__ == '__main__':
 	app = wx.App()

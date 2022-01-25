@@ -3,6 +3,7 @@ import os # needed for on_after_delete of ExperimentDocs
 from datetime import datetime
 from enum import unique
 import sqlitepersist as sqp
+from sqlitepersist.SQLitePersistBasicClasses import UUid
 
 class AbbreviatedThing(sqp.PBase):
     Abbreviation = sqp.String(uniquegrp="ABBRUNIQ")
@@ -199,6 +200,16 @@ class ExperimentDoc(sqp.PBase):
                 print("removed file <{}> by ExperimentDoc().on_after_delete()".format(self.filepath))
 
 
+class FactorCombiDefInter(sqp.CommonInter):
+    _intertype = "COMBIDEF_FACTDEF"
+    FactorDefinition = sqp.JoinedEmbeddedObject(targettype=FactorDefinition, localid="downid", autofill=True)
+
+class FactorCombiPreparation(sqp.PBase):
+    ProjectId = sqp.UUid()
+    Name = sqp.String()
+    IsNegated = sqp.Boolean(default=False)
+    FactorDefs = sqp.IntersectedList(targettype=FactorCombiDefInter)
+
 class Experiment(sqp.PBase):
     ProjectId = sqp.UUid()
     ExtruderUsedId = sqp.UUid()
@@ -215,6 +226,8 @@ class Experiment(sqp.PBase):
     Responses = sqp.JoinedEmbeddedList(targettype=ResponseValue, foreignid=ResponseValue.ExperimentId, cascadedelete=True)
     Enviros = sqp.JoinedEmbeddedList(targettype=EnviroValue, foreignid=EnviroValue.ExperimentId, cascadedelete=True)
     Docs = sqp.JoinedEmbeddedList(targettype=ExperimentDoc, foreignid=ExperimentDoc.ExperimentId, cascadedelete=True)
+
+
 
 
     

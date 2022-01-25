@@ -30,10 +30,13 @@ select * from catalog order by type;
 
 delete from catalog where type == "PICTURE_TYPE";
 
+select * from commoninter;
 
-select * from factorvalue;
+select * from factorcombipreparation;
 
-select * from envirodefinition;
+select * from commoninter;
+
+
 
 -- drop table catalog;
 -- drop table unit;
@@ -41,6 +44,7 @@ select * from envirodefinition;
 -- drop table experimentdoc;
 -- drop table experiment;
 -- drop TABLE envirodefinition;
+-- drop table commoninter;
 
 select
     fv.value
@@ -57,5 +61,7 @@ where
 .schema projectresponsepreparation
 
 .schema project
+
+.schema commoninter
 
 .tables

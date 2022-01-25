@@ -94,6 +94,9 @@ class _CreaBase:
             exp.enviros.append(envval)
 
     def _get_level_arr(self):
+        """ creates and returns a list of the levels in each factor in the sequence defined in
+            self._factpreps
+        """
         answ = []
 
         for fprep in self._factpreps:
@@ -103,7 +106,6 @@ class _CreaBase:
 
     def create(self):
         raise Exception("override create in your own class, do not use method in _CreaBase!!!!")
-
 
 
 class _CreaSequential(_CreaBase):

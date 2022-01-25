@@ -8,13 +8,12 @@ from sqlitepersist.SQLitePersistBasicClasses import PBase
 # Implementing AddSubElementDialog
 class PexDbViewerAddSubElementDialog( GeneratedGUI.AddSubElementDialog ):
 
-	def __init__( self, parent, fact : sqp.SQFactory, selcls, objname, alreadyconnected : list):
+	def __init__( self, parent, fact : sqp.SQFactory, presentthese : sqp.SQQuery, objname):
 		GeneratedGUI.AddSubElementDialog.__init__( self, parent)
-		self._alrconn = alreadyconnected
 		self._fact = fact
+		self._pres_q = presentthese
 		self._selected = None
 		self._objectlist = []
-		self._sc = selcls
 		self._oname = objname
 
 	@property
@@ -31,13 +30,11 @@ class PexDbViewerAddSubElementDialog( GeneratedGUI.AddSubElementDialog ):
 		if event.Show is False:
 			return
 
-		objectdef_q = sqp.SQQuery(self._fact, self._sc).where(self._sc.IsActive==True and sqp.NotIsIn(self._sc.Id, self._alrconn))
-		
 		self.m_objectsLLCTR
 		self.m_objectsLLCTR.ClearAll()
 		self.m_objectsLLCTR.InsertColumn(0, "Name")
 		self.m_objectsLLCTR.InsertColumn(1, "Unit")
-		self._objectlist = list(objectdef_q)
+		self._objectlist = list(self._pres_q)
 		ct = 0
 		for obj in self._objectlist:
 			idx = self.m_objectsLLCTR.InsertItem(self.m_objectsLLCTR.GetColumnCount(), obj.name)
