@@ -1,8 +1,10 @@
+from pydoc import doc
 import sqlitepersist as sqp
 from PersistClasses import *
 from .CreaBasics import *
 from .CreaBasics import _CreaSequential, _CreaBase
 from pyDOE2 import *
+
 
 class CreaFractFactorial(_CreaSequential):
     """ class for creation of fractional factorial experiment schemes
@@ -16,35 +18,75 @@ class CreaFractFactorial(_CreaSequential):
         sequence: CreaSequenceEnum = CreaSequenceEnum.LINEAR,
         planneddt: datetime = None,
         repetitions : int=1,
-        combidef : str = None):
-        
-        super().__init__(fact, project, printer, extruder, sequence=sequence, planneddt=planneddt, repetitions=repetitions)
+        docentre : bool=False):
 
-        if combidef is None or len(combidef)==0:
-            raise Exception("A fractional factorial with no combination directives makes no sense!")
+        #prepare the preps is called somewhere down here...
+        super().__init__(fact, project, printer, extruder, sequence=sequence, planneddt=planneddt, repetitions=repetitions, docentre=docentre)
 
-        self._combidef = self._trans_cd(combidef)
-        
 
-    def _trans_cd(self, cdefs):
-        pass
-    
+    def _getletter(self, num : int):
+        assert num >= 0 and num <= 26
+
+        return chr(num + 65)
+
     def _preparethepreps(self):
         super()._preparethepreps()
 
-        self._redfactpreps = []
+        #create a translation dicts for fact abbreviations
+        #and vor fact single letter names -> abbreviations
+        self._abbrletterdict = {}
+        self._abbrfactdict = {}
+        #add all factors we can find to helper dict, just to make sure we
+        letterct = 0
         for fprep in self._factpreps:
-            if fprep.factordefinition.name not in self._ommitfactors:
-                self._redfactpreps.append(fprep)
+            self._fact.fill_joins(fprep, 
+                ProjectFactorPreparation.FactorCombiDefs)
+            fdef = fprep.factordefinition
+            
+            if fdef.abbreviation not in self._abbrfactdict:
+                self._abbrfactdict[fdef.abbreviation] = fdef
+                self._abbrletterdict[fdef.abbreviation] = self._getletter(letterct)
+                letterct += 1
 
+            if fprep.iscombined:
+                for inter in fprep.factorcombidefs:
+                    fdef = inter.factordefinition
+                    if fdef.abbreviation not in self._abbrfactdict:
+                        self._abbrfactdict[fdef.abbreviation] = fdef
+                        self._abbrletterdict[fdef.abbreviation] = self._getletter(letterct)
+                        letterct += 1
+
+        self._combstr = self._get_combstr()
+
+    def _get_combstr(self):
+        """ from the combinations in self._combidefs and the prepared translations a string
+            describing the combinations with only capital letters is produced and returned
+        """
+        first = True
+        for fprep in self._factpreps:
+            if first:
+                answ = ""
+                first = False
+            else:
+                answ += " "
+
+            if fprep.isnegated:
+                answ += "-"
+
+            if not fprep.iscombined:
+                answ += self._abbrletterdict[fprep.factordefinition.abbreviation]
+            else:
+                self._fact.fill_joins(fprep, ProjectFactorPreparation.FactorCombiDefs)
+                for inter in fprep.factorcombidefs:
+                    answ += self._abbrletterdict[inter.factordefinition.abbreviation]
+
+        return answ
 
     def create(self):
         """ create all experiments in a "fractional factorial 2 level each" schema
         """
         result = []
-
-       
-        allidxes = fracfact(self._combidef) #_combidef is already translated from fact_abbreviations to A,B,C... form
+        allidxes = fracfact(self._combstr) #_combstr is already translated from fact_abbreviations to A,B,C... form
         for idxes in allidxes:
             factline = self._getfactors(idxes)
             # self._dbgprint(idxes, factline)

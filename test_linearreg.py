@@ -117,3 +117,20 @@ class TestLinearRegression(TestBase):
         coef = lr.model.coef_
         interc = lr.model.intercept_
 
+    def test_simple_fractional(self):
+        fpreps = {
+            "PRINOZZTEMP": {"minvalue": 190, "maxvalue": 220, "levelnum": 2, "iscombined": False},
+            "MATFLOW" : {"minvalue": 80, "maxvalue": 110, "levelnum": 2, "iscombined": False},
+            "FANSPEED" : {"minvalue": 0, "maxvalue": 100, "levelnum": 2, "iscombined": True, "isnegated":False, 
+                "factorcombidefs" : ["MATFLOW","PRINOZZTEMP"]}
+        }
+        rpreps = {
+            "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
+            "SURFQUAL" : [1.0]
+        }
+
+
+        cnum, proj = self.Mck.create_fractfactorial_experiments(fpreps, 
+            rpreps,
+            projectname="test_simple_project")
+

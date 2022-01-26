@@ -136,6 +136,10 @@ class Project(sqp.PBase):
     DoMergeCalculation = sqp.Boolean(default=False)
     MergeFormula = sqp.String()
 
+class FactorCombiDefInter(sqp.CommonInter):
+    _intertype = "COMBIDEF_FACTDEF"
+    FactorDefinition = sqp.JoinedEmbeddedObject(targettype=FactorDefinition, localid="downid", autofill=True)
+
 
 class ProjectFactorPreparation(sqp.PBase):
     ProjectId = sqp.UUid()
@@ -144,6 +148,9 @@ class ProjectFactorPreparation(sqp.PBase):
     LevelNum = sqp.Int(default=2)
     FactorDefinitionId = sqp.UUid()
     FactorDefinition = sqp.JoinedEmbeddedObject(targettype=FactorDefinition, localid=FactorDefinitionId, autofill=True)
+    IsCombined = sqp.Boolean(default=False)
+    IsNegated = sqp.Boolean(default=False)
+    FactorCombiDefs = sqp.IntersectedList(targettype=FactorCombiDefInter, cascadedelete=True)
 
 class ProjectResponsePreparation(sqp.PBase):
     ProjectId = sqp.UUid()
@@ -199,16 +206,6 @@ class ExperimentDoc(sqp.PBase):
                 os.remove(self.filepath)
                 print("removed file <{}> by ExperimentDoc().on_after_delete()".format(self.filepath))
 
-
-class FactorCombiDefInter(sqp.CommonInter):
-    _intertype = "COMBIDEF_FACTDEF"
-    FactorDefinition = sqp.JoinedEmbeddedObject(targettype=FactorDefinition, localid="downid", autofill=True)
-
-class FactorCombiPreparation(sqp.PBase):
-    ProjectId = sqp.UUid()
-    Name = sqp.String()
-    IsNegated = sqp.Boolean(default=False)
-    FactorDefs = sqp.IntersectedList(targettype=FactorCombiDefInter)
 
 class Experiment(sqp.PBase):
     ProjectId = sqp.UUid()

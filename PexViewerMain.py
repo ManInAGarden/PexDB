@@ -212,7 +212,6 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			EnviroValue,
 			ExperimentDoc,
 			#FactorCombiDefInter, data are in table of CommonInter
-			FactorCombiPreparation
 			]
 
 		createds = []

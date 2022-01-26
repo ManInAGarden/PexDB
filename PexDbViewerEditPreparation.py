@@ -2,27 +2,54 @@
 
 import wx
 import GeneratedGUI
+from PexDbViewerAddSubElementDialog import PexDbViewerAddSubElementDialog
 import sqlitepersist as sqp
 
-from PersistClasses import ProjectFactorPreparation
+from PersistClasses import *
+from sqlitepersist.SQLitePersistFactoryParts import SQFactory
 
 # Implementing EditPreparation
 class PexDbViewerEditPreparation( GeneratedGUI.EditPreparation ):
-	def __init__( self, parent, prep : ProjectFactorPreparation ):
-		GeneratedGUI.EditPreparation.__init__( self, parent )
+	def __init__( self, parent, fact : sqp.SQFactory, prep : ProjectFactorPreparation ):
+		GeneratedGUI.EditPreparation.__init__( self, parent)
 
 		self._prep = prep
 		self._editedprep = None
+		self._fact = fact
 
 	@property
 	def editedprep(self):
 		return self._editedprep
 
+	def _get_bool(self, inbo):
+		if inbo is None:
+			return False
+		else:
+			return inbo
+
+	def fill_combilist(self):
+		self.m_factCombisLCTRL.DeleteAllItems()
+		self._fact.fill_joins(self._prep, ProjectFactorPreparation.FactorCombiDefs)
+		ct = 0
+		for defi in self._prep.factorcombidefs:
+			fdef = defi.factordefinition
+			itm = self.m_factCombisLCTRL.InsertItem(self.m_factCombisLCTRL.GetItemCount(), self._getstr(fdef.name))
+			self.m_factCombisLCTRL.SetItemData(itm, ct)
+			self.m_factCombisLCTRL.SetItem(itm, 1, self._getstr(fdef.abbreviation))
+			ct += 1
+
+	def EditPreparationOnInitDialog(self, event):
+		self.m_factCombisLCTRL.AppendColumn("Name")
+		self.m_factCombisLCTRL.AppendColumn("Abbreviation")
+
 	def EditPreparationOnShow(self, event):
 		self.m_maxValTBX.SetValue(str(self._prep.maxvalue))
 		self.m_minValTBX.SetValue(str(self._prep.minvalue))
 		self.m_numLvlsTBX.SetValue(str(self._prep.levelnum))
+		self.m_isCombinedCBX.SetValue(self._get_bool(self._prep.iscombined))
+		self.m_isNegatedCBX.SetValue(self._get_bool(self._prep.isnegated))
 
+		self.fill_combilist()
 
 	# Handlers for EditPreparation events.
 	def OnOKButtonClick( self, event ):
@@ -30,6 +57,30 @@ class PexDbViewerEditPreparation( GeneratedGUI.EditPreparation ):
 		ediprep.minvalue = float(self.m_minValTBX.GetValue())
 		ediprep.maxvalue = float(self.m_maxValTBX.GetValue())
 		ediprep.levelnum = int(self.m_numLvlsTBX.GetValue())
+		ediprep.isnegated = self.m_isNegatedCBX.GetValue()
+		ediprep.iscombined = self.m_isCombinedCBX.GetValue()
 
 		self._editedprep = ediprep
 		self.EndModal(wx.ID_OK)
+
+	def m_addFactorBUTOnButtonClick( self, event ):
+		prep_fdef_ids = list(sqp.SQQuery(self._f, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._p._id).select(lambda fprep : fprep.factordefinitionid))
+		not_these_ids = list(map(lambda fd : fd.downid, self._comb.factordefs))
+		q = sqp.SQQuery(self._f, FactorDefinition).where(sqp.IsIn(FactorDefinition.Id, prep_fdef_ids) & sqp.NotIsIn(FactorDefinition.Id, not_these_ids))
+		dial = PexDbViewerAddSubElementDialog(self, self._f, q, "factor definition")
+		res = dial.ShowModal()
+		if res == wx.ID_OK:
+			defi = FactorCombiDefInter(upid = self._comb._id, 
+				factordefinition = dial.selected, 
+				downid = dial.selected._id)
+			self._comb.factordefs.append(defi)
+			self.show_factdefs()
+
+	def m_removeFactorBUTOnButtonClick( self, event ):
+		itm = self.m_factCombisLCTRL.GetFirstSelected()
+		if itm == wx.NOT_FOUND:
+			return
+
+		itmdta = self.m_factCombisLCTRL.GetItemData(itm)
+		self._comb.factordefs.pop(itmdta)
+		self.show_factdefs()

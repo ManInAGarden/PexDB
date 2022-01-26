@@ -24,8 +24,7 @@ class TestBase(unittest.TestCase):
         Project,
         ProjectFactorPreparation,
         ProjectResponsePreparation,
-        ProjectEnviroPreparation,
-        FactorCombiPreparation]
+        ProjectEnviroPreparation]
 
     @classmethod
     def setUpClass(cls):

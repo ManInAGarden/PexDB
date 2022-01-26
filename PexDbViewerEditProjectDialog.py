@@ -194,7 +194,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 		idx = self.m_prepsLCTRL.GetItemData(selidx)
 		
-		dial = PexDbViewerEditPreparation(self, self._factorpreps[idx])
+		dial = PexDbViewerEditPreparation(self, self._fact, self._factorpreps[idx])
 		res = dial.ShowModal()
 		if res == wx.ID_CANCEL:
 			return

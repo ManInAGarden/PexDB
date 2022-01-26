@@ -344,7 +344,7 @@ class IntersectedList(_EmbeddedList):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._getpara(kwargs, "autofill", default=False)
-        self._getpara(kwargs, "cascadedelete", default=True)
+        self._getpara(kwargs, "cascadedelete", default=False)
         self._getpara(kwargs, "localid", default="_id") 
         self._getpara(kwargs, "foreignid", default="_id")
         self._getpara(kwargs, "interupid", default="upid") 

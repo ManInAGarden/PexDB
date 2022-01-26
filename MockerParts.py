@@ -9,6 +9,14 @@ class Mocker(object):
    
     def __init__(self, fact : sqp.SQFactory) -> None:
         self._sqpf = fact
+        self._fdef_cache = None
+
+    @property
+    def fdef_dict(self):
+        if self._fdef_cache is None:
+            self._fdef_cache = self._create_ref_dict(SQQuery(self._sqpf, FactorDefinition))
+
+        return self._fdef_cache
 
     def create_seeddata(self, filepath):
         # self._mpf._db.drop_collection(MrMsCat.get_collection_name()) #this drops all of the catalogs becaus they are all in the same collection!
@@ -21,9 +29,8 @@ class Mocker(object):
         return proj
 
     def _create_ref_dict(self, sq : SQQuery) -> dict:
-        lst = list(sq)
         answ = {}
-        for el in lst:
+        for el in sq:
             answ[el.abbreviation] = el
 
         return answ
@@ -44,24 +51,59 @@ class Mocker(object):
 
             self._sqpf.flush(rprep)
 
+    def fprep_from_valdict(self, proj : Project, vdict:dict, fdef : FactorDefinition):
+        fprep = ProjectFactorPreparation(projectid = proj._id, 
+                factordefinition = fdef,
+                factordefinitionid = fdef._id,
+                minvalue=vdict["minvalue"], 
+                maxvalue=vdict["maxvalue"], 
+                levelnum=self._get_int(vdict, "levelnum", 2),
+                iscombined=self._get_bool(vdict, "iscombined"),
+                isnegated=self._get_bool(vdict, "isnegated"))
+
+        self._sqpf.flush(fprep)
+        if fprep.iscombined:
+            if not "factorcombidefs" in vdict:
+                raise Exception("iscombined==True bur no combinations found in mocking of factor {}".format(fdef.abbreviation))
+
+            combidefs = vdict["factorcombidefs"]
+            assert type(combidefs) is list
+
+            for fabbr in combidefs:
+                factdef = self.fdef_dict[fabbr]
+                inter = FactorCombiDefInter(upid=fprep._id, 
+                    downid=factdef._id)
+
+                self._sqpf.flush(inter)
+                inter.factordeinition = fdef
+
+                if fprep.factorcombidefs is None:
+                    fprep.factorcombidefs = []
+                fprep.factorcombidefs.append(inter)
+
+        return fprep
+
     def add_factor_preps(self, proj : Project, factlevels : dict):
         assert proj is not None
         assert len(factlevels) > 0
         assert proj._id is not None
 
-        #get all fdefs
-        fdef_dict = self._create_ref_dict(SQQuery(self._sqpf, FactorDefinition))
+        for fabbr, valdict in factlevels.items():
+            fdef = self.fdef_dict[fabbr] #get the factor definition to be used for the project-factor-preparation
+            fprep = self.fprep_from_valdict(proj, valdict, fdef)
+            #self._sqpf.flush(fprep)
 
-        for fabbr, prepdef in factlevels.items():
-            fdef = fdef_dict[fabbr]
-            fprep = ProjectFactorPreparation(projectid = proj._id, 
-                factordefinition = fdef,
-                factordefinitionid = fdef._id,
-                minvalue=prepdef[0], 
-                maxvalue=prepdef[1], 
-                levelnum=prepdef[2])
+    def _get_bool(self, valdict, key,  default=False):
+        if key not in valdict:
+            return default
+        else:
+            return valdict[key]
 
-            self._sqpf.flush(fprep)
+    def _get_int(self, valdict, key, default=0):
+        if key not in valdict:
+            return default
+        else:
+            return valdict[key]
 
     def create_printer(self, producedby="Qidi tech", name="X-MAX", abbreviation=None, firmware="MARLIN", version="1.1.3", yearofbuild=2020, monthofbuild=9):
         if abbreviation is None:
@@ -138,6 +180,31 @@ class Mocker(object):
         self.add_response_preps(proj, rpreps)
 
         crea = cr.CreaFullFactorial(self._sqpf, proj,
+            prin,
+            extr,
+            kind,
+            docentre=docentre)
+
+        cnum = crea.create()
+
+        return cnum, proj
+
+    def create_fractfactorial_experiments(self, 
+            fpreps, 
+            rpreps,
+            kind = cr.CreaSequenceEnum.LINEAR,
+            projectname="linregproj",
+            docentre = False):
+        """ create all experiments by a full factorial scheme
+        """
+        
+        prin = self.create_printer(name="LIN_SIMPLE_PRINTER")
+        extr = self.create_extruder(name="LIN_SIMPLE_EXTRUDER")
+        proj = self.create_project(name=projectname)
+
+        self.add_factor_preps(proj, fpreps)
+        self.add_response_preps(proj, rpreps)
+        crea = cr.CreaFractFactorial(self._sqpf, proj,
             prin,
             extr,
             kind,
