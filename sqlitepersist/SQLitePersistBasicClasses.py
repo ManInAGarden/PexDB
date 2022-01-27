@@ -4,6 +4,8 @@ import uuid
 import inspect
 from enum import Enum, unique
 
+from urllib3 import Retry
+
 class DbType(Enum):
      NULL = 0 
      INTEGER = 1
@@ -457,6 +459,36 @@ class PBase(object):
             mybe like: MyCls.MyProp=="something" """
         return None
 
+    def clone(self):
+        """ create an intelligent clone by deep copying all of the members which are declared
+            as persistent. _id is not omitted!
+        """
+
+        cls = self.__class__
+        answ = cls()
+        decls = cls.get_clsdict()
+        for mname, mdecl in decls.items():
+            val = getattr(self, mname, None)
+            if val is None:
+                setattr(answ, mname, val)
+            else:
+                if mdecl._dectype is JoinedEmbeddedObject:
+                    setattr(answ, mname, val.clone())
+                elif mdecl._dectype is IntersectedList:
+                    answval = []
+                    for valelm in val:
+                        answval.append(valelm.clone())
+                    setattr(answ, mname, answval)
+                elif mdecl._dectype is JoinedEmbeddedList:
+                    answval = []
+                    for valelm in val:
+                        answval.append(valelm.clone())
+                    setattr(answ, mname, answval)
+                    
+                else:
+                    setattr(answ, mname, val)
+
+        return answ
 
     def __init__(self, **kwargs):
         self._valuesdict = {}
@@ -464,6 +496,21 @@ class PBase(object):
         for key, value in kwargs.items():
             self._set_my_attribute(key, value)
         self.initialise_attributes()
+        self._dbvaluescache = None
+
+    def has_changed(self):
+        if self._dbvaluescache is None: #no read from db occured before we ask this
+            return True
+
+        vd = self._get_my_memberdict()
+        for key, value in vd.items():
+            if hasattr(self, key):
+                membval = getattr(self, key)
+                if self._dbvaluescache[key] != membval:
+                    return True
+
+        return False
+        
 
     def initialise_attributes(self):
         vd = self._get_my_memberdict()
@@ -503,6 +550,9 @@ class PCatalog(PBase):
 
     def __str__(self):
         return "{}.{}.{}.{}".format(self.type, self.langcode, self.code, self.value)
+        
+    def __eq__(self, other):
+        return self.langcode==other.langcode and self.type==other.type and self.code == other.code
         
     @classmethod
     def is_langsensitive(cls):

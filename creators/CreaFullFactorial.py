@@ -121,62 +121,7 @@ class CreaFullFactorial(_CreaSequential):
 
         return expct
 
-    def write_linear(self, result):
-        expct = 0
-
-        for i in range(self._repetitions):
-            for res in result:
-                exp = Experiment(sequence=expct + 1,
-                    repnum = i+1,
-                    description="Exp #{}".format(expct+1),
-                    project = self._proj,
-                    projectid = self._proj._id,
-                    printerused = self._printer,
-                    printerusedid = self._printer._id,
-                    extruderused = self._extruder,
-                    extruderusedid = self._extruder._id,
-                    carriedoutdt=self._planneddt)
-                self._fact.flush(exp) #we need the _id
-
-                for factval in res:
-                    factval.experimentid = exp._id
-                    self._fact.flushcopy(factval)
-
-                self.write_resps(exp) #write the prepared responses
-                self.write_enviros(exp)
-                expct += 1
-
-        return expct
-
-    def write_mixed(self, result):
-        expct = 0
-        rnum = 0
-        for res in RandHelper(result, self._repetitions):
-            exp = Experiment(sequence=expct + 1,
-                repnum = rnum + 1,
-                description="Exp #{}".format(expct+1),
-                project = self._proj,
-                projectid = self._proj._id,
-                printerused = self._printer,
-                printerusedid = self._printer._id,
-                extruderused = self._extruder,
-                extruderusedid = self._extruder._id)
-            self._fact.flush(exp) #we need the _id
-
-            for factval in res:
-                factval.experimentid = exp._id
-                self._fact.flushcopy(factval)
-
-            self.write_resps(exp) #write the prepared responses
-            self.write_enviros(exp)
-
-            expct += 1
-            if expct % len(result) == 0:
-                rnum = 0
-            else:
-                rnum += 1
-
-        return expct
+    
 
 
 

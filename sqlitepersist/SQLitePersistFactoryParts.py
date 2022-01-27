@@ -1,5 +1,6 @@
 
 from distutils.filelist import findall
+from importlib.util import module_for_loader
 import sqlite3 as sq3
 from sqlite3.dbapi2 import Error, OperationalError
 from typing import Type
@@ -299,13 +300,90 @@ class SQFactory():
         self._catcache[ck] = ce
         return ce
 
+    def _detect_lst_change(self, newl, oldl):
+        newnoid = list(filter(lambda el : el._id is None, newl))
+        newhasid = list(filter(lambda el : el._id is not None, newl))
+        newids = list(map(lambda el : el._id, newhasid))
+        oldids = list(map(lambda el : el._id, oldl))
+        newonly = []
+        oldonly = []
+        both = []
+        both_ids = []
+
+        for newele in newhasid:
+            if newele._id in oldids:
+                oldele = list(filter(lambda el : el._id==newele._id, oldl))[0]
+                both.append((newele, oldele))
+                both_ids.append(newele._id)
+            else:
+                newonly.append(newele)
+
+        for oldele in oldl:
+            if oldele._id in newids and oldele._id not in both_ids:
+                oldonly.append(oldele)
+
+        newonly.extend(newnoid) 
+        
+        return newonly, oldonly, both
+
+
+    def flush_diffs(self, newp, oldp):
+        """ flush everything so that newp is completely persistet. Any list elements not present
+            in oldp will be deleted during flush_diffs
+            This is done deep! 
+        """
+        newt = type(newp)
+        oldt = type(oldp)
+        if newt != oldt:
+            raise Exception("flush_diffs: types are not the same {} vs. {}".format(str(newt), str(oldt))) #not same types, no diff no flush!
+        if newp._id is None:
+            raise Exception("flush_diffs: new id is None for element type {}".format(str(newt))) #no id no flushdiff!
+        if oldp._id is None:
+            raise Exception("flush_diffs: old id is None for element type {}".format(str(oldt))) #no id no flushdiff!
+        if newp._id != oldp._id:
+            raise Exception("flush_diffs: ids are different") #not same id, no flushdiff!
+
+        self.flush(newp)
+        mdict = newp._get_my_memberdict()
+
+        for mdname, mdentry in mdict.items():
+            if mdentry._dectype is JoinedEmbeddedObject:
+                newembedo = getattr(newp, mdname)
+                oldembedo = getattr(oldp, mdname)
+                if newembedo is not None and oldembedo is not None:
+                    self.flush_diffs(newembedo, oldembedo)
+                elif newembedo is not None:
+                    self.flush(newembedo)
+                
+            elif mdentry._dectype is JoinedEmbeddedList or mdentry._dectype is IntersectedList:
+                newlstatt = getattr(newp, mdname)
+                oldlstatt = getattr(oldp, mdname)
+                newonlylst, oldonlylst, bothlst = self._detect_lst_change(newlstatt, oldlstatt)
+                # bothlst contains tuples of (old,new)
+                for elm in bothlst: #bothlist is a list of tuples (old, new)
+                    self.flush_diffs(elm[0], elm[1]) #at 0 is new, at 1 is old
+                for elm in newonlylst:
+                    self.flush(elm)
+                for elm in oldonlylst:
+                    if elm._id is not None: #if exists in DB
+                        self.delete(elm)
+
+                
+
     def flushcopy(self, pinst):
-        """flush the instance but make sure we have a fill insert even if we have been flushing before"""
+        """ Flush the instance but make sure we have a new insert even 
+            if we have been flushing before. This a new _id
+            will be created
+        """
         pinst._id = None
         self.flush(pinst)
 
     def flush(self, pinst : PBase):
         """write the instance to the database inserting or updating as needed"""
+
+        if not pinst.has_changed():
+            return
+
         curs = self.conn.cursor()
         microtrans = not self._intrans
         try:
@@ -649,6 +727,7 @@ class SQFactory():
         """create an instance of the object with a cursor to a selected row as row
         """
         inst = cls()
+        inst._dbvaluecache = {} #create a new cahce fpr the old values as read from db
         vd = inst._get_my_memberdict()
 
         jembs = []
@@ -672,12 +751,16 @@ class SQFactory():
                     ilists.append(decl)
             elif declt is Catalog:
                 dbdta = row[key]
-                setattr(inst, key, self._get_fullcatentry(value, dbdta))
+                cate = self._get_fullcatentry(value, dbdta)
+                setattr(inst, key, cate)
+                inst._dbvaluecache[key] = cate
             elif declt is Blob:
                 dbdta = row[key]
                 self._logger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, "blobdata..."))
                 try:
-                    setattr(inst, key, decl.to_innertype(dbdta))
+                    blobby = decl.to_innertype(dbdta)
+                    setattr(inst, key, blobby)
+                    inst._dbvaluecache[key] = blobby
                 except Exception as ex:
                     self._logger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
                     raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, "blobdata...", str(ex)))
@@ -685,7 +768,9 @@ class SQFactory():
                 dbdta = row[key]
                 self._logger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, dbdta))
                 try:
-                    setattr(inst, key, decl.to_innertype(dbdta))
+                    inty = decl.to_innertype(dbdta)
+                    setattr(inst, key, inty)
+                    inst._dbvaluecache[key] = inty
                 except Exception as ex:
                     self._logger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
                     raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, dbdta, str(ex)))

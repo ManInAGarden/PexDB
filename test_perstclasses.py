@@ -13,6 +13,42 @@ class TestAllCrud(TestBase):
 
     def setUp(self):
         super().setUp()
+
+    def test_flat_cloning(self):
+        prin = self.Mck.create_printer(name="testprinter1", firmware="Chitu", yearofbuild=2020)
+        prinC = prin.clone()
+
+        assert prin._id == prinC._id
+        assert prin.name == prinC.name
+        assert prin.abbreviation == prinC.abbreviation
+
+
+    def test_deep_cloning(self):
+        fpmock = {
+            "PRINOZZTEMP": {"minvalue": 190, "maxvalue": 220, "levelnum": 2, "iscombined": False}, #factorabbr : [min, max, levels]
+            "MATFLOW" : {"minvalue": 80, "maxvalue": 110, "levelnum": 2, "iscombined": True, "isnegated" : False, 
+                "factorcombidefs" : ["PRINOZZTEMP", "PRISP"]},
+            "PRISP" : {"minvalue": 40, "maxvalue": 60, "levelnum": 2, "iscombined": False}
+        }
+
+        proj = self.Mck.create_project()
+        projC = proj.clone()
+        assert proj._id == projC._id
+        assert proj.status == projC.status #catalogs are immuteable, so the are not deeply cloned
+        assert proj.status.code == projC.status.code
+
+        #now we go deeper
+        self.Mck.add_factor_preps(proj, fpmock)
+        fpreps = list(sqp.SQQuery(self.Spf, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==proj._id))
+        for fprep in fpreps:
+            self.Spf.fill_joins(fprep, ProjectFactorPreparation.FactorCombiDefs) #fill to enable cloning on this
+            fprepC = fprep.clone()
+            assert len(fprepC.factorcombidefs) == len(fprep.factorcombidefs)
+            for i in range(len(fprep.factorcombidefs)):
+                fpcd = fprep.factorcombidefs[i]
+                fpcdC = fprepC.factorcombidefs[i]
+                assert fpcd.factordefinition.abbreviation == fpcdC.factordefinition.abbreviation
+
     
     def test_printer_crud(self):
         #test create update delete of printer entities
@@ -133,9 +169,10 @@ class TestAllCrud(TestBase):
     def test_factcombipreps(self):
         myproj = self.Mck.create_project()
         fpreps = {
-            "PRINOZZTEMP": [190, 220, 2], #factorabbr : [min, max, levels]
-            "MATFLOW" : [80, 110, 2],
-            "PRISP" : [40.0, 60.0, 2]
+            "PRINOZZTEMP": {"minvalue": 190, "maxvalue": 220, "levelnum": 2, "iscombined": False}, #factorabbr : [min, max, levels]
+            "MATFLOW" : {"minvalue": 80, "maxvalue": 110, "levelnum": 2, "iscombined": True, "isnegated" : False, 
+                "factorcombidefs" : ["PRINOZZTEMP", "PRISP"]},
+            "PRISP" : {"minvalue": 40, "maxvalue": 60, "levelnum": 2, "iscombined": False}
         }
         rpreps = {
             "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
@@ -148,48 +185,18 @@ class TestAllCrud(TestBase):
         self.Mck.add_factor_preps(myproj, fpreps)
         self.Mck.add_response_preps(myproj, rpreps)
 
-        cbp1 = FactorCombiPreparation(name="COMBI1", abbreviation="TSTFCMBP#1", projectid=myproj._id)
-        self.Spf.flush(cbp1)
-        #now some intersects, let's combine PRISP WITH PRINOZZTEM
+        fpreps_q = sqp.SQQuery(self.Spf, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==myproj._id)
+        
+        selpreps = list(filter(lambda fprep : fprep.factordefinition.abbreviation=="MATFLOW", fpreps_q))
+        assert len(selpreps) == 1
+        matflowprep = selpreps[0]
+        assert matflowprep.iscombined
+        self.Spf.fill_joins(matflowprep, ProjectFactorPreparation.FactorCombiDefs)
+        assert matflowprep.factorcombidefs is not None
+        assert len(matflowprep.factorcombidefs) == 2
 
-        cmb1 = FactorCombiDefInter(topid=cbp1._id, downid=fdict["PRISP"]._id)
-        self.Spf.flush(cmb1)
-        cmb2 = FactorCombiDefInter(topid=cbp1._id, downid=fdict["PRINOZZTEMP"]._id)
-        self.Spf.flush(cmb2)
-
-        cbp2 = FactorCombiPreparation(name="COMBI2", abbreviation="TSTFCMBP#2", projectid = myproj._id)
-        self.Spf.flush(cbp2)
-        cmb3 = FactorCombiDefInter(topid=cbp2._id, downid=fdict["MATFLOW"]._id)
-        self.Spf.flush(cmb3)
-
-        cbp1_R = sqp.SQQuery(self.Spf, FactorCombiPreparation).where(FactorCombiPreparation.Id == cbp1._id).first_or_default(None)
-        self.Spf.fill_joins(cbp1_R, FactorCombiPreparation.FactorDefs)
-
-        assert cbp1_R is not None
-        assert cbp1_R.factordefs is not None and len(cbp1_R.factordefs) == 2
-
-    def test_factcombipreps_multiselect(self):
-        myproj = self.Mck.create_project()
-        fpreps = {
-            "PRINOZZTEMP": [190, 220, 2], #factorabbr : [min, max, levels]
-            "MATFLOW" : [80, 110, 2],
-            "PRISP" : [40.0, 60.0, 2]
-        }
-        rpreps = {
-            "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
-            "SURFQUAL" : [1.0]
-        }
-        #get me the full info for the factor definitions
-        fdict = self._get_facts_by_lst(list(fpreps.keys()))
-
-        #add some factor- and response-preparations
-        self.Mck.add_factor_preps(myproj, fpreps)
-        self.Mck.add_response_preps(myproj, rpreps)
-
-        #we expect to find nothing here!
-        combi_q = sqp.SQQuery(self.Spf, FactorCombiPreparation).where(FactorCombiPreparation.ProjectId==myproj._id)
-        combipreps = list(combi_q)
-        assert len(combipreps) == 0
+        for fcdef in matflowprep.factorcombidefs:
+            assert fcdef.factordefinition.abbreviation in ["PRINOZZTEMP", "PRISP"]
 
 if __name__ == '__main__':
     unittest.main()

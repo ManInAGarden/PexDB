@@ -41,67 +41,60 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 		else:
 			return str(ins)
 
+	def _get_factordefstr(self):
+		havesome = False
+		first = True
+		for fprep in self._factpreps:
+			if first:
+				fstr = "<p>" + fprep.factordefinition.name
+				first = False
+			else:
+				fstr += "<br><p>" + fprep.factordefinition.name
+
+			if fprep.iscombined:
+				havesome = True
+				self._fact.fill_joins(fprep, ProjectFactorPreparation.FactorCombiDefs)
+				first_2 = True
+				if fprep.isnegated:
+					fstr += " = -"
+				else:
+					fstr += " = "
+
+				for fcdinter in fprep.factorcombidefs:
+					if first_2:
+						first_2 = False
+						fstr += "&lt;" + fcdinter.factordefinition.name + "&gt"
+					else:
+						fstr += "*" + "&lt;" + fcdinter.factordefinition.name  + "&gt"
+				
+			fstr += "</p>"
+
+		return havesome, fstr
+
 	def fill_combipreps_gui(self):
-		self.m_combiPrepsLCTR.DeleteAllItems()
-		for i in range(len(self._combipreps)):
-			cprep = self._combipreps[i]
-			currct = self.m_combiPrepsLCTR.GetItemCount()
-			itm = self.m_combiPrepsLCTR.InsertItem(currct, self._getstr(cprep.name))
-			self.m_combiPrepsLCTR.SetItemData(itm, i)
-			self.m_combiPrepsLCTR.SetItem(itm, 1, self._getformula(cprep))
+		havesome, factstr = self._get_factordefstr()
+		html = "<html><body>"
+		if havesome:
+			html += "<h1>Combination definition</h1>"
+			html += "<p>(like defined in project factor preparations)</p>"
+			html += "<p>"
+			html += factstr
+			html += "</p>"
+		else:
+			html += "No factor combinations are defined in the factor factor preparations of this project. "
+			html += "A full factorial scheme will be used to create the experiments."
+		html += "</body></html>"
+
+		self.m_combiInfoHTML.SetPage(html)
 
 	# Handlers for CreateFractDetail events.
 	def CreateFractDetailOnInitDialog( self, event ):
-		combi_q = sqp.SQQuery(self._fact, FactorCombiPreparation).where(FactorCombiPreparation.ProjectId==self._project._id)
-		self._combipreps = list(combi_q)
-		for combip in self._combipreps:
-			self._fact.fill_joins(combip, FactorCombiPreparation.FactorDefs)
-			
-		self.m_combiPrepsLCTR.AppendColumn("factor name")
-		self.m_combiPrepsLCTR.AppendColumn("combi definition")
+		self._factpreps = list(sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._project._id))
+		self.fill_combipreps_gui()
 
 	def CreateFractDetailOnShow( self, event ):
 		if not event.Show:
 			return
-
-		self.fill_combipreps_gui()
-		
-	def m_addCombiBUTOnButtonClick( self, event ):
-		combi = FactorCombiPreparation(projectid=self._project._id, name="new factor combi")
-		self._fact.flush(combi)
-		self._combipreps.append(combi)
-		self.fill_combipreps_gui()
-
-
-	def _get_selected_combi(self):
-		selidx = self.m_combiPrepsLCTR.GetFirstSelected()
-		if selidx == wx.NOT_FOUND:
-			return selidx, None
-		
-		dtaidx = self.m_combiPrepsLCTR.GetItemData(selidx)
-		return dtaidx, self._combipreps[dtaidx]
-
-	def m_removeCombiBUTOnButtonClick( self, event ):
-		sidx, selcombi = self._get_selected_combi()
-		if selcombi is None:
-			wx.MessageBox("Select a combi preparation first to delete it")
-			return
-
-		self._fact.delete(selcombi)
-		self._combipreps.pop(sidx)
-		self.fill_combipreps_gui()
-
-	def m_editCombiBUTOnButtonClick( self, event ):
-		sidx, selcombi = self._get_selected_combi()
-		if selcombi is None:
-			wx.MessageBox("Select a combi preparation first to delete it")
-			return
-
-		dial = PexDbViewerEditFactCombi(self, self._fact, self._project, selcombi)
-		res = dial.ShowModal()
-		if res == wx.ID_OK:
-			self._combipreps[sidx] = dial.factcombi
-			self.fill_combipreps_gui()
 
 	def _get_sequence_enum(self) -> CreaSequenceEnum:
 		seqidx = self.m_sequenceCHOI.GetSelection()
@@ -133,7 +126,7 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 			seq = self._get_sequence_enum()
 			plandt = self._get_datetime(self.m_datePicker1.GetValue())
 			reps = self.m_repetitionsSPCTRL.GetValue()
-			combidefs = self._combipreps
+			docentre = self.m_createCentreExpCKBX.GetValue()
 			crea = CreaFractFactorial(self._fact,
 				self._project,
 				self._printer,
@@ -141,9 +134,10 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 				seq,
 				plandt,
 				reps,
-				combidefs)
+				docentre)
 			
 			experi_ct = crea.create()
+
 			wx.MessageBox("{} experiments have been created.".format(experi_ct))
 			
 			self.EndModal(wx.ID_OK)

@@ -1475,31 +1475,16 @@ class CreateFractDetail ( wx.Dialog ):
 
 		gbSizer8.Add( self.m_staticText29, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
+		self.m_staticText37 = wx.StaticText( self, wx.ID_ANY, _(u"Combiinfo"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText37.Wrap( -1 )
+
+		gbSizer8.Add( self.m_staticText37, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+		self.m_combiInfoHTML = wx.html.HtmlWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.html.HW_SCROLLBAR_AUTO )
+		gbSizer8.Add( self.m_combiInfoHTML, wx.GBPosition( 4, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
+
 		self.m_createCentreExpCKBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.CHK_2STATE )
 		gbSizer8.Add( self.m_createCentreExpCKBX, wx.GBPosition( 3, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
-
-		self.m_combiPrepsLCTR = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT )
-		gbSizer8.Add( self.m_combiPrepsLCTR, wx.GBPosition( 4, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
-
-		bSizer11 = wx.BoxSizer( wx.HORIZONTAL )
-
-		self.m_addCombiBUT = wx.Button( self, wx.ID_ANY, _(u"MyButton"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
-
-		self.m_addCombiBUT.SetBitmap( wx.Bitmap( u"ressources/Data-Add-Row-icon.png", wx.BITMAP_TYPE_ANY ) )
-		bSizer11.Add( self.m_addCombiBUT, 0, wx.ALL, 5 )
-
-		self.m_removeCombiBUT = wx.Button( self, wx.ID_ANY, _(u"MyButton"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
-
-		self.m_removeCombiBUT.SetBitmap( wx.Bitmap( u"ressources/Actions-file-close-icon.png", wx.BITMAP_TYPE_ANY ) )
-		bSizer11.Add( self.m_removeCombiBUT, 0, wx.ALL, 5 )
-
-		self.m_editCombiBUT = wx.Button( self, wx.ID_ANY, _(u"MyButton"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT|wx.BU_NOTEXT )
-
-		self.m_editCombiBUT.SetBitmap( wx.Bitmap( u"ressources/edit-icon.png", wx.BITMAP_TYPE_ANY ) )
-		bSizer11.Add( self.m_editCombiBUT, 0, wx.ALL, 5 )
-
-
-		gbSizer8.Add( bSizer11, wx.GBPosition( 5, 1 ), wx.GBSpan( 1, 1 ), wx.EXPAND, 5 )
 
 		self.m_staticline1 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		gbSizer8.Add( self.m_staticline1, wx.GBPosition( 6, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
@@ -1525,9 +1510,6 @@ class CreateFractDetail ( wx.Dialog ):
 		# Connect Events
 		self.Bind( wx.EVT_INIT_DIALOG, self.CreateFractDetailOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.CreateFractDetailOnShow )
-		self.m_addCombiBUT.Bind( wx.EVT_BUTTON, self.m_addCombiBUTOnButtonClick )
-		self.m_removeCombiBUT.Bind( wx.EVT_BUTTON, self.m_removeCombiBUTOnButtonClick )
-		self.m_editCombiBUT.Bind( wx.EVT_BUTTON, self.m_editCombiBUTOnButtonClick )
 		self.m_sdbSizer6OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer6OnOKButtonClick )
 
 	def __del__( self ):
@@ -1539,15 +1521,6 @@ class CreateFractDetail ( wx.Dialog ):
 		event.Skip()
 
 	def CreateFractDetailOnShow( self, event ):
-		event.Skip()
-
-	def m_addCombiBUTOnButtonClick( self, event ):
-		event.Skip()
-
-	def m_removeCombiBUTOnButtonClick( self, event ):
-		event.Skip()
-
-	def m_editCombiBUTOnButtonClick( self, event ):
 		event.Skip()
 
 	def m_sdbSizer6OnOKButtonClick( self, event ):

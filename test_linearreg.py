@@ -1,5 +1,6 @@
 import math
 import random as rn
+import numpy
 from MultiReg import *
 from unittest import TestCase
 from TestBase import TestBase
@@ -28,8 +29,8 @@ class TestLinearRegression(TestBase):
 
     def test_simple(self):
         fpreps = {
-            "PRINOZZTEMP": [190,220,2], #factorabbr : [min, max, levels]
-            "MATFLOW" : [80, 110, 2]
+            "PRINOZZTEMP": {"minvalue": 190, "maxvalue": 220, "levelnum": 2, "iscombined": False},
+            "MATFLOW" : {"minvalue": 80, "maxvalue": 110, "levelnum": 2, "iscombined": False}
         }
         rpreps = {
             "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
@@ -77,8 +78,8 @@ class TestLinearRegression(TestBase):
 
     def test_standarized(self):
         fpreps = {
-            "PRINOZZTEMP": [190,220,2], #factorabbr : [min, max, levels]
-            "MATFLOW" : [80, 110, 2]
+            "PRINOZZTEMP": {"minvalue": 190, "maxvalue": 220, "levelnum": 2, "iscombined": False},
+            "MATFLOW" : {"minvalue": 80, "maxvalue": 110, "levelnum": 2, "iscombined": False}
         }
         rpreps = {
             "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
@@ -117,6 +118,34 @@ class TestLinearRegression(TestBase):
         coef = lr.model.coef_
         interc = lr.model.intercept_
 
+    def _calc_dev(self, m1, m2):
+        """ calculate the max difference of the values in two matrices
+        """
+        maxdev = 0.0
+        if len(m1) != len(m2):
+            raise Exception("only matrices, vectors of the same size can be compared")
+
+        for i in range(len(m1)):
+            v1 = m1[i]
+            v2 = m2[i]
+            tv = type(v1)
+            if tv is float or tv is int or tv is numpy.float64:
+                dev = math.fabs(v1-v2)
+                if dev > maxdev:
+                    maxdev = dev
+            else:
+                if len(v1) != len(v2):
+                    raise Exception("only matrices, vectors of the same size in all dimensions can be compared")
+
+                for j in range(len(v1)):
+                    vi1 = v1[j]
+                    vi2 = v2[j]
+                    dev = math.fabs(vi1-vi2)
+                    if dev > maxdev:
+                        maxdev = dev
+
+        return maxdev
+
     def test_simple_fractional(self):
         fpreps = {
             "PRINOZZTEMP": {"minvalue": 190, "maxvalue": 220, "levelnum": 2, "iscombined": False},
@@ -133,4 +162,37 @@ class TestLinearRegression(TestBase):
         cnum, proj = self.Mck.create_fractfactorial_experiments(fpreps, 
             rpreps,
             projectname="test_simple_project")
+
+        assert cnum == 4
+
+        M = [
+                [-1.0, 0.9, 0.45],
+                [-2.0, -0.5, 1.32]
+            ]
+        c = [0.3, 1.5]
+        self._calc_responses(proj, M, c)
+
+        lr = MultiReg(self.Spf, proj, normed=False)
+        lr.read_data()
+
+        assert lr.dataframe is not None
+
+        #check dataframe
+        for fpabbr, fpdta in fpreps.items():
+            assert len(lr.dataframe[fpabbr]) == 4
+
+        for rpabbr, rpdta in rpreps.items():
+            assert len(lr.dataframe[rpabbr]) == 4
+
+        lr.solve_for_all()
+
+        assert lr.model is not None
+        coef = lr.model.coef_
+        maxcdev = self._calc_dev(coef, M)
+        assert maxcdev < 0.03
+        interc = lr.model.intercept_
+        maxidev = self._calc_dev(interc, c)
+        assert maxidev < 0.1
+
+
 

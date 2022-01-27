@@ -82,6 +82,30 @@ class CreaFractFactorial(_CreaSequential):
 
         return answ
 
+    def _getfactors(self, idxes : list):
+        answ = []
+        for i in range(len(idxes)):
+            p = self._factpreps[i]
+            min = p.minvalue
+            max = p.maxvalue
+            lvls = p.levelnum
+
+            if lvls != 2:
+                raise Exception("Fractional facotred experiments do only allow two levels! Please correct your factor preparations")
+
+            if idxes[i] == 1:
+                currval = max
+            elif idxes[i] == -1:
+                currval = min
+            else:
+                raise Exception("Index must be -1 or 1. Value of {} encountered as index for factor calblulation".format(idxes[i]))
+
+            answ.append(FactorValue(factordefinition=p.factordefinition,
+                factordefinitionid=p.factordefinitionid,
+                value = currval))
+
+        return answ
+
     def create(self):
         """ create all experiments in a "fractional factorial 2 level each" schema
         """

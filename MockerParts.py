@@ -91,7 +91,6 @@ class Mocker(object):
         for fabbr, valdict in factlevels.items():
             fdef = self.fdef_dict[fabbr] #get the factor definition to be used for the project-factor-preparation
             fprep = self.fprep_from_valdict(proj, valdict, fdef)
-            #self._sqpf.flush(fprep)
 
     def _get_bool(self, valdict, key,  default=False):
         if key not in valdict:
@@ -195,7 +194,8 @@ class Mocker(object):
             kind = cr.CreaSequenceEnum.LINEAR,
             projectname="linregproj",
             docentre = False):
-        """ create all experiments by a full factorial scheme
+        """ create all experiments by a fractional factorial scheme
+            where combined factors are defined in the projectfactorpreparations
         """
         
         prin = self.create_printer(name="LIN_SIMPLE_PRINTER")
