@@ -105,6 +105,9 @@ class SQQuery():
 
         return firstel
 
+    def as_list(self):
+        return list(self)
+
     def order_by(self, *args):
         """creates the order part in form a list of OrderInfos to be used when the db select-statement gets
         produced and executed"""

@@ -20,7 +20,7 @@ from PexDbViewerCreateFullDetailsDialog import PexDbViewerCreateFullDetailsDialo
 from PropGridGUIMappers import *
 import sqlitepersist as sqp
 from PersistClasses import *
-from ExportProject2Csv import *
+from ExportImportProjects import *
 from sqlitepersist.SQLitePersistBasicClasses import PCatalog
 
 # Implementing PexViewerMainFrame
@@ -628,12 +628,11 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			flags=wx.FD_SAVE,
 			parent=self)
 
-		p2csv = Project2CsvExporter(self._fact, 
-			self._currentproject,
-			self._experiments)
+		p2csv = ProjectExporter(self._fact, 
+			self._currentproject)
 
 		try:
-			p2csv.export(filename)
+			p2csv.export_to_csv(filename)
 		except Exception as exc:
 			wx.MessageBox("A problem occured during export to csv. Original message: {}".format(str(exc)))
 
