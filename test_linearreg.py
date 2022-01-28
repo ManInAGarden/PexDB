@@ -1,6 +1,7 @@
 import math
 import random as rn
 import numpy
+from pyDOE2 import *
 from MultiReg import *
 from unittest import TestCase
 from TestBase import TestBase
@@ -193,6 +194,11 @@ class TestLinearRegression(TestBase):
         interc = lr.model.intercept_
         maxidev = self._calc_dev(interc, c)
         assert maxidev < 0.1
+
+    def test_fractfact_creation(self):
+        res = fracfact("A B AB")
+        res = fracfact("AB A B")
+        pass
 
 
 

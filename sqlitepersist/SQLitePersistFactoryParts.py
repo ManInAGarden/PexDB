@@ -319,7 +319,7 @@ class SQFactory():
                 newonly.append(newele)
 
         for oldele in oldl:
-            if oldele._id in newids and oldele._id not in both_ids:
+            if oldele._id not in newids and oldele._id not in both_ids:
                 oldonly.append(oldele)
 
         newonly.extend(newnoid) 

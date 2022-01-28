@@ -3,6 +3,7 @@
 import wx
 from wx.core import NOT_FOUND
 import GeneratedGUI
+from GuiHelper import GuiHelper
 from PersistClasses import *
 from PexDbViewerAddSubElementDialog import PexDbViewerAddSubElementDialog
 from PexDbViewerEditPreparation import PexDbViewerEditPreparation
@@ -35,6 +36,8 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 	def EditProjectDialogOnInitDialog(self, event):
 		connf_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._project._id)
 		self._factorpreps = list(connf_q)
+		for fprep in self._factorpreps:
+			self._fact.fill_joins(fprep, ProjectFactorPreparation.FactorCombiDefs)
 
 		connr_q = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._project._id)
 		self._responsepreps = list(connr_q)
@@ -47,6 +50,26 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 		enviro_q = sqp.SQQuery(self._fact, ProjectEnviroPreparation).where(ProjectEnviroPreparation.ProjectId==self._project._id)
 		self._enviropreps = list(enviro_q)
+
+		self.m_prepsLCTRL.InsertColumn(0, "Factor", width=170)
+		self.m_prepsLCTRL.InsertColumn(1, "Subs", wx.LIST_FORMAT_RIGHT)
+		self.m_prepsLCTRL.InsertColumn(2, "Min.", wx.LIST_FORMAT_RIGHT)
+		self.m_prepsLCTRL.InsertColumn(3, "Max.",  wx.LIST_FORMAT_RIGHT)
+		self.m_prepsLCTRL.InsertColumn(4, "Levels",  wx.LIST_FORMAT_RIGHT)
+
+		ps_q = sqp.SQQuery(self._fact, ProjectStatusCat).where(ProjectStatusCat.LangCode==self._fact.lang)
+		self._pstatcat = []
+		ct = 0
+		sel = wx.NOT_FOUND
+		for ps in ps_q:
+			self._pstatcat.append(ps)
+			if not self._project.status is None and ps.code == self._project.status.code:
+				sel = ct
+			ct += 1
+		choicevals = list(map(lambda ps : ps.value, self._pstatcat))
+		self.m_projectstatusCOB.SetItems(choicevals)
+		self.m_projectstatusCOB.SetSelection(sel)
+
 
 	def EditProjectDialogOnShow( self, event ):
 		if event.Show is False:
@@ -77,35 +100,24 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		else:
 			self.m_mergeFormulaTBX.Enable(False)
 
-		ps_q = sqp.SQQuery(self._fact, ProjectStatusCat).where(ProjectStatusCat.LangCode==self._fact.lang)
-		self._pstatcat = []
-		ct = 0
-		sel = wx.NOT_FOUND
-		for ps in ps_q:
-			self._pstatcat.append(ps)
-			if not pro.status is None and ps.code == pro.status.code:
-				sel = ct
-			ct += 1
-		choicevals = list(map(lambda ps : ps.value, self._pstatcat))
-		self.m_projectstatusCOB.SetItems(choicevals)
-		self.m_projectstatusCOB.SetSelection(sel)
-
-		self.m_prepsLCTRL.ClearAll()
-		self.m_prepsLCTRL.InsertColumn(0, "Factor", width=200)
-		self.m_prepsLCTRL.InsertColumn(1, "Minimum value", wx.LIST_FORMAT_RIGHT)
-		self.m_prepsLCTRL.InsertColumn(2, "Maximum value",  wx.LIST_FORMAT_RIGHT)
-		self.m_prepsLCTRL.InsertColumn(3, "Number of levels",  wx.LIST_FORMAT_RIGHT)
-
+		self.m_prepsLCTRL.DeleteAllItems()
+		
 		ct = 0
 		for fprep in self._factorpreps:
+			subfacnum = len(fprep.factorcombidefs)
+			if subfacnum > 0:
+				subfacnums = str(len(fprep.factorcombidefs))
+			else:
+				subfacnums = ""
+
 			idx = self.m_prepsLCTRL.InsertItem(self.m_prepsLCTRL.GetColumnCount(), fprep.factordefinition.name)
 			self.m_prepsLCTRL.SetItemData(idx, ct)
-			self.m_prepsLCTRL.SetItem(idx, 1, str(fprep.minvalue))
-			self.m_prepsLCTRL.SetItem(idx, 2, str(fprep.maxvalue))
-			self.m_prepsLCTRL.SetItem(idx, 3, str(fprep.levelnum))
+			self.m_prepsLCTRL.SetItem(idx, 1, subfacnums)
+			self.m_prepsLCTRL.SetItem(idx, 2, str(fprep.minvalue))
+			self.m_prepsLCTRL.SetItem(idx, 3, str(fprep.maxvalue))
+			self.m_prepsLCTRL.SetItem(idx, 4, str(fprep.levelnum))
 			ct += 1
 
-		#self._fill_list(self.m_prepsLCTRL, self._factorpreps)
 		self._fill_list(self.m_respPrepsLCTR, self._responsepreps)
 		self._fill_list(self.m_envoroPrepsLCTRL, self._enviropreps)
 
@@ -185,27 +197,28 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self._fact.delete(remoprep)		
 		self.fill_gui(self._project)
 
-	def editPrepBUOnButtonClick(self, event):
-		selidx = self.m_prepsLCTRL.GetFirstSelected()
-
-		if selidx==wx.NOT_FOUND:
-			wx.MessageBox("please select a factor preparation to be edited")
-			return
-
-		idx = self.m_prepsLCTRL.GetItemData(selidx)
-		
+	def edit_fact_prep(self, factprep):
 		dial = PexDbViewerEditPreparation(self,
 			self._fact,
 			self._project,
-			self._factorpreps[idx])
+			factprep)
 			
 		res = dial.ShowModal()
 		if res == wx.ID_CANCEL:
 			return
 
 		self._fact.flush(dial.editedprep)
-		self._factorpreps[idx] = dial.editedprep
+		factprep = dial.editedprep
 		self.fill_gui(self._project)
+		
+	def editPrepBUOnButtonClick(self, event):
+		selfprep = GuiHelper.get_selected_item(self.m_prepsLCTRL, self._factorpreps)
+		if selfprep is None:
+			wx.MessageBox("please select a factor preparation to be edited")
+			return
+
+		self.edit_fact_prep(selfprep)
+		
 
 	def m_editRespPrepBUTOnButtonClick(self, event):
 		selit = self.m_respPrepsLCTR.GetFirstSelected()
@@ -295,3 +308,9 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 		self._fact.delete(remoenv)
 		self.fill_gui(self._project)
+
+	def m_prepsLCTRLOnLeftDClick(self, event):
+		selit = GuiHelper.get_selected_item(self.m_prepsLCTRL, self._factorpreps)
+		if selit is not None:
+			self.edit_fact_prep(selit)
+

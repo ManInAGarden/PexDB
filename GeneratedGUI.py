@@ -38,7 +38,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.openproject_menuItem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Open project")+ u"\t" + u"CTRL+O", wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.Append( self.openproject_menuItem )
 
-		self.editproject_menuItem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Edit project"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.editproject_menuItem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Edit project")+ u"\t" + u"CTRL+E", wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.Append( self.editproject_menuItem )
 
 		self.newproj_menutitem = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"New project")+ u"\t" + u"CTRL+N", wx.EmptyString, wx.ITEM_NORMAL )
@@ -526,7 +526,7 @@ class EditResponseDefinitions ( wx.Dialog ):
 class EditProjectDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 764,847 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 852,846 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -709,6 +709,7 @@ class EditProjectDialog ( wx.Dialog ):
 		# Connect Events
 		self.Bind( wx.EVT_INIT_DIALOG, self.EditProjectDialogOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.EditProjectDialogOnShow )
+		self.m_prepsLCTRL.Bind( wx.EVT_LEFT_DCLICK, self.m_prepsLCTRLOnLeftDClick )
 		self.m_addEnviroBUT.Bind( wx.EVT_BUTTON, self.m_addEnviroBUTOnButtonClick )
 		self.m_removeEnviroBUT.Bind( wx.EVT_BUTTON, self.m_removeEnviroBUTOnButtonClick )
 		self.m_editEnviroBUT.Bind( wx.EVT_BUTTON, self.m_editEnviroBUTOnButtonClick )
@@ -730,6 +731,9 @@ class EditProjectDialog ( wx.Dialog ):
 		event.Skip()
 
 	def EditProjectDialogOnShow( self, event ):
+		event.Skip()
+
+	def m_prepsLCTRLOnLeftDClick( self, event ):
 		event.Skip()
 
 	def m_addEnviroBUTOnButtonClick( self, event ):

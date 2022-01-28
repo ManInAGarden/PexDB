@@ -594,6 +594,19 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			wx.MessageBox("{} Experiments were created under the current project".format(dial.numexps))
 
 
+	def m_creaFractFactMEIOnMenuSelection(self, event):
+		dial = PexDbViewerCreateFractDetailDialog(self,
+			self._fact,
+			self._currentproject,
+			self._prefprinter,
+			self._prefextruder)
+
+		res = dial.ShowModal()
+		if res==wx.ID_OK:
+			self._experiments = self.get_experiments()
+			self.refresh_dash()
+			wx.MessageBox("{} Experiments were created under the current project".format(dial.numexps))
+
 	def m_deleteAllExperimentsMEIOnMenuSelection(self, event):
 		res = wx.MessageBox("Are you sure to delete all experiments in the current project", "Delete all experiments", style=YES_NO|CENTRE)
 		if res!=wx.YES:
@@ -726,16 +739,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		if dosave:
 			self._fact.flush(doc)
 
-	def m_creaFractFactMEIOnMenuSelection(self, event):
-		dial = PexDbViewerCreateFractDetailDialog(self,
-			self._fact,
-			self._currentproject,
-			self._prefprinter,
-			self._prefextruder)
-
-		res = dial.ShowModal()
-		if res != wx.ID_OK:
-			return
+	
 
 
 if __name__ == '__main__':

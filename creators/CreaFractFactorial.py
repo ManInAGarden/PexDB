@@ -91,14 +91,14 @@ class CreaFractFactorial(_CreaSequential):
             lvls = p.levelnum
 
             if lvls != 2:
-                raise Exception("Fractional facotred experiments do only allow two levels! Please correct your factor preparations")
+                raise Exception("Fractional factored experiments do only allow two levels! Please correct your factor preparations")
 
             if idxes[i] == 1:
                 currval = max
             elif idxes[i] == -1:
                 currval = min
             else:
-                raise Exception("Index must be -1 or 1. Value of {} encountered as index for factor calblulation".format(idxes[i]))
+                raise Exception("Index must be -1 or 1. Value of {} encountered as index for factor calculation".format(idxes[i]))
 
             answ.append(FactorValue(factordefinition=p.factordefinition,
                 factordefinitionid=p.factordefinitionid,

@@ -20,6 +20,11 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 		self._printer = printer
 		self._extruder = extruder
 		self._sequence = cr.CreaSequenceEnum.LINEAR
+		self._experi_cts = 0
+
+	@property
+	def numexps(self):
+		return self._experi_cts
 
 	def _getformula(self, cprep):
 		answ = ""
@@ -136,10 +141,8 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 				reps,
 				docentre)
 			
-			experi_ct = crea.create()
+			self._experi_cts = crea.create()
 
-			wx.MessageBox("{} experiments have been created.".format(experi_ct))
-			
 			self.EndModal(wx.ID_OK)
 		except Exception as exc:
 			wx.MessageBox("Error during experiment creation. Original message: {}".format(str(exc)))
