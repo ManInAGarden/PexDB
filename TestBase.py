@@ -42,6 +42,7 @@ class TestBase(unittest.TestCase):
             sqp.SQPSeeder(fact, "./PexSeeds/units.json").create_seeddata()
             sqp.SQPSeeder(fact, "./PexSeeds/factordefinitions.json").create_seeddata()
             sqp.SQPSeeder(fact, "./PexSeeds/responsedefinitions.json").create_seeddata()
+            sqp.SQPSeeder(fact, "./PexSeeds/envirodefinitions.json").create_seeddata()
         except Exception as exc:
             print("Data seeding failed with {0}".format(str(exc)))
 

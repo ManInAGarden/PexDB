@@ -42,14 +42,33 @@ class Mocker(object):
 
         rdefs_dict = self._create_ref_dict(SQQuery(self._sqpf, ResponseDefinition))
 
-        for rabr, respdta in resps.items():
-            rdef = rdefs_dict[rabr]
-            rprep = ProjectResponsePreparation(projectid = proj._id,
-                responsedefinition = rdef,
-                responsedefinitionid = rdef._id,
-                combinationweight = respdta[0])
+        for rabr, valdict in resps.items():
+            fdef = rdefs_dict[rabr] #get the factor definition to be used for the project-factor-preparation
+            fprep = self.rprep_from_valdict(proj, valdict, fdef)
 
-            self._sqpf.flush(rprep)
+
+    def add_enviro_preps(self, proj : Project, envs : dict):
+        assert proj is not None
+        assert len(envs) > 0
+        assert proj._id is not None
+
+        edefs_dict = self._create_ref_dict(SQQuery(self._sqpf, EnviroDefinition))
+
+        for eabr, envpdta in envs.items():
+            edef = edefs_dict[eabr]
+            eprep = ProjectEnviroPreparation(projectid = proj._id,
+                envirodefinition = edef,
+                envirodefinitionid = edef._id)
+
+            self._sqpf.flush(eprep)
+
+    def rprep_from_valdict(self, proj : Project, vdict:dict, fdef : ResponseDefinition):
+        rprep = ProjectResponsePreparation(projectid = proj._id, 
+                responsedefinition = fdef,
+                responsedefinitionid = fdef._id,
+                combinationweight = self._get_float(vdict, "combinationweight"))
+
+        self._sqpf.flush(rprep)
 
     def fprep_from_valdict(self, proj : Project, vdict:dict, fdef : FactorDefinition):
         fprep = ProjectFactorPreparation(projectid = proj._id, 
@@ -99,6 +118,12 @@ class Mocker(object):
             return valdict[key]
 
     def _get_int(self, valdict, key, default=0):
+        if key not in valdict:
+            return default
+        else:
+            return valdict[key]
+
+    def _get_float(self, valdict, key, default=0.0):
         if key not in valdict:
             return default
         else:
@@ -191,6 +216,7 @@ class Mocker(object):
     def create_fractfactorial_experiments(self, 
             fpreps, 
             rpreps,
+            epreps = None,
             kind = cr.CreaSequenceEnum.LINEAR,
             projectname="linregproj",
             docentre = False):
@@ -204,6 +230,9 @@ class Mocker(object):
 
         self.add_factor_preps(proj, fpreps)
         self.add_response_preps(proj, rpreps)
+        if epreps is not None:
+            self.add_enviro_preps(proj, epreps)
+
         crea = cr.CreaFractFactorial(self._sqpf, proj,
             prin,
             extr,

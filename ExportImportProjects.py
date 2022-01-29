@@ -34,36 +34,36 @@ class ProjectImporter:
         """
         dbf = self._dbfact
         pr = self._p
-        f_preps = sqp.SQQuery(dbf, ProjectFactorPreparation).where(ProjectFactorPreparation.Id == pr._id).as_list()
-        r_preps =sqp.SQQuery(dbf, ProjectResponsePreparation).where(ProjectResponsePreparation.Id == pr._id).as_lsit()
-        e_preps = sqp.SQQuery(dbf, ProjectEnviroPreparation).where(ProjectEnviroPreparation.Id==pr._id)
+        f_preps = sqp.SQQuery(dbf, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId == pr._id).as_list()
+        r_preps =sqp.SQQuery(dbf, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId == pr._id).as_list()
+        e_preps = sqp.SQQuery(dbf, ProjectEnviroPreparation).where(ProjectEnviroPreparation.ProjectId==pr._id).as_list()
         
         #create a handy dict to map clumn headings
         coln_dict = {}
         for fp in f_preps:
-            coln_dict[fp.facttordefinition.abbreviation] = fp
+            coln_dict[fp.factordefinition.abbreviation] = fp
 
         for rp in r_preps:
-            coln_dict[fp.responsedefinition.abbreviation] = rp
+            coln_dict[rp.responsedefinition.abbreviation] = rp
 
         for ep in e_preps:
-            coln_dict[fp.envirodefinition.abbreviation] = rp
+            coln_dict[ep.envirodefinition.abbreviation] = ep
 
         #now we know what to expect in the file which must at least contain data for what is definied/prepared
         #for the project
 
-        with open(filename, mode="w", encoding="UTF-8", newline="\n") as f:
+        with open(filename, mode="r", encoding="UTF-8", newline="\n") as f:
             csvr = csv.DictReader(f)
             ct = 0
             self._dbfact.begin_transaction()
             try:
                 for row in csvr:
                     currexp = Experiment(projectid=self._p._id,
-                        description=row["experiment"],
+                        sequence = row["EXP_SEQUENCE"],
+                        repnum = row["EXP_REPNUM"],
+                        description=row["EXP_DESCRIPTION"],
                         extruderused=self._extr,
-                        printerused = self._pri,
-                        sequence=ct,
-                        repnum = 1)
+                        printerused = self._pri)
 
                     self._dbfact.flush(currexp)
                     currexp.factors = []
@@ -73,21 +73,21 @@ class ProjectImporter:
                     for coln, cdta in coln_dict.items():
                         ctype = type(cdta)
                         if ctype == ProjectFactorPreparation:
-                            valob = self._get_valob_fact(currexp, row[coln], ctype)
-                            self._append(currexp.factors, valob)
+                            valob = self._get_valob_fact(currexp, row[coln], cdta)
+                            currexp.factors.append(valob)
                         elif ctype is ProjectResponsePreparation:
-                            valob = self._get_valob_resp(currexp, row[coln], ctype)
-                            self._append(currexp.responses, valob)
+                            valob = self._get_valob_resp(currexp, row[coln], cdta)
+                            currexp.responses.append(valob)
                         elif ctype is ProjectEnviroPreparation:
-                            valob = self._get_valob_env(currexp, row[coln], ctype)
-                            self._append(currexp.enviros, valob)
+                            valob = self._get_valob_env(currexp, row[coln], cdta)
+                            currexp.enviros.append(valob)
                         else:
                             raise NotImplemented("Unknown type in coldict!")
 
                         self._dbfact.flush(valob)
 
 
-                    self._dbfact.commit_transaction()
+                self._dbfact.commit_transaction()
             except Exception as exc:
                 self._dbfact.rollback_transaction()
                 raise exc
@@ -98,7 +98,7 @@ class ProjectExporter:
         self._p = proj
 
     def export_to_csv(self, filename):
-        header = ["experiment"]
+        header = ["EXP_SEQUENCE", "EXP_REPNUM", "EXP_DESCRIPTION"]
         exp_q = sqp.SQQuery(self._fact, Experiment).where(Experiment.ProjectId==self._p._id)
         experiments = list(exp_q)
         if len(experiments) <= 0:
@@ -117,24 +117,24 @@ class ProjectExporter:
         for fprep in fpreps:
             fdef = fprep.factordefinition
             head = fdef.abbreviation
-            if fdef.unit is not None:
-                head += "[{}]".format(fdef.unit.abbreviation)
+            # if fdef.unit is not None:
+            #     head += "[{}]".format(fdef.unit.abbreviation)
 
             header.append(head)
 
         for rprep in rpreps:
             fdef = rprep.responsedefinition
             head = fdef.abbreviation
-            if fdef.unit is not None:
-                head += "[{}]".format(fdef.unit.abbreviation)
+            # if fdef.unit is not None:
+            #     head += "[{}]".format(fdef.unit.abbreviation)
 
             header.append(head)
 
         for eprep in epreps:
             fdef = eprep.envirodefinition
             head = fdef.abbreviation
-            if fdef.unit is not None:
-                head += "[{}]".format(fdef.unit.abbreviation)
+            # if fdef.unit is not None:
+            #     head += "[{}]".format(fdef.unit.abbreviation)
 
             header.append(head)
 
@@ -149,6 +149,8 @@ class ProjectExporter:
                     Experiment.Enviros)
 
                 data = []
+                data.append(exp.sequence)
+                data.append(exp.repnum)
                 data.append(exp.description)
                 for fv in exp.factors:
                     data.append(fv.value)

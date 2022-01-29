@@ -34,8 +34,8 @@ class TestLinearRegression(TestBase):
             "MATFLOW" : {"minvalue": 80, "maxvalue": 110, "levelnum": 2, "iscombined": False}
         }
         rpreps = {
-            "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
-            "SURFQUAL" : [1.0]
+            "DIMACC" : {"combinationweight" : 1.0}, #combination weight - deprecated, not used for anything!
+            "SURFQUAL" : {"combinationweight" : 1.0}
         }
 
         cnum, proj = self.Mck.create_fullfactorial_experiments(fpreps, 
@@ -83,8 +83,8 @@ class TestLinearRegression(TestBase):
             "MATFLOW" : {"minvalue": 80, "maxvalue": 110, "levelnum": 2, "iscombined": False}
         }
         rpreps = {
-            "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
-            "SURFQUAL" : [1.0]
+            "DIMACC" : {"combinationweight" : 1.0}, #combination weight - deprecated, not used for anything!
+            "SURFQUAL" : {"combinationweight" : 1.0}
         }
 
         cnum, proj = self.Mck.create_fullfactorial_experiments(fpreps, 
@@ -155,8 +155,8 @@ class TestLinearRegression(TestBase):
                 "factorcombidefs" : ["MATFLOW","PRINOZZTEMP"]}
         }
         rpreps = {
-            "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
-            "SURFQUAL" : [1.0]
+            "DIMACC" : {"combinationweight" : 1.0}, #combination weight - deprecated, not used for anything!
+            "SURFQUAL" : {"combinationweight" : 1.0}
         }
 
 
