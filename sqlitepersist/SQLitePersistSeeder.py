@@ -192,7 +192,7 @@ class SQPSeeder(object):
 
     def _getclass(self, clsname : str):
         if clsname is None or len(clsname)==0:
-            raise Exception("Mocker._getclass(classname) for an empty classname is not a valid call")
+            raise Exception("SQLitePersistSeeder._getclass(classname) for an empty classname is not a valid call")
 
         lastdot = clsname.rindex('.')
         modulename = clsname[0:lastdot]

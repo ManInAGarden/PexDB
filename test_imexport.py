@@ -2,11 +2,75 @@ from csv import DictReader
 from genericpath import exists
 import unittest
 import csv
-from ExportImportProjects import ProjectExporter, ProjectImporter
+import json
+from ExportImportProjects import *
 from TestBase import *
 import sqlitepersist as sqp
 
 class TestImport(TestBase):
+    def test_basic_json_customencoder(self):
+        proj = self.Mck.create_project()
+        jsons = json.dumps(proj, cls=PexJSONEncoder)
+        assert jsons is not None
+        assert jsons["_clsname_"]=="PersistClasses.Project"
+
+    def test_list_json_customencoder(self):
+        fpreps = {
+            "PRINOZZTEMP": {"minvalue": 190, "maxvalue": 220, "levelnum": 2, "iscombined": False},
+            "MATFLOW" : {"minvalue": 80, "maxvalue": 110, "levelnum": 2, "iscombined": False},
+            "FANSPEED" : {"minvalue": 0, "maxvalue": 100, "levelnum": 2, "iscombined": True, "isnegated":False, 
+                "factorcombidefs" : ["MATFLOW","PRINOZZTEMP"]}
+        }
+        rpreps = {
+            "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
+            "SURFQUAL" : [1.0]
+        }
+        epreps = {
+            "CASETEMP" : {}
+        }
+
+
+        cnum, proj = self.Mck.create_fractfactorial_experiments(fpreps, 
+            rpreps,
+            epreps,
+            projectname="test_simple_project")
+
+        exps = sqp.SQQuery(self.Spf, Experiment).where(Experiment.ProjectId==proj._id).as_list()
+        jsons = json.dumps(exps, cls=PexJSONEncoder)
+        assert jsons is not None
+
+    def test_project_json_export(self):
+        fpreps = {
+            "PRINOZZTEMP": {"minvalue": 190, "maxvalue": 220, "levelnum": 2, "iscombined": False},
+            "MATFLOW" : {"minvalue": 80, "maxvalue": 110, "levelnum": 2, "iscombined": False},
+            "FANSPEED" : {"minvalue": 0, "maxvalue": 100, "levelnum": 2, "iscombined": True, "isnegated":False, 
+                "factorcombidefs" : ["MATFLOW","PRINOZZTEMP"]}
+        }
+        rpreps = {
+            "DIMACC" : [1.0], #combination weight - deprecated, not used for anything!
+            "SURFQUAL" : [1.0]
+        }
+        epreps = {
+            "CASETEMP" : {}
+        }
+
+
+        cnum, proj = self.Mck.create_fractfactorial_experiments(fpreps, 
+            rpreps,
+            epreps,
+            projectname="test_simple_project")
+
+        jsexp = ProjectExporter(self.Spf, proj)
+        fname = "testfiles/projectexport.json"
+        jsexp.export_to_json(fname)
+        assert exists(fname)
+
+    def test_project_json_import(self):
+        proj = Project(name="New project")
+        jimpo = ProjectImporter(self.Spf, proj)
+        filename = "testfiles/projectimport.json"
+        jimpo.import_from_json(filename)
+
     def test_export(self):
         fpreps = {
             "PRINOZZTEMP": {"minvalue": 190, "maxvalue": 220, "levelnum": 2, "iscombined": False},

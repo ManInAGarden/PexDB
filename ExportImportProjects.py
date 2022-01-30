@@ -1,8 +1,41 @@
 import csv
+import json
+import importlib
+from time import strptime
+from typing import Any
+from uuid import UUID, uuid4
 
+from numpy import full, isin
 import sqlitepersist as sqp
 from PersistClasses import *
+from sqlitepersist.SQLitePersistBasicClasses import DateTime, PCatalog
 
+class PexJSONEncoder(json.JSONEncoder):
+    """ custom encoder for json exports of complete projects
+    """
+    def encode_pbase(self, obj):
+        ot = type(obj)
+        full_clsname = ot.__module__ + "." + ot.__name__
+        answdict = {"_clsname_":full_clsname}
+        mdict = obj._get_my_memberdict()
+        for membname, membinfo in mdict.items():
+            answdict[membname] = getattr(obj, membname)
+
+        return answdict
+
+
+    def default(self, obj: Any) -> Any:
+        if isinstance(obj, PCatalog):
+            return obj.code
+        elif isinstance(obj, sqp.PBase):
+            return self.encode_pbase(obj)
+        elif isinstance(obj, datetime):
+            return obj.strftime("%Y%m%dT%H:%M:%S")
+        elif isinstance(obj, UUID):
+            return obj.hex
+        else:
+            return super().default(obj)
+        
 class ProjectImporter:
     def __init__(self, fact : sqp.SQFactory, proj : Project, printer=None, extruder=None):
         self._dbfact = fact
@@ -38,7 +71,7 @@ class ProjectImporter:
         r_preps =sqp.SQQuery(dbf, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId == pr._id).as_list()
         e_preps = sqp.SQQuery(dbf, ProjectEnviroPreparation).where(ProjectEnviroPreparation.ProjectId==pr._id).as_list()
         
-        #create a handy dict to map clumn headings
+        #create a handy dict to map column headings
         coln_dict = {}
         for fp in f_preps:
             coln_dict[fp.factordefinition.abbreviation] = fp
@@ -86,18 +119,93 @@ class ProjectImporter:
 
                         self._dbfact.flush(valob)
 
-
                 self._dbfact.commit_transaction()
             except Exception as exc:
                 self._dbfact.rollback_transaction()
                 raise exc
 
+    def import_from_json(self, filename):
+        dechook = PexDecoderHook()
+
+        with open(filename, mode="rt", encoding="UTF-8") as fp:
+            jsonlst = json.load(fp, object_hook=dechook.pex_hook)
+        
+        #now we got all the object but nothing is stored in the db up to this point
+        #we need a dict of old vs new ids and a dict of any already stored object first
+        for jobj in jsonlst:
+            pass
+
+class PexDecoderHook:
+
+    def __init__(self):
+        self._id_dict = {} #initialise a dict {<oldid>:<newid>}
+
+    def _trfrm_uuid(self, val : str) -> UUID:
+        if val is None or len(val)==0:
+            return None
+
+        id = UUID(val)
+        self._id_dict[id] = None
+
+        return id
+
+    def _trfrm_datetime(self, val : str) -> datetime:
+        if val is None or len(val)==0:
+            return None
+
+        return datetime.strptime(val, "%Y%m%dT%H:%M:%S")
+
+    def _getclass(self, full_clsname : str):
+        if full_clsname is None or len(full_clsname)==0:
+            raise Exception("ExportImportProjects._getclass(classname) for an empty classname is not a valid call")
+
+        lastdot = full_clsname.rindex('.')
+        modulename = full_clsname[0:lastdot]
+        full_clsname = full_clsname[lastdot + 1::]
+        module = importlib.import_module(modulename)
+        return getattr(module, full_clsname)
+
+
+    def _set_pexattr(self, obj, mn, dect, dct):
+        if mn not in dct:
+            value = None
+        else:
+            value = dct[mn]
+            dtype = dect._dectype
+            if dtype is UUid:
+                value = self._trfrm_uuid(value)
+            elif dtype is DateTime:
+                value = self._trfrm_datetime(value)
+
+        setattr(obj, mn, value)
+
+    def _get_pexinst(self, dct):
+        full_clsname = dct["_clsname_"]
+        cls = self._getclass(full_clsname)
+        if not issubclass(cls, sqp.PBase):
+            raise Exception("Class {} is not a persistent sqlite class. Must be derived from PBase!".format(full_clsname))
+        
+        obj = cls()
+        mdict = obj._get_my_memberdict()
+        for membname, membinfo in mdict.items():
+            self._set_pexattr(obj, membname, membinfo, dct)
+
+        return obj
+
+    def pex_hook(self, dct):
+        if "_clsname_" in dct:
+            return self._get_pexinst(dct)
+        else:
+            return dct
+
 class ProjectExporter:
     def __init__(self, fact : sqp.SQFactory, proj : Project):
         self._fact = fact
-        self._p = proj
+        self._p = proj 
 
     def export_to_csv(self, filename):
+        """ export the experiments to a csv for external use during the experiments and othe rpurposes
+        """
         header = ["EXP_SEQUENCE", "EXP_REPNUM", "EXP_DESCRIPTION"]
         exp_q = sqp.SQQuery(self._fact, Experiment).where(Experiment.ProjectId==self._p._id)
         experiments = list(exp_q)
@@ -160,3 +268,48 @@ class ProjectExporter:
                     data.append(ev.value)
 
                 cwr.writerow(data)
+
+    def export_to_json(self, 
+        filename : str, 
+        include_preps : bool = True, 
+        includedefs : bool = True):
+        """ export a complete project in json
+            main purpose is to import it again later on or into another system
+        """
+        exports = []
+        if includedefs:
+            fdefs_q = sqp.SQQuery(self._fact, FactorDefinition)
+            rdefs_q = sqp.SQQuery(self._fact, ResponseDefinition)
+            edefs_q = sqp.SQQuery(self._fact, EnviroDefinition)
+            printers_q = sqp.SQQuery(self._fact, Printer)
+            extruders_q = sqp.SQQuery(self._fact, Extruder)
+            exports.extend(fdefs_q)
+            exports.extend(rdefs_q)
+            exports.extend(edefs_q)
+            exports.extend(printers_q)
+            exports.extend(extruders_q)
+
+        exp_q = sqp.SQQuery(self._fact, Experiment).where(Experiment.ProjectId==self._p._id)
+        experiments = list(exp_q)
+        if len(experiments) <= 0:
+            raise Exception("No experiments are defined in the given project, nothing will be exported")
+
+        exports.append(self._p)
+        for exp in experiments:
+            self._fact.fill_joins(exp, 
+                Experiment.Factors, 
+                Experiment.Responses, 
+                Experiment.Enviros)
+            exports.append(exp)
+
+        if include_preps:
+            fpreps = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._p._id).as_list()
+            exports.extend(fpreps)
+            rpreps = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._p._id).as_list()
+            exports.extend(rpreps)
+            epreps = sqp.SQQuery(self._fact, ProjectEnviroPreparation).where(ProjectEnviroPreparation.ProjectId==self._p._id).as_list()
+            exports.extend(epreps)
+
+        with open(filename, mode="wt", encoding="UTF-8") as f:
+            json.dump(exports, f, cls=PexJSONEncoder, indent=4)
+
