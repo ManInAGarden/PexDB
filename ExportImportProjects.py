@@ -1,4 +1,5 @@
 import csv
+from gettext import Catalog
 import json
 import importlib
 from time import strptime
@@ -8,7 +9,7 @@ from uuid import UUID, uuid4
 from numpy import full, isin
 import sqlitepersist as sqp
 from PersistClasses import *
-from sqlitepersist.SQLitePersistBasicClasses import DateTime, PCatalog
+from sqlitepersist.SQLitePersistBasicClasses import DateTime, PBase, PCatalog
 
 class PexJSONEncoder(json.JSONEncoder):
     """ custom encoder for json exports of complete projects
@@ -132,8 +133,43 @@ class ProjectImporter:
         
         #now we got all the object but nothing is stored in the db up to this point
         #we need a dict of old vs new ids and a dict of any already stored object first
-        for jobj in jsonlst:
-            pass
+
+        self._dbfact.begin_transaction()
+
+        try:
+            for jobj in jsonlst:
+                if isinstance(jobj, PBase):
+                    self._first_flush(jobj, dechook)
+                else:
+                    raise Exception("Non persistent object found on first level of imported objects")
+
+            self._dbfact.commit_transaction()
+        except Exception as exc:
+            self._dbfact.rollback_transaction()
+            raise exc
+
+    def _first_flush(self, obj, dh):
+        """ flush the objects of the lowest level of reference when they are not already present in the db
+        """
+
+        presobj = self._try_get_from_db(obj)
+        if presobj is not None:
+            dh._id_dict[obj._id] = presobj._id
+        else:
+            self._dbfact.flush(obj)
+            dh._id_dict[obj._id] = obj._id
+
+    def _try_get_from_db(self, obj):
+        if isinstance(obj, Catalog):
+            return None
+        elif isinstance(obj, FactorDefinition):
+            return sqp.SQQuery(self._dbfact, FactorDefinition).where(FactorDefinition.Abbreviation==obj.abbreviation).first_or_default(None)
+        elif isinstance(obj, ResponseDefinition):
+            return sqp.SQQuery(self._dbfact, ResponseDefinition).where(ResponseDefinition.Abbreviation==obj.abbreviation).first_or_default(None)        
+        elif isinstance(obj, EnviroDefinition):
+            return sqp.SQQuery(self._dbfact, EnviroDefinition).where(EnviroDefinition.Abbreviation==obj.abbreviation).first_or_default(None)        
+        else:
+            raise Exception("Unhandled type {} in _try_get_from_db".format(str(type(obj))))
 
 class PexDecoderHook:
 
