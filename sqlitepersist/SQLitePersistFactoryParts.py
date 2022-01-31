@@ -396,9 +396,13 @@ class SQFactory():
                     pinst.created = dt.datetime.now()
                     pinst.lastupdate = dt.datetime.now()
                     self._insert(curs, pinst)
+                    if curs.rowcount!=1:
+                        raise Exception("Insert of a single persistent object failed, {} rows were changed on last update".format(curs.rowcount))
                 else: #we need to update
                     pinst.lastupdate = dt.datetime.now()
                     self._update(curs, pinst)
+                    if curs.rowcount!=1:
+                        raise Exception("Update of a single persistent object failed, {} rows were changed on last update".format(curs.rowcount))
 
                 if microtrans:
                     self.commit_transaction("flush")
@@ -727,7 +731,7 @@ class SQFactory():
         """create an instance of the object with a cursor to a selected row as row
         """
         inst = cls()
-        inst._dbvaluecache = {} #create a new cahce fpr the old values as read from db
+        inst._dbvaluescache = {} #create a new cahce fpr the old values as read from db
         vd = inst._get_my_memberdict()
 
         jembs = []
@@ -753,14 +757,14 @@ class SQFactory():
                 dbdta = row[key]
                 cate = self._get_fullcatentry(value, dbdta)
                 setattr(inst, key, cate)
-                inst._dbvaluecache[key] = cate
+                inst._dbvaluescache[key] = cate
             elif declt is Blob:
                 dbdta = row[key]
                 self._logger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, "blobdata..."))
                 try:
                     blobby = decl.to_innertype(dbdta)
                     setattr(inst, key, blobby)
-                    inst._dbvaluecache[key] = blobby
+                    inst._dbvaluescache[key] = blobby
                 except Exception as ex:
                     self._logger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
                     raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, "blobdata...", str(ex)))
@@ -770,7 +774,7 @@ class SQFactory():
                 try:
                     inty = decl.to_innertype(dbdta)
                     setattr(inst, key, inty)
-                    inst._dbvaluecache[key] = inty
+                    inst._dbvaluescache[key] = inty
                 except Exception as ex:
                     self._logger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
                     raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, dbdta, str(ex)))

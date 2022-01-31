@@ -12,7 +12,8 @@ class TestImport(TestBase):
         proj = self.Mck.create_project()
         jsons = json.dumps(proj, cls=PexJSONEncoder)
         assert jsons is not None
-        assert jsons["_clsname_"]=="PersistClasses.Project"
+        assert '"_clsname_": "PersistClasses.Project"' in jsons
+        assert '"created": "' + proj.created.strftime("%Y%m%dT%H:%M:%S.%f") + '"' in jsons
 
     def test_list_json_customencoder(self):
         fpreps = {
@@ -66,10 +67,45 @@ class TestImport(TestBase):
         assert exists(fname)
 
     def test_project_json_import(self):
-        proj = Project(name="New project")
-        jimpo = ProjectImporter(self.Spf, proj)
+        proj_dumm = Project(name="New project")
+        jimpo = ProjectImporter(self.Spf, proj_dumm)
         filename = "testfiles/projectimport.json"
         jimpo.import_from_json(filename)
+
+        #now check if data are in the db and correctly referenced
+        projs = sqp.SQQuery(self.Spf, Project).where(Project.Name=="test_simple_project").as_list()
+        assert projs is not None
+        assert len(projs)==1
+        proj = projs[0]
+        exps = sqp.SQQuery(self.Spf, Experiment).where(Experiment.ProjectId==proj._id).as_list()
+        assert exps is not None
+        assert len(exps) == 4
+        for exp in exps:
+            self.Spf.fill_joins(exp, 
+                Experiment.Factors, 
+                Experiment.Responses,
+                Experiment.Enviros)
+
+            assert len(exp.factors)==3
+            assert len(exp.responses)==2
+            assert len(exp.enviros)==1
+
+        #check preps too
+        fpreps = sqp.SQQuery(self.Spf, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==proj._id).as_list()
+        assert fpreps is not None
+        assert len(fpreps) == 3
+
+        for fprep in fpreps:
+            assert fprep.factordefinition._id is not None
+            assert fprep.factordefinition is not None
+            assert fprep.factordefinition._id == fprep.factordefinition._id
+            self.Spf.fill_joins(fprep, ProjectFactorPreparation.FactorCombiDefs)
+            if fprep.factordefinition.abbreviation=="FANSPEED":
+                assert fprep.iscombined == True
+                assert len(fprep.factorcombidefs) == 2
+                for inter in fprep.factorcombidefs:
+                    assert inter.factordefinition is not None
+                    assert inter.factordefinition.abbreviation in ["MATFLOW","PRINOZZTEMP"]
 
     def test_export(self):
         fpreps = {
@@ -85,7 +121,6 @@ class TestImport(TestBase):
         epreps = {
             "CASETEMP" : {}
         }
-
 
         cnum, proj = self.Mck.create_fractfactorial_experiments(fpreps, 
             rpreps,

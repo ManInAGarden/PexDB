@@ -506,6 +506,10 @@ class PBase(object):
         for key, value in vd.items():
             if hasattr(self, key):
                 membval = getattr(self, key)
+                if not key in self._dbvaluescache:
+                    continue #we rely on the correct preparation of the cache
+                    #all joined types are not compared for changes
+
                 if self._dbvaluescache[key] != membval:
                     return True
 

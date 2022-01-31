@@ -9,7 +9,6 @@ from uuid import UUID, uuid4
 from numpy import full, isin
 import sqlitepersist as sqp
 from PersistClasses import *
-from sqlitepersist.SQLitePersistBasicClasses import DateTime, PBase, PCatalog
 
 class PexJSONEncoder(json.JSONEncoder):
     """ custom encoder for json exports of complete projects
@@ -26,12 +25,12 @@ class PexJSONEncoder(json.JSONEncoder):
 
 
     def default(self, obj: Any) -> Any:
-        if isinstance(obj, PCatalog):
+        if isinstance(obj, sqp.PCatalog):
             return obj.code
         elif isinstance(obj, sqp.PBase):
             return self.encode_pbase(obj)
         elif isinstance(obj, datetime):
-            return obj.strftime("%Y%m%dT%H:%M:%S")
+            return obj.strftime("%Y%m%dT%H:%M:%S.%f")
         elif isinstance(obj, UUID):
             return obj.hex
         else:
@@ -125,6 +124,23 @@ class ProjectImporter:
                 self._dbfact.rollback_transaction()
                 raise exc
 
+    def _do_correct_ids(self,dechook,  obj):
+        """ correct foreign keys which still contain the old-ids deliverd by the import"""
+        membdict = obj._get_my_memberdict()
+        for membname, membdecinfo in membdict.items(): #iterate to the classdict to find and handle any foreign key members
+            if membname in ["_id", "created", "lastupdate"]:
+                continue
+            if membdecinfo._dectype is UUid:
+                chkid = getattr(obj, membname)
+                if chkid not in dechook._id_dict:
+                    raise Exception("Unhandled id found")
+
+                newid = dechook._id_dict[chkid]
+                if newid != chkid:
+                    setattr(obj, membname, newid)
+
+        self._dbfact.flush(obj) #updates only when values were actually changed
+
     def import_from_json(self, filename):
         dechook = PexDecoderHook()
 
@@ -135,13 +151,17 @@ class ProjectImporter:
         #we need a dict of old vs new ids and a dict of any already stored object first
 
         self._dbfact.begin_transaction()
+        self._jsonimported = []
 
         try:
             for jobj in jsonlst:
-                if isinstance(jobj, PBase):
+                if isinstance(jobj, sqp.PBase):
                     self._first_flush(jobj, dechook)
                 else:
                     raise Exception("Non persistent object found on first level of imported objects")
+
+            for obj in self._jsonimported:
+                self._do_correct_ids(dechook, obj)
 
             self._dbfact.commit_transaction()
         except Exception as exc:
@@ -151,23 +171,52 @@ class ProjectImporter:
     def _first_flush(self, obj, dh):
         """ flush the objects of the lowest level of reference when they are not already present in the db
         """
-
-        presobj = self._try_get_from_db(obj)
+        importedid = obj._id
+        presobj = self._try_get_from_db(obj) #try to get a similar object from the db
         if presobj is not None:
-            dh._id_dict[obj._id] = presobj._id
+            dh._id_dict[importedid] = presobj._id
         else:
-            self._dbfact.flush(obj)
-            dh._id_dict[obj._id] = obj._id
+            self._persist_deeply(obj, dh)
+            
+    def _persist_deeply(self, obj, dh):
+        importedid = obj._id
+        self._dbfact.flushcopy(obj) #gets obj a new id, obj will be inserted into db
+        self._jsonimported.append(obj)
+        dh._id_dict[importedid] = obj._id
+
+        membdict = obj._get_my_memberdict()
+        for membname, membdecinfo in membdict.items(): 
+            if membdecinfo._dectype in (sqp.JoinedEmbeddedList, sqp.IntersectedList):
+                lvals = getattr(obj, membname)
+                if lvals is not None:
+                    for val in lvals:
+                        self._persist_deeply(val, dh)
 
     def _try_get_from_db(self, obj):
-        if isinstance(obj, Catalog):
+        if isinstance(obj, sqp.Catalog):
             return None
         elif isinstance(obj, FactorDefinition):
+            if obj.abbreviation is None:
+                raise Exception("Abbreviation must not be none for an imported factor definition!")
             return sqp.SQQuery(self._dbfact, FactorDefinition).where(FactorDefinition.Abbreviation==obj.abbreviation).first_or_default(None)
         elif isinstance(obj, ResponseDefinition):
+            if obj.abbreviation is None:
+                raise Exception("Abbreviation must not be none for an imported response definition!")
             return sqp.SQQuery(self._dbfact, ResponseDefinition).where(ResponseDefinition.Abbreviation==obj.abbreviation).first_or_default(None)        
         elif isinstance(obj, EnviroDefinition):
-            return sqp.SQQuery(self._dbfact, EnviroDefinition).where(EnviroDefinition.Abbreviation==obj.abbreviation).first_or_default(None)        
+            if obj.abbreviation is None:
+                raise Exception("Abbreviation must not be none for an imported environment definition!")
+            return sqp.SQQuery(self._dbfact, EnviroDefinition).where(EnviroDefinition.Abbreviation==obj.abbreviation).first_or_default(None)
+        elif isinstance(obj, Printer):
+            if obj.abbreviation is None:
+                raise Exception("Abbreviation must not be none for an imported printer!")
+            return sqp.SQQuery(self._dbfact, Printer).where(Printer.Abbreviation==obj.abbreviation).first_or_default(None)
+        elif isinstance(obj, Extruder):
+            if obj.abbreviation is None:
+                raise Exception("Abbreviation must not be none for an imported extruder!")
+            return sqp.SQQuery(self._dbfact, Extruder).where(Extruder.Abbreviation==obj.abbreviation).first_or_default(None)
+        elif isinstance(obj, (Project, Experiment, ProjectFactorPreparation, ProjectResponsePreparation, ProjectEnviroPreparation)):
+            return None #these entities are always imported
         else:
             raise Exception("Unhandled type {} in _try_get_from_db".format(str(type(obj))))
 
@@ -189,7 +238,7 @@ class PexDecoderHook:
         if val is None or len(val)==0:
             return None
 
-        return datetime.strptime(val, "%Y%m%dT%H:%M:%S")
+        return datetime.strptime(val, "%Y%m%dT%H:%M:%S.%f")
 
     def _getclass(self, full_clsname : str):
         if full_clsname is None or len(full_clsname)==0:
@@ -210,7 +259,7 @@ class PexDecoderHook:
             dtype = dect._dectype
             if dtype is UUid:
                 value = self._trfrm_uuid(value)
-            elif dtype is DateTime:
+            elif dtype is sqp.DateTime:
                 value = self._trfrm_datetime(value)
 
         setattr(obj, mn, value)
@@ -332,7 +381,7 @@ class ProjectExporter:
 
         exports.append(self._p)
         for exp in experiments:
-            self._fact.fill_joins(exp, 
+            self._fact.fill_joins(exp, #not autofilled
                 Experiment.Factors, 
                 Experiment.Responses, 
                 Experiment.Enviros)
@@ -340,6 +389,9 @@ class ProjectExporter:
 
         if include_preps:
             fpreps = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._p._id).as_list()
+            for fprep in fpreps: #not auto-filled
+                self._fact.fill_joins(fprep, ProjectFactorPreparation.FactorCombiDefs)
+
             exports.extend(fpreps)
             rpreps = sqp.SQQuery(self._fact, ProjectResponsePreparation).where(ProjectResponsePreparation.ProjectId==self._p._id).as_list()
             exports.extend(rpreps)

@@ -17,6 +17,8 @@ select * from responsedefinition;
 
 select * from projectresponsepreparation;
 
+select * from factorvalue;
+
 select * from responsevalue;
 
 select * from experimentdoc;

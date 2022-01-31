@@ -5,24 +5,24 @@
         "defaultmin": 0.1,
         "defaultmax": 0.3,
         "defaultlevelnum": 2,
-        "unitid": "953f66efa76748e084b9ad2207935ba5",
+        "unitid": "c7e1a8f2641e405f8677964fead4d46a",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 0.001,
             "baseunit": "m",
             "abbreviation": "mm",
             "name": "millimeter",
-            "_id": "953f66efa76748e084b9ad2207935ba5",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "c7e1a8f2641e405f8677964fead4d46a",
+            "created": "20220131T16:25:44.044436",
+            "lastupdate": "20220131T16:25:44.044436"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "LAYERHEIGHT",
         "name": "layer height",
-        "_id": "b0d490921bdc45e282bc37a17a5e35ce",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "869d92447a6a4ad8a1eaa42b7c6c8907",
+        "created": "20220131T16:25:44.061245",
+        "lastupdate": "20220131T16:25:44.061245"
     },
     {
         "_clsname_": "PersistClasses.FactorDefinition",
@@ -30,24 +30,24 @@
         "defaultmin": 10.0,
         "defaultmax": 60.0,
         "defaultlevelnum": 2,
-        "unitid": "bb928847edfb441cb67ceaf6225c86c2",
+        "unitid": "61b17f2ec90146c9a6e12e5f81b84c71",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 0.001,
             "baseunit": "m/s",
             "abbreviation": "mm/s",
             "name": "millimeter speed",
-            "_id": "bb928847edfb441cb67ceaf6225c86c2",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "61b17f2ec90146c9a6e12e5f81b84c71",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "PRISP",
         "name": "print speed",
-        "_id": "19d08797f19747eb9b2df229024ec333",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "5fecbfb31b9044cea224629579f4a79a",
+        "created": "20220131T16:25:44.068242",
+        "lastupdate": "20220131T16:25:44.068242"
     },
     {
         "_clsname_": "PersistClasses.FactorDefinition",
@@ -55,24 +55,24 @@
         "defaultmin": 10.0,
         "defaultmax": 60.0,
         "defaultlevelnum": 2,
-        "unitid": "bb928847edfb441cb67ceaf6225c86c2",
+        "unitid": "61b17f2ec90146c9a6e12e5f81b84c71",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 0.001,
             "baseunit": "m/s",
             "abbreviation": "mm/s",
             "name": "millimeter speed",
-            "_id": "bb928847edfb441cb67ceaf6225c86c2",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "61b17f2ec90146c9a6e12e5f81b84c71",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "PRISPTOBO",
         "name": "print speed top bottom",
-        "_id": "20313fb826ba4fb1a374f8e3af3fb8c2",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "c356f968f78e4182989a1c67a9ee85b0",
+        "created": "20220131T16:25:44.073249",
+        "lastupdate": "20220131T16:25:44.073249"
     },
     {
         "_clsname_": "PersistClasses.FactorDefinition",
@@ -80,24 +80,24 @@
         "defaultmin": 180.0,
         "defaultmax": 240.0,
         "defaultlevelnum": 3,
-        "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+        "unitid": "0eb8d634f2674708ba096fc270e974ff",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "\u00b0C",
             "abbreviation": "\u00b0C",
             "name": "temperature Celsius",
-            "_id": "1f1ee32a30354c989172a072a5af6fe5",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "0eb8d634f2674708ba096fc270e974ff",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "PRINOZZTEMP",
         "name": "print temperature",
-        "_id": "6d8a4321159e400780be53c315c75176",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "3ff4e826b17b4e5796d503cd80f52a88",
+        "created": "20220131T16:25:44.080244",
+        "lastupdate": "20220131T16:25:44.080244"
     },
     {
         "_clsname_": "PersistClasses.FactorDefinition",
@@ -105,24 +105,24 @@
         "defaultmin": 0.0,
         "defaultmax": 110.0,
         "defaultlevelnum": 2,
-        "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+        "unitid": "0eb8d634f2674708ba096fc270e974ff",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "\u00b0C",
             "abbreviation": "\u00b0C",
             "name": "temperature Celsius",
-            "_id": "1f1ee32a30354c989172a072a5af6fe5",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "0eb8d634f2674708ba096fc270e974ff",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "MATBEDTEMP",
         "name": "bed temperature",
-        "_id": "e4dea43e49e44bf9beb88302d0f9a6f2",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "13b28a2befc94e978ee1d4947c07a669",
+        "created": "20220131T16:25:44.086241",
+        "lastupdate": "20220131T16:25:44.086241"
     },
     {
         "_clsname_": "PersistClasses.FactorDefinition",
@@ -130,24 +130,24 @@
         "defaultmin": 80.0,
         "defaultmax": 110.0,
         "defaultlevelnum": 2,
-        "unitid": "764bff4300894872bf3f388b04c7bebe",
+        "unitid": "c66bfc4520404b88b52c4f89ddb97287",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "%",
             "abbreviation": "%",
             "name": "percent",
-            "_id": "764bff4300894872bf3f388b04c7bebe",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "c66bfc4520404b88b52c4f89ddb97287",
+            "created": "20220131T16:25:44.046632",
+            "lastupdate": "20220131T16:25:44.046632"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "MATFLOW",
         "name": "material flow",
-        "_id": "faa44c51bbde4219b9790544e32173f3",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "11a46f364c294955b93b30b1572da476",
+        "created": "20220131T16:25:44.092227",
+        "lastupdate": "20220131T16:25:44.092227"
     },
     {
         "_clsname_": "PersistClasses.FactorDefinition",
@@ -155,24 +155,24 @@
         "defaultmin": 80.0,
         "defaultmax": 110.0,
         "defaultlevelnum": 2,
-        "unitid": "764bff4300894872bf3f388b04c7bebe",
+        "unitid": "c66bfc4520404b88b52c4f89ddb97287",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "%",
             "abbreviation": "%",
             "name": "percent",
-            "_id": "764bff4300894872bf3f388b04c7bebe",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "c66bfc4520404b88b52c4f89ddb97287",
+            "created": "20220131T16:25:44.046632",
+            "lastupdate": "20220131T16:25:44.046632"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "MATFLOWLAY0",
         "name": "top level material flow",
-        "_id": "2cdaab8368cc459da52cd943a2618e20",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "04c13ed488244e30b794a5f2fc5b4200",
+        "created": "20220131T16:25:44.099223",
+        "lastupdate": "20220131T16:25:44.099223"
     },
     {
         "_clsname_": "PersistClasses.FactorDefinition",
@@ -180,66 +180,66 @@
         "defaultmin": 0.0,
         "defaultmax": 100.0,
         "defaultlevelnum": 2,
-        "unitid": "764bff4300894872bf3f388b04c7bebe",
+        "unitid": "c66bfc4520404b88b52c4f89ddb97287",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "%",
             "abbreviation": "%",
             "name": "percent",
-            "_id": "764bff4300894872bf3f388b04c7bebe",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "c66bfc4520404b88b52c4f89ddb97287",
+            "created": "20220131T16:25:44.046632",
+            "lastupdate": "20220131T16:25:44.046632"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "FANSPEED",
         "name": "fan speed",
-        "_id": "b2907b11309f404b8c588cd6f27481b1",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "2074869d2c0842dd8bf63d9036d47f25",
+        "created": "20220131T16:25:44.104220",
+        "lastupdate": "20220131T16:25:44.104220"
     },
     {
         "_clsname_": "PersistClasses.ResponseDefinition",
-        "unitid": "7f3380d320f54f439f59bfada48a2a07",
+        "unitid": "841d9f5bf99e4e5fa0935d42ba24112c",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "s",
             "abbreviation": "s",
             "name": "second",
-            "_id": "7f3380d320f54f439f59bfada48a2a07",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "841d9f5bf99e4e5fa0935d42ba24112c",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "TOTPRINTTIME",
         "name": "print time",
-        "_id": "390139dc2a4e45749ffeeb0504135040",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "2fd3429356924d5ab6b4e9420122e12d",
+        "created": "20220131T16:25:44.129329",
+        "lastupdate": "20220131T16:25:44.129329"
     },
     {
         "_clsname_": "PersistClasses.ResponseDefinition",
-        "unitid": "2174f4d303734b66927c700323ed9f1d",
+        "unitid": "32928a2850be428ea5c1527f2d2b9322",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "MPa",
             "abbreviation": "MPa",
             "name": "mega pascal",
-            "_id": "2174f4d303734b66927c700323ed9f1d",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "32928a2850be428ea5c1527f2d2b9322",
+            "created": "20220131T16:25:44.046632",
+            "lastupdate": "20220131T16:25:44.046632"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "TENACITY",
         "name": "tenacity",
-        "_id": "3f4620d78a5a45258111833dff268e2f",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "9644142808f8400589bd1a757bca4241",
+        "created": "20220131T16:25:44.133802",
+        "lastupdate": "20220131T16:25:44.133802"
     },
     {
         "_clsname_": "PersistClasses.ResponseDefinition",
@@ -249,240 +249,240 @@
         "disptype": "FLOAT",
         "abbreviation": "SURFQUAL",
         "name": "surface quality",
-        "_id": "c4cca95613784708893555f997deba23",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "d3617d56b2ad43abb09e1175de52bc0c",
+        "created": "20220131T16:25:44.133802",
+        "lastupdate": "20220131T16:25:44.133802"
     },
     {
         "_clsname_": "PersistClasses.ResponseDefinition",
-        "unitid": "953f66efa76748e084b9ad2207935ba5",
+        "unitid": "c7e1a8f2641e405f8677964fead4d46a",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 0.001,
             "baseunit": "m",
             "abbreviation": "mm",
             "name": "millimeter",
-            "_id": "953f66efa76748e084b9ad2207935ba5",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "c7e1a8f2641e405f8677964fead4d46a",
+            "created": "20220131T16:25:44.044436",
+            "lastupdate": "20220131T16:25:44.044436"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "DIMACC",
         "name": "dimensional accuracy",
-        "_id": "352f8a1ea0494dcba2c3966995e2a8aa",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "445a83f6304b420dbb8de475123607de",
+        "created": "20220131T16:25:44.136800",
+        "lastupdate": "20220131T16:25:44.136800"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+        "unitid": "0eb8d634f2674708ba096fc270e974ff",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "\u00b0C",
             "abbreviation": "\u00b0C",
             "name": "temperature Celsius",
-            "_id": "1f1ee32a30354c989172a072a5af6fe5",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "0eb8d634f2674708ba096fc270e974ff",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "ENVTEMP",
         "name": "environment temperature",
-        "_id": "5ed8ad832c634893a11cc44a7a8565d9",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "3dd5fa40055e4255bc3405d8cb1837ee",
+        "created": "20220131T16:25:44.145247",
+        "lastupdate": "20220131T16:25:44.145247"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+        "unitid": "0eb8d634f2674708ba096fc270e974ff",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "\u00b0C",
             "abbreviation": "\u00b0C",
             "name": "temperature Celsius",
-            "_id": "1f1ee32a30354c989172a072a5af6fe5",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "0eb8d634f2674708ba096fc270e974ff",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "CASETEMP",
         "name": "case temperature",
-        "_id": "bef764ba49a541249d39676661ad7b85",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "e37bb6034c394ca3a9e439677bc07531",
+        "created": "20220131T16:25:44.149222",
+        "lastupdate": "20220131T16:25:44.149222"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "953f66efa76748e084b9ad2207935ba5",
+        "unitid": "c7e1a8f2641e405f8677964fead4d46a",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 0.001,
             "baseunit": "m",
             "abbreviation": "mm",
             "name": "millimeter",
-            "_id": "953f66efa76748e084b9ad2207935ba5",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "c7e1a8f2641e405f8677964fead4d46a",
+            "created": "20220131T16:25:44.044436",
+            "lastupdate": "20220131T16:25:44.044436"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "LAYERHEIGHT",
         "name": "layer height",
-        "_id": "bf300eec1c4a4d0081901a6487d4f570",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "f2842a9d1c684ac19cf90b5053fdc533",
+        "created": "20220131T16:25:44.152217",
+        "lastupdate": "20220131T16:25:44.152217"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "bb928847edfb441cb67ceaf6225c86c2",
+        "unitid": "61b17f2ec90146c9a6e12e5f81b84c71",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 0.001,
             "baseunit": "m/s",
             "abbreviation": "mm/s",
             "name": "millimeter speed",
-            "_id": "bb928847edfb441cb67ceaf6225c86c2",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "61b17f2ec90146c9a6e12e5f81b84c71",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "PRISP",
         "name": "print speed",
-        "_id": "f7569f74c2b44111ba9e638767642df1",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "656120ceae9544d8b8e3767219454bdd",
+        "created": "20220131T16:25:44.154216",
+        "lastupdate": "20220131T16:25:44.154216"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "bb928847edfb441cb67ceaf6225c86c2",
+        "unitid": "61b17f2ec90146c9a6e12e5f81b84c71",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 0.001,
             "baseunit": "m/s",
             "abbreviation": "mm/s",
             "name": "millimeter speed",
-            "_id": "bb928847edfb441cb67ceaf6225c86c2",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "61b17f2ec90146c9a6e12e5f81b84c71",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "PRISPTOBO",
         "name": "print speed top bottom",
-        "_id": "bd285896968e4fd683fef670e506a94b",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "1e12e79f5fad4595881082c6dc5c35a7",
+        "created": "20220131T16:25:44.157226",
+        "lastupdate": "20220131T16:25:44.157226"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+        "unitid": "0eb8d634f2674708ba096fc270e974ff",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "\u00b0C",
             "abbreviation": "\u00b0C",
             "name": "temperature Celsius",
-            "_id": "1f1ee32a30354c989172a072a5af6fe5",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "0eb8d634f2674708ba096fc270e974ff",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "PRINOZZTEMP",
         "name": "print temperature",
-        "_id": "35ce7dd7ccba4e7bb69e514fd0f6cf62",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "5381fab397a249a4aaa96888ca15a305",
+        "created": "20220131T16:25:44.161212",
+        "lastupdate": "20220131T16:25:44.161212"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+        "unitid": "0eb8d634f2674708ba096fc270e974ff",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "\u00b0C",
             "abbreviation": "\u00b0C",
             "name": "temperature Celsius",
-            "_id": "1f1ee32a30354c989172a072a5af6fe5",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "0eb8d634f2674708ba096fc270e974ff",
+            "created": "20220131T16:25:44.045617",
+            "lastupdate": "20220131T16:25:44.045617"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "MATBEDTEMP",
         "name": "bed temperature",
-        "_id": "bd5ffe6708034e46838c87673cb351d9",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "bb3a632f9a05429887370d8311be6c9d",
+        "created": "20220131T16:25:44.164209",
+        "lastupdate": "20220131T16:25:44.164209"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "764bff4300894872bf3f388b04c7bebe",
+        "unitid": "c66bfc4520404b88b52c4f89ddb97287",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "%",
             "abbreviation": "%",
             "name": "percent",
-            "_id": "764bff4300894872bf3f388b04c7bebe",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "c66bfc4520404b88b52c4f89ddb97287",
+            "created": "20220131T16:25:44.046632",
+            "lastupdate": "20220131T16:25:44.046632"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "MATFLOW",
         "name": "material flow",
-        "_id": "57b0cf075b9f4b63ae85df9d8b5771c6",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "c0012e2f0c9844b483893c67fa0ba942",
+        "created": "20220131T16:25:44.167220",
+        "lastupdate": "20220131T16:25:44.167220"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "764bff4300894872bf3f388b04c7bebe",
+        "unitid": "c66bfc4520404b88b52c4f89ddb97287",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "%",
             "abbreviation": "%",
             "name": "percent",
-            "_id": "764bff4300894872bf3f388b04c7bebe",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "c66bfc4520404b88b52c4f89ddb97287",
+            "created": "20220131T16:25:44.046632",
+            "lastupdate": "20220131T16:25:44.046632"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "MATFLOWLAY0",
         "name": "top level material flow",
-        "_id": "9fabe68a79c041cd98ef912e66129fc1",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "71778710a6bf44df819b37f8f3386b7a",
+        "created": "20220131T16:25:44.170217",
+        "lastupdate": "20220131T16:25:44.170217"
     },
     {
         "_clsname_": "PersistClasses.EnviroDefinition",
-        "unitid": "764bff4300894872bf3f388b04c7bebe",
+        "unitid": "c66bfc4520404b88b52c4f89ddb97287",
         "unit": {
             "_clsname_": "PersistClasses.Unit",
             "factortobase": 1.0,
             "baseunit": "%",
             "abbreviation": "%",
             "name": "percent",
-            "_id": "764bff4300894872bf3f388b04c7bebe",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "c66bfc4520404b88b52c4f89ddb97287",
+            "created": "20220131T16:25:44.046632",
+            "lastupdate": "20220131T16:25:44.046632"
         },
         "isactive": true,
         "disptype": "FLOAT",
         "abbreviation": "FANSPEED",
         "name": "fan speed",
-        "_id": "89723b61d93448c4aa56a97292465617",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "35b08da1a08a44b1b2896d75c718d439",
+        "created": "20220131T16:25:44.173204",
+        "lastupdate": "20220131T16:25:44.173204"
     },
     {
         "_clsname_": "PersistClasses.Printer",
@@ -493,11 +493,11 @@
         "firmware": "MARLIN",
         "firmwareversion": null,
         "isactive": true,
-        "abbreviation": "PRN_410d895aec0c42d8b166345ebd66386c",
+        "abbreviation": "PRN_0c1d2e9bda8040eca7811915d284a838",
         "name": "LIN_SIMPLE_PRINTER",
-        "_id": "81f2706a59ca4c3486f493a329f11903",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "aafdb89d56324fd6b9d487ce3f5a3913",
+        "created": "20220131T16:25:44.367176",
+        "lastupdate": "20220131T16:25:44.376925"
     },
     {
         "_clsname_": "PersistClasses.Printer",
@@ -508,11 +508,11 @@
         "firmware": "MARLIN",
         "firmwareversion": null,
         "isactive": true,
-        "abbreviation": "PRN_44922a13ca5c47ecadd8a560b4bd42b4",
+        "abbreviation": "PRN_a6d0c0078ec0449f882c398149b80684",
         "name": "LIN_SIMPLE_PRINTER",
-        "_id": "7ed4099c65f24790b965f809981bb6af",
-        "created": "20220130T15:16:16",
-        "lastupdate": "20220130T15:16:16"
+        "_id": "a098e73c030d456196945692b4bb90ae",
+        "created": "20220131T16:34:05.121029",
+        "lastupdate": "20220131T16:34:05.121029"
     },
     {
         "_clsname_": "PersistClasses.Extruder",
@@ -520,11 +520,11 @@
         "maxtemperature": 300,
         "hascooler": false,
         "isactive": true,
-        "abbreviation": "EXT_78fb6e00f1294149babfc7e1a11f1ec5",
+        "abbreviation": "EXT_85d8ec272ae8431eb6f9eddee4d345dc",
         "name": "LIN_SIMPLE_EXTRUDER",
-        "_id": "58f09bfa6f474f3cb84c19cda9b4d2e8",
-        "created": "20220130T12:02:36",
-        "lastupdate": "20220130T12:02:36"
+        "_id": "b75141780315453b8a514c8736838fdf",
+        "created": "20220131T16:25:44.370907",
+        "lastupdate": "20220131T16:25:44.376925"
     },
     {
         "_clsname_": "PersistClasses.Extruder",
@@ -532,11 +532,11 @@
         "maxtemperature": 300,
         "hascooler": false,
         "isactive": true,
-        "abbreviation": "EXT_295908e08af84b1c8df71fef8861a063",
+        "abbreviation": "EXT_2bd7f8325d014cfcb6fdd8e134fe0089",
         "name": "LIN_SIMPLE_EXTRUDER",
-        "_id": "5f25cd07521d420ab0b2d691f7301af6",
-        "created": "20220130T15:16:16",
-        "lastupdate": "20220130T15:16:16"
+        "_id": "ddfa9531b3a64119bbef11059916d20a",
+        "created": "20220131T16:34:05.127649",
+        "lastupdate": "20220131T16:34:05.127649"
     },
     {
         "_clsname_": "PersistClasses.Project",
@@ -546,15 +546,15 @@
         "description": null,
         "domergecalculation": false,
         "mergeformula": null,
-        "_id": "63b5442674e9448d9fb1d78acfb41bb0",
-        "created": "20220130T15:16:16",
-        "lastupdate": "20220130T15:16:16"
+        "_id": "b1541eee380d444a8f9ec6da8fa68eba",
+        "created": "20220131T16:34:05.135667",
+        "lastupdate": "20220131T16:34:05.135667"
     },
     {
         "_clsname_": "PersistClasses.Experiment",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
-        "extruderusedid": "5f25cd07521d420ab0b2d691f7301af6",
-        "printerusedid": "7ed4099c65f24790b965f809981bb6af",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
+        "extruderusedid": "ddfa9531b3a64119bbef11059916d20a",
+        "printerusedid": "a098e73c030d456196945692b4bb90ae",
         "project": {
             "_clsname_": "PersistClasses.Project",
             "name": "test_simple_project",
@@ -563,9 +563,9 @@
             "description": null,
             "domergecalculation": false,
             "mergeformula": null,
-            "_id": "63b5442674e9448d9fb1d78acfb41bb0",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "b1541eee380d444a8f9ec6da8fa68eba",
+            "created": "20220131T16:34:05.135667",
+            "lastupdate": "20220131T16:34:05.135667"
         },
         "sequence": 1,
         "repnum": 1,
@@ -575,11 +575,11 @@
             "maxtemperature": 300,
             "hascooler": false,
             "isactive": true,
-            "abbreviation": "EXT_295908e08af84b1c8df71fef8861a063",
+            "abbreviation": "EXT_2bd7f8325d014cfcb6fdd8e134fe0089",
             "name": "LIN_SIMPLE_EXTRUDER",
-            "_id": "5f25cd07521d420ab0b2d691f7301af6",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "ddfa9531b3a64119bbef11059916d20a",
+            "created": "20220131T16:34:05.127649",
+            "lastupdate": "20220131T16:34:05.127649"
         },
         "printerused": {
             "_clsname_": "PersistClasses.Printer",
@@ -590,11 +590,11 @@
             "firmware": "MARLIN",
             "firmwareversion": null,
             "isactive": true,
-            "abbreviation": "PRN_44922a13ca5c47ecadd8a560b4bd42b4",
+            "abbreviation": "PRN_a6d0c0078ec0449f882c398149b80684",
             "name": "LIN_SIMPLE_PRINTER",
-            "_id": "7ed4099c65f24790b965f809981bb6af",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "a098e73c030d456196945692b4bb90ae",
+            "created": "20220131T16:34:05.121029",
+            "lastupdate": "20220131T16:34:05.121029"
         },
         "carriedoutdt": null,
         "isarchived": false,
@@ -602,142 +602,142 @@
         "factors": [
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "6d8a4321159e400780be53c315c75176",
-                "experimentid": "a1fa88a1de0e420c98cc8de1643c5992",
+                "factordefinitionid": "3ff4e826b17b4e5796d503cd80f52a88",
+                "experimentid": "d436237ae3884807894d14a2cffcaf94",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "MATERIAL_PRINT_TEMPERATURE",
                     "defaultmin": 180.0,
                     "defaultmax": 240.0,
                     "defaultlevelnum": 3,
-                    "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+                    "unitid": "0eb8d634f2674708ba096fc270e974ff",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "\u00b0C",
                         "abbreviation": "\u00b0C",
                         "name": "temperature Celsius",
-                        "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "0eb8d634f2674708ba096fc270e974ff",
+                        "created": "20220131T16:25:44.045617",
+                        "lastupdate": "20220131T16:25:44.045617"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "PRINOZZTEMP",
                     "name": "print temperature",
-                    "_id": "6d8a4321159e400780be53c315c75176",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "3ff4e826b17b4e5796d503cd80f52a88",
+                    "created": "20220131T16:25:44.080244",
+                    "lastupdate": "20220131T16:25:44.080244"
                 },
                 "value": 190.0,
-                "_id": "d157f42323694de88310b2e6279a2431",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "d0c37be8e6d14efc9ee02609c5253a0e",
+                "created": "20220131T16:34:05.430628",
+                "lastupdate": "20220131T16:34:05.430628"
             },
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "faa44c51bbde4219b9790544e32173f3",
-                "experimentid": "a1fa88a1de0e420c98cc8de1643c5992",
+                "factordefinitionid": "11a46f364c294955b93b30b1572da476",
+                "experimentid": "d436237ae3884807894d14a2cffcaf94",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "MATERIAL_FLOW",
                     "defaultmin": 80.0,
                     "defaultmax": 110.0,
                     "defaultlevelnum": 2,
-                    "unitid": "764bff4300894872bf3f388b04c7bebe",
+                    "unitid": "c66bfc4520404b88b52c4f89ddb97287",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "%",
                         "abbreviation": "%",
                         "name": "percent",
-                        "_id": "764bff4300894872bf3f388b04c7bebe",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                        "created": "20220131T16:25:44.046632",
+                        "lastupdate": "20220131T16:25:44.046632"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "MATFLOW",
                     "name": "material flow",
-                    "_id": "faa44c51bbde4219b9790544e32173f3",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "11a46f364c294955b93b30b1572da476",
+                    "created": "20220131T16:25:44.092227",
+                    "lastupdate": "20220131T16:25:44.092227"
                 },
                 "value": 80.0,
-                "_id": "a60c1cd2431a4a9dbb585738f4f032a3",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "2c9df52979274f159b7d75ad978fbc62",
+                "created": "20220131T16:34:05.438248",
+                "lastupdate": "20220131T16:34:05.438248"
             },
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "b2907b11309f404b8c588cd6f27481b1",
-                "experimentid": "a1fa88a1de0e420c98cc8de1643c5992",
+                "factordefinitionid": "2074869d2c0842dd8bf63d9036d47f25",
+                "experimentid": "d436237ae3884807894d14a2cffcaf94",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "COOL_FAN_SPEED",
                     "defaultmin": 0.0,
                     "defaultmax": 100.0,
                     "defaultlevelnum": 2,
-                    "unitid": "764bff4300894872bf3f388b04c7bebe",
+                    "unitid": "c66bfc4520404b88b52c4f89ddb97287",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "%",
                         "abbreviation": "%",
                         "name": "percent",
-                        "_id": "764bff4300894872bf3f388b04c7bebe",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                        "created": "20220131T16:25:44.046632",
+                        "lastupdate": "20220131T16:25:44.046632"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "FANSPEED",
                     "name": "fan speed",
-                    "_id": "b2907b11309f404b8c588cd6f27481b1",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "2074869d2c0842dd8bf63d9036d47f25",
+                    "created": "20220131T16:25:44.104220",
+                    "lastupdate": "20220131T16:25:44.104220"
                 },
                 "value": 100.0,
-                "_id": "112fae44994d441e8bafe4d0f10084a2",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "16dcabec0a5b47f4af70c75e8d894822",
+                "created": "20220131T16:34:05.447614",
+                "lastupdate": "20220131T16:34:05.447614"
             }
         ],
         "responses": [
             {
                 "_clsname_": "PersistClasses.ResponseValue",
-                "responsedefinitionid": "352f8a1ea0494dcba2c3966995e2a8aa",
-                "experimentid": "a1fa88a1de0e420c98cc8de1643c5992",
+                "responsedefinitionid": "445a83f6304b420dbb8de475123607de",
+                "experimentid": "d436237ae3884807894d14a2cffcaf94",
                 "responsedefinition": {
                     "_clsname_": "PersistClasses.ResponseDefinition",
-                    "unitid": "953f66efa76748e084b9ad2207935ba5",
+                    "unitid": "c7e1a8f2641e405f8677964fead4d46a",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 0.001,
                         "baseunit": "m",
                         "abbreviation": "mm",
                         "name": "millimeter",
-                        "_id": "953f66efa76748e084b9ad2207935ba5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c7e1a8f2641e405f8677964fead4d46a",
+                        "created": "20220131T16:25:44.044436",
+                        "lastupdate": "20220131T16:25:44.044436"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "DIMACC",
                     "name": "dimensional accuracy",
-                    "_id": "352f8a1ea0494dcba2c3966995e2a8aa",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "445a83f6304b420dbb8de475123607de",
+                    "created": "20220131T16:25:44.136800",
+                    "lastupdate": "20220131T16:25:44.136800"
                 },
                 "value": 0.0,
-                "_id": "e06a34d7297744bab629e929d5d7d232",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "d75edcaeacc748f0b8c002d33b1b9696",
+                "created": "20220131T16:34:05.456392",
+                "lastupdate": "20220131T16:34:05.456392"
             },
             {
                 "_clsname_": "PersistClasses.ResponseValue",
-                "responsedefinitionid": "c4cca95613784708893555f997deba23",
-                "experimentid": "a1fa88a1de0e420c98cc8de1643c5992",
+                "responsedefinitionid": "d3617d56b2ad43abb09e1175de52bc0c",
+                "experimentid": "d436237ae3884807894d14a2cffcaf94",
                 "responsedefinition": {
                     "_clsname_": "PersistClasses.ResponseDefinition",
                     "unitid": null,
@@ -746,58 +746,58 @@
                     "disptype": "FLOAT",
                     "abbreviation": "SURFQUAL",
                     "name": "surface quality",
-                    "_id": "c4cca95613784708893555f997deba23",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "d3617d56b2ad43abb09e1175de52bc0c",
+                    "created": "20220131T16:25:44.133802",
+                    "lastupdate": "20220131T16:25:44.133802"
                 },
                 "value": 0.0,
-                "_id": "16947836643f4d3d936d9ef0a2ad97e8",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "4787e2901686439f9ccc98abb8ad05ae",
+                "created": "20220131T16:34:05.466861",
+                "lastupdate": "20220131T16:34:05.466861"
             }
         ],
         "enviros": [
             {
                 "_clsname_": "PersistClasses.EnviroValue",
-                "envirodefinitionid": "bef764ba49a541249d39676661ad7b85",
-                "experimentid": "a1fa88a1de0e420c98cc8de1643c5992",
+                "envirodefinitionid": "e37bb6034c394ca3a9e439677bc07531",
+                "experimentid": "d436237ae3884807894d14a2cffcaf94",
                 "envirodefinition": {
                     "_clsname_": "PersistClasses.EnviroDefinition",
-                    "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+                    "unitid": "0eb8d634f2674708ba096fc270e974ff",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "\u00b0C",
                         "abbreviation": "\u00b0C",
                         "name": "temperature Celsius",
-                        "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "0eb8d634f2674708ba096fc270e974ff",
+                        "created": "20220131T16:25:44.045617",
+                        "lastupdate": "20220131T16:25:44.045617"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "CASETEMP",
                     "name": "case temperature",
-                    "_id": "bef764ba49a541249d39676661ad7b85",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "e37bb6034c394ca3a9e439677bc07531",
+                    "created": "20220131T16:25:44.149222",
+                    "lastupdate": "20220131T16:25:44.149222"
                 },
                 "value": 0.0,
-                "_id": "a4b965a63b114985befb7b250a5a3ec2",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "c49859c933564438bbf1dadaebfb7332",
+                "created": "20220131T16:34:05.482217",
+                "lastupdate": "20220131T16:34:05.482217"
             }
         ],
         "docs": null,
-        "_id": "a1fa88a1de0e420c98cc8de1643c5992",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "_id": "d436237ae3884807894d14a2cffcaf94",
+        "created": "20220131T16:34:05.419974",
+        "lastupdate": "20220131T16:34:05.419974"
     },
     {
         "_clsname_": "PersistClasses.Experiment",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
-        "extruderusedid": "5f25cd07521d420ab0b2d691f7301af6",
-        "printerusedid": "7ed4099c65f24790b965f809981bb6af",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
+        "extruderusedid": "ddfa9531b3a64119bbef11059916d20a",
+        "printerusedid": "a098e73c030d456196945692b4bb90ae",
         "project": {
             "_clsname_": "PersistClasses.Project",
             "name": "test_simple_project",
@@ -806,9 +806,9 @@
             "description": null,
             "domergecalculation": false,
             "mergeformula": null,
-            "_id": "63b5442674e9448d9fb1d78acfb41bb0",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "b1541eee380d444a8f9ec6da8fa68eba",
+            "created": "20220131T16:34:05.135667",
+            "lastupdate": "20220131T16:34:05.135667"
         },
         "sequence": 2,
         "repnum": 1,
@@ -818,11 +818,11 @@
             "maxtemperature": 300,
             "hascooler": false,
             "isactive": true,
-            "abbreviation": "EXT_295908e08af84b1c8df71fef8861a063",
+            "abbreviation": "EXT_2bd7f8325d014cfcb6fdd8e134fe0089",
             "name": "LIN_SIMPLE_EXTRUDER",
-            "_id": "5f25cd07521d420ab0b2d691f7301af6",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "ddfa9531b3a64119bbef11059916d20a",
+            "created": "20220131T16:34:05.127649",
+            "lastupdate": "20220131T16:34:05.127649"
         },
         "printerused": {
             "_clsname_": "PersistClasses.Printer",
@@ -833,11 +833,11 @@
             "firmware": "MARLIN",
             "firmwareversion": null,
             "isactive": true,
-            "abbreviation": "PRN_44922a13ca5c47ecadd8a560b4bd42b4",
+            "abbreviation": "PRN_a6d0c0078ec0449f882c398149b80684",
             "name": "LIN_SIMPLE_PRINTER",
-            "_id": "7ed4099c65f24790b965f809981bb6af",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "a098e73c030d456196945692b4bb90ae",
+            "created": "20220131T16:34:05.121029",
+            "lastupdate": "20220131T16:34:05.121029"
         },
         "carriedoutdt": null,
         "isarchived": false,
@@ -845,142 +845,142 @@
         "factors": [
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "6d8a4321159e400780be53c315c75176",
-                "experimentid": "f4844769d7d646b4bbe5c89ea28f1594",
+                "factordefinitionid": "3ff4e826b17b4e5796d503cd80f52a88",
+                "experimentid": "22199c855bb749feb1277202e1755954",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "MATERIAL_PRINT_TEMPERATURE",
                     "defaultmin": 180.0,
                     "defaultmax": 240.0,
                     "defaultlevelnum": 3,
-                    "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+                    "unitid": "0eb8d634f2674708ba096fc270e974ff",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "\u00b0C",
                         "abbreviation": "\u00b0C",
                         "name": "temperature Celsius",
-                        "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "0eb8d634f2674708ba096fc270e974ff",
+                        "created": "20220131T16:25:44.045617",
+                        "lastupdate": "20220131T16:25:44.045617"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "PRINOZZTEMP",
                     "name": "print temperature",
-                    "_id": "6d8a4321159e400780be53c315c75176",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "3ff4e826b17b4e5796d503cd80f52a88",
+                    "created": "20220131T16:25:44.080244",
+                    "lastupdate": "20220131T16:25:44.080244"
                 },
                 "value": 220.0,
-                "_id": "33a7f7f158344efb90370c3d6a62393e",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "c92d33dc72494b95a7734adce9b3ee40",
+                "created": "20220131T16:34:05.499719",
+                "lastupdate": "20220131T16:34:05.499719"
             },
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "faa44c51bbde4219b9790544e32173f3",
-                "experimentid": "f4844769d7d646b4bbe5c89ea28f1594",
+                "factordefinitionid": "11a46f364c294955b93b30b1572da476",
+                "experimentid": "22199c855bb749feb1277202e1755954",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "MATERIAL_FLOW",
                     "defaultmin": 80.0,
                     "defaultmax": 110.0,
                     "defaultlevelnum": 2,
-                    "unitid": "764bff4300894872bf3f388b04c7bebe",
+                    "unitid": "c66bfc4520404b88b52c4f89ddb97287",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "%",
                         "abbreviation": "%",
                         "name": "percent",
-                        "_id": "764bff4300894872bf3f388b04c7bebe",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                        "created": "20220131T16:25:44.046632",
+                        "lastupdate": "20220131T16:25:44.046632"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "MATFLOW",
                     "name": "material flow",
-                    "_id": "faa44c51bbde4219b9790544e32173f3",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "11a46f364c294955b93b30b1572da476",
+                    "created": "20220131T16:25:44.092227",
+                    "lastupdate": "20220131T16:25:44.092227"
                 },
                 "value": 80.0,
-                "_id": "6f0eefeac9eb4f2da8399cdd0d9d20f5",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "6f1bd0f0edb04d2a9abd71e4792db383",
+                "created": "20220131T16:34:05.504944",
+                "lastupdate": "20220131T16:34:05.504944"
             },
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "b2907b11309f404b8c588cd6f27481b1",
-                "experimentid": "f4844769d7d646b4bbe5c89ea28f1594",
+                "factordefinitionid": "2074869d2c0842dd8bf63d9036d47f25",
+                "experimentid": "22199c855bb749feb1277202e1755954",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "COOL_FAN_SPEED",
                     "defaultmin": 0.0,
                     "defaultmax": 100.0,
                     "defaultlevelnum": 2,
-                    "unitid": "764bff4300894872bf3f388b04c7bebe",
+                    "unitid": "c66bfc4520404b88b52c4f89ddb97287",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "%",
                         "abbreviation": "%",
                         "name": "percent",
-                        "_id": "764bff4300894872bf3f388b04c7bebe",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                        "created": "20220131T16:25:44.046632",
+                        "lastupdate": "20220131T16:25:44.046632"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "FANSPEED",
                     "name": "fan speed",
-                    "_id": "b2907b11309f404b8c588cd6f27481b1",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "2074869d2c0842dd8bf63d9036d47f25",
+                    "created": "20220131T16:25:44.104220",
+                    "lastupdate": "20220131T16:25:44.104220"
                 },
                 "value": 0.0,
-                "_id": "3a608bb3b3e64120a5edd95157ee432a",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "8818ac4e2c9a4af382ddf9b40a22eea3",
+                "created": "20220131T16:34:05.512076",
+                "lastupdate": "20220131T16:34:05.512076"
             }
         ],
         "responses": [
             {
                 "_clsname_": "PersistClasses.ResponseValue",
-                "responsedefinitionid": "352f8a1ea0494dcba2c3966995e2a8aa",
-                "experimentid": "f4844769d7d646b4bbe5c89ea28f1594",
+                "responsedefinitionid": "445a83f6304b420dbb8de475123607de",
+                "experimentid": "22199c855bb749feb1277202e1755954",
                 "responsedefinition": {
                     "_clsname_": "PersistClasses.ResponseDefinition",
-                    "unitid": "953f66efa76748e084b9ad2207935ba5",
+                    "unitid": "c7e1a8f2641e405f8677964fead4d46a",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 0.001,
                         "baseunit": "m",
                         "abbreviation": "mm",
                         "name": "millimeter",
-                        "_id": "953f66efa76748e084b9ad2207935ba5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c7e1a8f2641e405f8677964fead4d46a",
+                        "created": "20220131T16:25:44.044436",
+                        "lastupdate": "20220131T16:25:44.044436"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "DIMACC",
                     "name": "dimensional accuracy",
-                    "_id": "352f8a1ea0494dcba2c3966995e2a8aa",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "445a83f6304b420dbb8de475123607de",
+                    "created": "20220131T16:25:44.136800",
+                    "lastupdate": "20220131T16:25:44.136800"
                 },
                 "value": 0.0,
-                "_id": "6a4d345f8a9c498a81484df70aa1aaac",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "f81f1ad69a72481480d7bad42bdd2277",
+                "created": "20220131T16:34:05.517295",
+                "lastupdate": "20220131T16:34:05.517295"
             },
             {
                 "_clsname_": "PersistClasses.ResponseValue",
-                "responsedefinitionid": "c4cca95613784708893555f997deba23",
-                "experimentid": "f4844769d7d646b4bbe5c89ea28f1594",
+                "responsedefinitionid": "d3617d56b2ad43abb09e1175de52bc0c",
+                "experimentid": "22199c855bb749feb1277202e1755954",
                 "responsedefinition": {
                     "_clsname_": "PersistClasses.ResponseDefinition",
                     "unitid": null,
@@ -989,58 +989,58 @@
                     "disptype": "FLOAT",
                     "abbreviation": "SURFQUAL",
                     "name": "surface quality",
-                    "_id": "c4cca95613784708893555f997deba23",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "d3617d56b2ad43abb09e1175de52bc0c",
+                    "created": "20220131T16:25:44.133802",
+                    "lastupdate": "20220131T16:25:44.133802"
                 },
                 "value": 0.0,
-                "_id": "8fcff7817ef447b9b0fd48aad2ceaedd",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "67f87fd3348e4f7eb45b4a53dcd84922",
+                "created": "20220131T16:34:05.524503",
+                "lastupdate": "20220131T16:34:05.524503"
             }
         ],
         "enviros": [
             {
                 "_clsname_": "PersistClasses.EnviroValue",
-                "envirodefinitionid": "bef764ba49a541249d39676661ad7b85",
-                "experimentid": "f4844769d7d646b4bbe5c89ea28f1594",
+                "envirodefinitionid": "e37bb6034c394ca3a9e439677bc07531",
+                "experimentid": "22199c855bb749feb1277202e1755954",
                 "envirodefinition": {
                     "_clsname_": "PersistClasses.EnviroDefinition",
-                    "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+                    "unitid": "0eb8d634f2674708ba096fc270e974ff",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "\u00b0C",
                         "abbreviation": "\u00b0C",
                         "name": "temperature Celsius",
-                        "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "0eb8d634f2674708ba096fc270e974ff",
+                        "created": "20220131T16:25:44.045617",
+                        "lastupdate": "20220131T16:25:44.045617"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "CASETEMP",
                     "name": "case temperature",
-                    "_id": "bef764ba49a541249d39676661ad7b85",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "e37bb6034c394ca3a9e439677bc07531",
+                    "created": "20220131T16:25:44.149222",
+                    "lastupdate": "20220131T16:25:44.149222"
                 },
                 "value": 0.0,
-                "_id": "09b566371fdb49179a5f51a914529200",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "8c8fa184fca84a508522426dbdb84bc1",
+                "created": "20220131T16:34:05.531736",
+                "lastupdate": "20220131T16:34:05.531736"
             }
         ],
         "docs": null,
-        "_id": "f4844769d7d646b4bbe5c89ea28f1594",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "_id": "22199c855bb749feb1277202e1755954",
+        "created": "20220131T16:34:05.494622",
+        "lastupdate": "20220131T16:34:05.494622"
     },
     {
         "_clsname_": "PersistClasses.Experiment",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
-        "extruderusedid": "5f25cd07521d420ab0b2d691f7301af6",
-        "printerusedid": "7ed4099c65f24790b965f809981bb6af",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
+        "extruderusedid": "ddfa9531b3a64119bbef11059916d20a",
+        "printerusedid": "a098e73c030d456196945692b4bb90ae",
         "project": {
             "_clsname_": "PersistClasses.Project",
             "name": "test_simple_project",
@@ -1049,9 +1049,9 @@
             "description": null,
             "domergecalculation": false,
             "mergeformula": null,
-            "_id": "63b5442674e9448d9fb1d78acfb41bb0",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "b1541eee380d444a8f9ec6da8fa68eba",
+            "created": "20220131T16:34:05.135667",
+            "lastupdate": "20220131T16:34:05.135667"
         },
         "sequence": 3,
         "repnum": 1,
@@ -1061,11 +1061,11 @@
             "maxtemperature": 300,
             "hascooler": false,
             "isactive": true,
-            "abbreviation": "EXT_295908e08af84b1c8df71fef8861a063",
+            "abbreviation": "EXT_2bd7f8325d014cfcb6fdd8e134fe0089",
             "name": "LIN_SIMPLE_EXTRUDER",
-            "_id": "5f25cd07521d420ab0b2d691f7301af6",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "ddfa9531b3a64119bbef11059916d20a",
+            "created": "20220131T16:34:05.127649",
+            "lastupdate": "20220131T16:34:05.127649"
         },
         "printerused": {
             "_clsname_": "PersistClasses.Printer",
@@ -1076,11 +1076,11 @@
             "firmware": "MARLIN",
             "firmwareversion": null,
             "isactive": true,
-            "abbreviation": "PRN_44922a13ca5c47ecadd8a560b4bd42b4",
+            "abbreviation": "PRN_a6d0c0078ec0449f882c398149b80684",
             "name": "LIN_SIMPLE_PRINTER",
-            "_id": "7ed4099c65f24790b965f809981bb6af",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "a098e73c030d456196945692b4bb90ae",
+            "created": "20220131T16:34:05.121029",
+            "lastupdate": "20220131T16:34:05.121029"
         },
         "carriedoutdt": null,
         "isarchived": false,
@@ -1088,142 +1088,142 @@
         "factors": [
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "6d8a4321159e400780be53c315c75176",
-                "experimentid": "65d7b8fbe79149debc1fc1f966745af5",
+                "factordefinitionid": "3ff4e826b17b4e5796d503cd80f52a88",
+                "experimentid": "31ae6e4d688645058a202d0b123708c8",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "MATERIAL_PRINT_TEMPERATURE",
                     "defaultmin": 180.0,
                     "defaultmax": 240.0,
                     "defaultlevelnum": 3,
-                    "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+                    "unitid": "0eb8d634f2674708ba096fc270e974ff",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "\u00b0C",
                         "abbreviation": "\u00b0C",
                         "name": "temperature Celsius",
-                        "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "0eb8d634f2674708ba096fc270e974ff",
+                        "created": "20220131T16:25:44.045617",
+                        "lastupdate": "20220131T16:25:44.045617"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "PRINOZZTEMP",
                     "name": "print temperature",
-                    "_id": "6d8a4321159e400780be53c315c75176",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "3ff4e826b17b4e5796d503cd80f52a88",
+                    "created": "20220131T16:25:44.080244",
+                    "lastupdate": "20220131T16:25:44.080244"
                 },
                 "value": 190.0,
-                "_id": "1319b1b0d3e74ead9ec07c6f54c7fe5d",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "e2650226b8094ac097771e96f223f80c",
+                "created": "20220131T16:34:05.548507",
+                "lastupdate": "20220131T16:34:05.548507"
             },
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "faa44c51bbde4219b9790544e32173f3",
-                "experimentid": "65d7b8fbe79149debc1fc1f966745af5",
+                "factordefinitionid": "11a46f364c294955b93b30b1572da476",
+                "experimentid": "31ae6e4d688645058a202d0b123708c8",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "MATERIAL_FLOW",
                     "defaultmin": 80.0,
                     "defaultmax": 110.0,
                     "defaultlevelnum": 2,
-                    "unitid": "764bff4300894872bf3f388b04c7bebe",
+                    "unitid": "c66bfc4520404b88b52c4f89ddb97287",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "%",
                         "abbreviation": "%",
                         "name": "percent",
-                        "_id": "764bff4300894872bf3f388b04c7bebe",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                        "created": "20220131T16:25:44.046632",
+                        "lastupdate": "20220131T16:25:44.046632"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "MATFLOW",
                     "name": "material flow",
-                    "_id": "faa44c51bbde4219b9790544e32173f3",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "11a46f364c294955b93b30b1572da476",
+                    "created": "20220131T16:25:44.092227",
+                    "lastupdate": "20220131T16:25:44.092227"
                 },
                 "value": 110.0,
-                "_id": "ff806312101d47b0a602fddcbf065577",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "74e163793e3d41149d4b412e8ce2f5a7",
+                "created": "20220131T16:34:05.556432",
+                "lastupdate": "20220131T16:34:05.556432"
             },
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "b2907b11309f404b8c588cd6f27481b1",
-                "experimentid": "65d7b8fbe79149debc1fc1f966745af5",
+                "factordefinitionid": "2074869d2c0842dd8bf63d9036d47f25",
+                "experimentid": "31ae6e4d688645058a202d0b123708c8",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "COOL_FAN_SPEED",
                     "defaultmin": 0.0,
                     "defaultmax": 100.0,
                     "defaultlevelnum": 2,
-                    "unitid": "764bff4300894872bf3f388b04c7bebe",
+                    "unitid": "c66bfc4520404b88b52c4f89ddb97287",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "%",
                         "abbreviation": "%",
                         "name": "percent",
-                        "_id": "764bff4300894872bf3f388b04c7bebe",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                        "created": "20220131T16:25:44.046632",
+                        "lastupdate": "20220131T16:25:44.046632"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "FANSPEED",
                     "name": "fan speed",
-                    "_id": "b2907b11309f404b8c588cd6f27481b1",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "2074869d2c0842dd8bf63d9036d47f25",
+                    "created": "20220131T16:25:44.104220",
+                    "lastupdate": "20220131T16:25:44.104220"
                 },
                 "value": 0.0,
-                "_id": "0424389a0fd64293920d75d5c00b8fc5",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "bcd0e38d488f4548a2a097c595210992",
+                "created": "20220131T16:34:05.565932",
+                "lastupdate": "20220131T16:34:05.565932"
             }
         ],
         "responses": [
             {
                 "_clsname_": "PersistClasses.ResponseValue",
-                "responsedefinitionid": "352f8a1ea0494dcba2c3966995e2a8aa",
-                "experimentid": "65d7b8fbe79149debc1fc1f966745af5",
+                "responsedefinitionid": "445a83f6304b420dbb8de475123607de",
+                "experimentid": "31ae6e4d688645058a202d0b123708c8",
                 "responsedefinition": {
                     "_clsname_": "PersistClasses.ResponseDefinition",
-                    "unitid": "953f66efa76748e084b9ad2207935ba5",
+                    "unitid": "c7e1a8f2641e405f8677964fead4d46a",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 0.001,
                         "baseunit": "m",
                         "abbreviation": "mm",
                         "name": "millimeter",
-                        "_id": "953f66efa76748e084b9ad2207935ba5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c7e1a8f2641e405f8677964fead4d46a",
+                        "created": "20220131T16:25:44.044436",
+                        "lastupdate": "20220131T16:25:44.044436"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "DIMACC",
                     "name": "dimensional accuracy",
-                    "_id": "352f8a1ea0494dcba2c3966995e2a8aa",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "445a83f6304b420dbb8de475123607de",
+                    "created": "20220131T16:25:44.136800",
+                    "lastupdate": "20220131T16:25:44.136800"
                 },
                 "value": 0.0,
-                "_id": "b766d373e1d044729f408380d2ca0a69",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "06e2b695a9dc4c10bb8b178903ecaa50",
+                "created": "20220131T16:34:05.576291",
+                "lastupdate": "20220131T16:34:05.576291"
             },
             {
                 "_clsname_": "PersistClasses.ResponseValue",
-                "responsedefinitionid": "c4cca95613784708893555f997deba23",
-                "experimentid": "65d7b8fbe79149debc1fc1f966745af5",
+                "responsedefinitionid": "d3617d56b2ad43abb09e1175de52bc0c",
+                "experimentid": "31ae6e4d688645058a202d0b123708c8",
                 "responsedefinition": {
                     "_clsname_": "PersistClasses.ResponseDefinition",
                     "unitid": null,
@@ -1232,58 +1232,58 @@
                     "disptype": "FLOAT",
                     "abbreviation": "SURFQUAL",
                     "name": "surface quality",
-                    "_id": "c4cca95613784708893555f997deba23",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "d3617d56b2ad43abb09e1175de52bc0c",
+                    "created": "20220131T16:25:44.133802",
+                    "lastupdate": "20220131T16:25:44.133802"
                 },
                 "value": 0.0,
-                "_id": "3d1abecd9d5542e5b03cee1c83a89a20",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "4750104467b645c2a4e086eba4aa515f",
+                "created": "20220131T16:34:05.626036",
+                "lastupdate": "20220131T16:34:05.626036"
             }
         ],
         "enviros": [
             {
                 "_clsname_": "PersistClasses.EnviroValue",
-                "envirodefinitionid": "bef764ba49a541249d39676661ad7b85",
-                "experimentid": "65d7b8fbe79149debc1fc1f966745af5",
+                "envirodefinitionid": "e37bb6034c394ca3a9e439677bc07531",
+                "experimentid": "31ae6e4d688645058a202d0b123708c8",
                 "envirodefinition": {
                     "_clsname_": "PersistClasses.EnviroDefinition",
-                    "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+                    "unitid": "0eb8d634f2674708ba096fc270e974ff",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "\u00b0C",
                         "abbreviation": "\u00b0C",
                         "name": "temperature Celsius",
-                        "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "0eb8d634f2674708ba096fc270e974ff",
+                        "created": "20220131T16:25:44.045617",
+                        "lastupdate": "20220131T16:25:44.045617"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "CASETEMP",
                     "name": "case temperature",
-                    "_id": "bef764ba49a541249d39676661ad7b85",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "e37bb6034c394ca3a9e439677bc07531",
+                    "created": "20220131T16:25:44.149222",
+                    "lastupdate": "20220131T16:25:44.149222"
                 },
                 "value": 0.0,
-                "_id": "15523e3fb6c346429366ca89e63a87d2",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "6103b20d3e734893b558fb6427d86c70",
+                "created": "20220131T16:34:05.635902",
+                "lastupdate": "20220131T16:34:05.635902"
             }
         ],
         "docs": null,
-        "_id": "65d7b8fbe79149debc1fc1f966745af5",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "_id": "31ae6e4d688645058a202d0b123708c8",
+        "created": "20220131T16:34:05.539401",
+        "lastupdate": "20220131T16:34:05.539401"
     },
     {
         "_clsname_": "PersistClasses.Experiment",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
-        "extruderusedid": "5f25cd07521d420ab0b2d691f7301af6",
-        "printerusedid": "7ed4099c65f24790b965f809981bb6af",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
+        "extruderusedid": "ddfa9531b3a64119bbef11059916d20a",
+        "printerusedid": "a098e73c030d456196945692b4bb90ae",
         "project": {
             "_clsname_": "PersistClasses.Project",
             "name": "test_simple_project",
@@ -1292,9 +1292,9 @@
             "description": null,
             "domergecalculation": false,
             "mergeformula": null,
-            "_id": "63b5442674e9448d9fb1d78acfb41bb0",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "b1541eee380d444a8f9ec6da8fa68eba",
+            "created": "20220131T16:34:05.135667",
+            "lastupdate": "20220131T16:34:05.135667"
         },
         "sequence": 4,
         "repnum": 1,
@@ -1304,11 +1304,11 @@
             "maxtemperature": 300,
             "hascooler": false,
             "isactive": true,
-            "abbreviation": "EXT_295908e08af84b1c8df71fef8861a063",
+            "abbreviation": "EXT_2bd7f8325d014cfcb6fdd8e134fe0089",
             "name": "LIN_SIMPLE_EXTRUDER",
-            "_id": "5f25cd07521d420ab0b2d691f7301af6",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "ddfa9531b3a64119bbef11059916d20a",
+            "created": "20220131T16:34:05.127649",
+            "lastupdate": "20220131T16:34:05.127649"
         },
         "printerused": {
             "_clsname_": "PersistClasses.Printer",
@@ -1319,11 +1319,11 @@
             "firmware": "MARLIN",
             "firmwareversion": null,
             "isactive": true,
-            "abbreviation": "PRN_44922a13ca5c47ecadd8a560b4bd42b4",
+            "abbreviation": "PRN_a6d0c0078ec0449f882c398149b80684",
             "name": "LIN_SIMPLE_PRINTER",
-            "_id": "7ed4099c65f24790b965f809981bb6af",
-            "created": "20220130T15:16:16",
-            "lastupdate": "20220130T15:16:16"
+            "_id": "a098e73c030d456196945692b4bb90ae",
+            "created": "20220131T16:34:05.121029",
+            "lastupdate": "20220131T16:34:05.121029"
         },
         "carriedoutdt": null,
         "isarchived": false,
@@ -1331,142 +1331,142 @@
         "factors": [
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "6d8a4321159e400780be53c315c75176",
-                "experimentid": "d55e002ca65f480cb639fe9f6baf732f",
+                "factordefinitionid": "3ff4e826b17b4e5796d503cd80f52a88",
+                "experimentid": "2d58b2dd1ac84ff29ade32e23eb76352",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "MATERIAL_PRINT_TEMPERATURE",
                     "defaultmin": 180.0,
                     "defaultmax": 240.0,
                     "defaultlevelnum": 3,
-                    "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+                    "unitid": "0eb8d634f2674708ba096fc270e974ff",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "\u00b0C",
                         "abbreviation": "\u00b0C",
                         "name": "temperature Celsius",
-                        "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "0eb8d634f2674708ba096fc270e974ff",
+                        "created": "20220131T16:25:44.045617",
+                        "lastupdate": "20220131T16:25:44.045617"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "PRINOZZTEMP",
                     "name": "print temperature",
-                    "_id": "6d8a4321159e400780be53c315c75176",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "3ff4e826b17b4e5796d503cd80f52a88",
+                    "created": "20220131T16:25:44.080244",
+                    "lastupdate": "20220131T16:25:44.080244"
                 },
                 "value": 220.0,
-                "_id": "a8ee16c2d2884264a7393a95a08b3889",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "769af7b46a654c6b855b78d0c93cd451",
+                "created": "20220131T16:34:05.654957",
+                "lastupdate": "20220131T16:34:05.654957"
             },
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "faa44c51bbde4219b9790544e32173f3",
-                "experimentid": "d55e002ca65f480cb639fe9f6baf732f",
+                "factordefinitionid": "11a46f364c294955b93b30b1572da476",
+                "experimentid": "2d58b2dd1ac84ff29ade32e23eb76352",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "MATERIAL_FLOW",
                     "defaultmin": 80.0,
                     "defaultmax": 110.0,
                     "defaultlevelnum": 2,
-                    "unitid": "764bff4300894872bf3f388b04c7bebe",
+                    "unitid": "c66bfc4520404b88b52c4f89ddb97287",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "%",
                         "abbreviation": "%",
                         "name": "percent",
-                        "_id": "764bff4300894872bf3f388b04c7bebe",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                        "created": "20220131T16:25:44.046632",
+                        "lastupdate": "20220131T16:25:44.046632"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "MATFLOW",
                     "name": "material flow",
-                    "_id": "faa44c51bbde4219b9790544e32173f3",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "11a46f364c294955b93b30b1572da476",
+                    "created": "20220131T16:25:44.092227",
+                    "lastupdate": "20220131T16:25:44.092227"
                 },
                 "value": 110.0,
-                "_id": "e20c1e4f9a754382b063add7a48d633f",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "818d8527c4884270bce85a3ccf4b931b",
+                "created": "20220131T16:34:05.665636",
+                "lastupdate": "20220131T16:34:05.665636"
             },
             {
                 "_clsname_": "PersistClasses.FactorValue",
-                "factordefinitionid": "b2907b11309f404b8c588cd6f27481b1",
-                "experimentid": "d55e002ca65f480cb639fe9f6baf732f",
+                "factordefinitionid": "2074869d2c0842dd8bf63d9036d47f25",
+                "experimentid": "2d58b2dd1ac84ff29ade32e23eb76352",
                 "factordefinition": {
                     "_clsname_": "PersistClasses.FactorDefinition",
                     "curaname": "COOL_FAN_SPEED",
                     "defaultmin": 0.0,
                     "defaultmax": 100.0,
                     "defaultlevelnum": 2,
-                    "unitid": "764bff4300894872bf3f388b04c7bebe",
+                    "unitid": "c66bfc4520404b88b52c4f89ddb97287",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "%",
                         "abbreviation": "%",
                         "name": "percent",
-                        "_id": "764bff4300894872bf3f388b04c7bebe",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                        "created": "20220131T16:25:44.046632",
+                        "lastupdate": "20220131T16:25:44.046632"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "FANSPEED",
                     "name": "fan speed",
-                    "_id": "b2907b11309f404b8c588cd6f27481b1",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "2074869d2c0842dd8bf63d9036d47f25",
+                    "created": "20220131T16:25:44.104220",
+                    "lastupdate": "20220131T16:25:44.104220"
                 },
                 "value": 100.0,
-                "_id": "0b99748a0b6743a9bee21a013cf2a647",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "d6199a82db34430b86cb2428f1498ada",
+                "created": "20220131T16:34:05.679094",
+                "lastupdate": "20220131T16:34:05.679094"
             }
         ],
         "responses": [
             {
                 "_clsname_": "PersistClasses.ResponseValue",
-                "responsedefinitionid": "352f8a1ea0494dcba2c3966995e2a8aa",
-                "experimentid": "d55e002ca65f480cb639fe9f6baf732f",
+                "responsedefinitionid": "445a83f6304b420dbb8de475123607de",
+                "experimentid": "2d58b2dd1ac84ff29ade32e23eb76352",
                 "responsedefinition": {
                     "_clsname_": "PersistClasses.ResponseDefinition",
-                    "unitid": "953f66efa76748e084b9ad2207935ba5",
+                    "unitid": "c7e1a8f2641e405f8677964fead4d46a",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 0.001,
                         "baseunit": "m",
                         "abbreviation": "mm",
                         "name": "millimeter",
-                        "_id": "953f66efa76748e084b9ad2207935ba5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "c7e1a8f2641e405f8677964fead4d46a",
+                        "created": "20220131T16:25:44.044436",
+                        "lastupdate": "20220131T16:25:44.044436"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "DIMACC",
                     "name": "dimensional accuracy",
-                    "_id": "352f8a1ea0494dcba2c3966995e2a8aa",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "445a83f6304b420dbb8de475123607de",
+                    "created": "20220131T16:25:44.136800",
+                    "lastupdate": "20220131T16:25:44.136800"
                 },
                 "value": 0.0,
-                "_id": "696537348c584edfbe76014fdf4cf167",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "22d0b8eecfd14422a9b62eb781f85f85",
+                "created": "20220131T16:34:05.691484",
+                "lastupdate": "20220131T16:34:05.691484"
             },
             {
                 "_clsname_": "PersistClasses.ResponseValue",
-                "responsedefinitionid": "c4cca95613784708893555f997deba23",
-                "experimentid": "d55e002ca65f480cb639fe9f6baf732f",
+                "responsedefinitionid": "d3617d56b2ad43abb09e1175de52bc0c",
+                "experimentid": "2d58b2dd1ac84ff29ade32e23eb76352",
                 "responsedefinition": {
                     "_clsname_": "PersistClasses.ResponseDefinition",
                     "unitid": null,
@@ -1475,204 +1475,273 @@
                     "disptype": "FLOAT",
                     "abbreviation": "SURFQUAL",
                     "name": "surface quality",
-                    "_id": "c4cca95613784708893555f997deba23",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "d3617d56b2ad43abb09e1175de52bc0c",
+                    "created": "20220131T16:25:44.133802",
+                    "lastupdate": "20220131T16:25:44.133802"
                 },
                 "value": 0.0,
-                "_id": "5b8c99c3dec8458b882fad55554eee4d",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "374a92eb3faf4bd7816c2f679ba062d7",
+                "created": "20220131T16:34:05.703820",
+                "lastupdate": "20220131T16:34:05.703820"
             }
         ],
         "enviros": [
             {
                 "_clsname_": "PersistClasses.EnviroValue",
-                "envirodefinitionid": "bef764ba49a541249d39676661ad7b85",
-                "experimentid": "d55e002ca65f480cb639fe9f6baf732f",
+                "envirodefinitionid": "e37bb6034c394ca3a9e439677bc07531",
+                "experimentid": "2d58b2dd1ac84ff29ade32e23eb76352",
                 "envirodefinition": {
                     "_clsname_": "PersistClasses.EnviroDefinition",
-                    "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+                    "unitid": "0eb8d634f2674708ba096fc270e974ff",
                     "unit": {
                         "_clsname_": "PersistClasses.Unit",
                         "factortobase": 1.0,
                         "baseunit": "\u00b0C",
                         "abbreviation": "\u00b0C",
                         "name": "temperature Celsius",
-                        "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                        "created": "20220130T12:02:36",
-                        "lastupdate": "20220130T12:02:36"
+                        "_id": "0eb8d634f2674708ba096fc270e974ff",
+                        "created": "20220131T16:25:44.045617",
+                        "lastupdate": "20220131T16:25:44.045617"
                     },
                     "isactive": true,
                     "disptype": "FLOAT",
                     "abbreviation": "CASETEMP",
                     "name": "case temperature",
-                    "_id": "bef764ba49a541249d39676661ad7b85",
-                    "created": "20220130T12:02:36",
-                    "lastupdate": "20220130T12:02:36"
+                    "_id": "e37bb6034c394ca3a9e439677bc07531",
+                    "created": "20220131T16:25:44.149222",
+                    "lastupdate": "20220131T16:25:44.149222"
                 },
                 "value": 0.0,
-                "_id": "9094408e5626431cb5b28e525156622c",
-                "created": "20220130T15:16:17",
-                "lastupdate": "20220130T15:16:17"
+                "_id": "708c5d080bc0464b86a1a88de8d652ee",
+                "created": "20220131T16:34:05.715363",
+                "lastupdate": "20220131T16:34:05.715363"
             }
         ],
         "docs": null,
-        "_id": "d55e002ca65f480cb639fe9f6baf732f",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "_id": "2d58b2dd1ac84ff29ade32e23eb76352",
+        "created": "20220131T16:34:05.645047",
+        "lastupdate": "20220131T16:34:05.645047"
     },
     {
         "_clsname_": "PersistClasses.ProjectFactorPreparation",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
         "minvalue": 190.0,
         "maxvalue": 220.0,
         "levelnum": 2,
-        "factordefinitionid": "6d8a4321159e400780be53c315c75176",
+        "factordefinitionid": "3ff4e826b17b4e5796d503cd80f52a88",
         "factordefinition": {
             "_clsname_": "PersistClasses.FactorDefinition",
             "curaname": "MATERIAL_PRINT_TEMPERATURE",
             "defaultmin": 180.0,
             "defaultmax": 240.0,
             "defaultlevelnum": 3,
-            "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+            "unitid": "0eb8d634f2674708ba096fc270e974ff",
             "unit": {
                 "_clsname_": "PersistClasses.Unit",
                 "factortobase": 1.0,
                 "baseunit": "\u00b0C",
                 "abbreviation": "\u00b0C",
                 "name": "temperature Celsius",
-                "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                "created": "20220130T12:02:36",
-                "lastupdate": "20220130T12:02:36"
+                "_id": "0eb8d634f2674708ba096fc270e974ff",
+                "created": "20220131T16:25:44.045617",
+                "lastupdate": "20220131T16:25:44.045617"
             },
             "isactive": true,
             "disptype": "FLOAT",
             "abbreviation": "PRINOZZTEMP",
             "name": "print temperature",
-            "_id": "6d8a4321159e400780be53c315c75176",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "3ff4e826b17b4e5796d503cd80f52a88",
+            "created": "20220131T16:25:44.080244",
+            "lastupdate": "20220131T16:25:44.080244"
         },
         "iscombined": false,
         "isnegated": false,
-        "factorcombidefs": null,
-        "_id": "020818d65b6a459ab6bf82a41bf881c5",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "factorcombidefs": [],
+        "_id": "05b4847e433f46a3977fdb195c9ad2d7",
+        "created": "20220131T16:34:05.210026",
+        "lastupdate": "20220131T16:34:05.210026"
     },
     {
         "_clsname_": "PersistClasses.ProjectFactorPreparation",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
         "minvalue": 80.0,
         "maxvalue": 110.0,
         "levelnum": 2,
-        "factordefinitionid": "faa44c51bbde4219b9790544e32173f3",
+        "factordefinitionid": "11a46f364c294955b93b30b1572da476",
         "factordefinition": {
             "_clsname_": "PersistClasses.FactorDefinition",
             "curaname": "MATERIAL_FLOW",
             "defaultmin": 80.0,
             "defaultmax": 110.0,
             "defaultlevelnum": 2,
-            "unitid": "764bff4300894872bf3f388b04c7bebe",
+            "unitid": "c66bfc4520404b88b52c4f89ddb97287",
             "unit": {
                 "_clsname_": "PersistClasses.Unit",
                 "factortobase": 1.0,
                 "baseunit": "%",
                 "abbreviation": "%",
                 "name": "percent",
-                "_id": "764bff4300894872bf3f388b04c7bebe",
-                "created": "20220130T12:02:36",
-                "lastupdate": "20220130T12:02:36"
+                "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                "created": "20220131T16:25:44.046632",
+                "lastupdate": "20220131T16:25:44.046632"
             },
             "isactive": true,
             "disptype": "FLOAT",
             "abbreviation": "MATFLOW",
             "name": "material flow",
-            "_id": "faa44c51bbde4219b9790544e32173f3",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "11a46f364c294955b93b30b1572da476",
+            "created": "20220131T16:25:44.092227",
+            "lastupdate": "20220131T16:25:44.092227"
         },
         "iscombined": false,
         "isnegated": false,
-        "factorcombidefs": null,
-        "_id": "25432e1adc114f1e9a18d162d42a978a",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "factorcombidefs": [],
+        "_id": "1c1d9f384d56408595329b29fb122185",
+        "created": "20220131T16:34:05.222077",
+        "lastupdate": "20220131T16:34:05.222077"
     },
     {
         "_clsname_": "PersistClasses.ProjectFactorPreparation",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
         "minvalue": 0.0,
         "maxvalue": 100.0,
         "levelnum": 2,
-        "factordefinitionid": "b2907b11309f404b8c588cd6f27481b1",
+        "factordefinitionid": "2074869d2c0842dd8bf63d9036d47f25",
         "factordefinition": {
             "_clsname_": "PersistClasses.FactorDefinition",
             "curaname": "COOL_FAN_SPEED",
             "defaultmin": 0.0,
             "defaultmax": 100.0,
             "defaultlevelnum": 2,
-            "unitid": "764bff4300894872bf3f388b04c7bebe",
+            "unitid": "c66bfc4520404b88b52c4f89ddb97287",
             "unit": {
                 "_clsname_": "PersistClasses.Unit",
                 "factortobase": 1.0,
                 "baseunit": "%",
                 "abbreviation": "%",
                 "name": "percent",
-                "_id": "764bff4300894872bf3f388b04c7bebe",
-                "created": "20220130T12:02:36",
-                "lastupdate": "20220130T12:02:36"
+                "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                "created": "20220131T16:25:44.046632",
+                "lastupdate": "20220131T16:25:44.046632"
             },
             "isactive": true,
             "disptype": "FLOAT",
             "abbreviation": "FANSPEED",
             "name": "fan speed",
-            "_id": "b2907b11309f404b8c588cd6f27481b1",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "2074869d2c0842dd8bf63d9036d47f25",
+            "created": "20220131T16:25:44.104220",
+            "lastupdate": "20220131T16:25:44.104220"
         },
         "iscombined": true,
         "isnegated": false,
-        "factorcombidefs": null,
-        "_id": "03d07bc063c74e02be8aff2fcaf1d29b",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "factorcombidefs": [
+            {
+                "_clsname_": "PersistClasses.FactorCombiDefInter",
+                "factordefinition": {
+                    "_clsname_": "PersistClasses.FactorDefinition",
+                    "curaname": "MATERIAL_FLOW",
+                    "defaultmin": 80.0,
+                    "defaultmax": 110.0,
+                    "defaultlevelnum": 2,
+                    "unitid": "c66bfc4520404b88b52c4f89ddb97287",
+                    "unit": {
+                        "_clsname_": "PersistClasses.Unit",
+                        "factortobase": 1.0,
+                        "baseunit": "%",
+                        "abbreviation": "%",
+                        "name": "percent",
+                        "_id": "c66bfc4520404b88b52c4f89ddb97287",
+                        "created": "20220131T16:25:44.046632",
+                        "lastupdate": "20220131T16:25:44.046632"
+                    },
+                    "isactive": true,
+                    "disptype": "FLOAT",
+                    "abbreviation": "MATFLOW",
+                    "name": "material flow",
+                    "_id": "11a46f364c294955b93b30b1572da476",
+                    "created": "20220131T16:25:44.092227",
+                    "lastupdate": "20220131T16:25:44.092227"
+                },
+                "upid": "1bd3b70ad83548b48a5377e3c7966abe",
+                "downid": "11a46f364c294955b93b30b1572da476",
+                "intertype": "COMBIDEF_FACTDEF",
+                "_id": "e61515d2a0814580ac19f94b7cda014c",
+                "created": "20220131T16:34:05.250243",
+                "lastupdate": "20220131T16:34:05.250243"
+            },
+            {
+                "_clsname_": "PersistClasses.FactorCombiDefInter",
+                "factordefinition": {
+                    "_clsname_": "PersistClasses.FactorDefinition",
+                    "curaname": "MATERIAL_PRINT_TEMPERATURE",
+                    "defaultmin": 180.0,
+                    "defaultmax": 240.0,
+                    "defaultlevelnum": 3,
+                    "unitid": "0eb8d634f2674708ba096fc270e974ff",
+                    "unit": {
+                        "_clsname_": "PersistClasses.Unit",
+                        "factortobase": 1.0,
+                        "baseunit": "\u00b0C",
+                        "abbreviation": "\u00b0C",
+                        "name": "temperature Celsius",
+                        "_id": "0eb8d634f2674708ba096fc270e974ff",
+                        "created": "20220131T16:25:44.045617",
+                        "lastupdate": "20220131T16:25:44.045617"
+                    },
+                    "isactive": true,
+                    "disptype": "FLOAT",
+                    "abbreviation": "PRINOZZTEMP",
+                    "name": "print temperature",
+                    "_id": "3ff4e826b17b4e5796d503cd80f52a88",
+                    "created": "20220131T16:25:44.080244",
+                    "lastupdate": "20220131T16:25:44.080244"
+                },
+                "upid": "1bd3b70ad83548b48a5377e3c7966abe",
+                "downid": "3ff4e826b17b4e5796d503cd80f52a88",
+                "intertype": "COMBIDEF_FACTDEF",
+                "_id": "d2f43cbf94444a2eb1a252bd121a50d1",
+                "created": "20220131T16:34:05.255314",
+                "lastupdate": "20220131T16:34:05.255314"
+            }
+        ],
+        "_id": "1bd3b70ad83548b48a5377e3c7966abe",
+        "created": "20220131T16:34:05.232145",
+        "lastupdate": "20220131T16:34:05.232145"
     },
     {
         "_clsname_": "PersistClasses.ProjectResponsePreparation",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
-        "responsedefinitionid": "352f8a1ea0494dcba2c3966995e2a8aa",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
+        "responsedefinitionid": "445a83f6304b420dbb8de475123607de",
         "combinationweight": 0.0,
         "responsedefinition": {
             "_clsname_": "PersistClasses.ResponseDefinition",
-            "unitid": "953f66efa76748e084b9ad2207935ba5",
+            "unitid": "c7e1a8f2641e405f8677964fead4d46a",
             "unit": {
                 "_clsname_": "PersistClasses.Unit",
                 "factortobase": 0.001,
                 "baseunit": "m",
                 "abbreviation": "mm",
                 "name": "millimeter",
-                "_id": "953f66efa76748e084b9ad2207935ba5",
-                "created": "20220130T12:02:36",
-                "lastupdate": "20220130T12:02:36"
+                "_id": "c7e1a8f2641e405f8677964fead4d46a",
+                "created": "20220131T16:25:44.044436",
+                "lastupdate": "20220131T16:25:44.044436"
             },
             "isactive": true,
             "disptype": "FLOAT",
             "abbreviation": "DIMACC",
             "name": "dimensional accuracy",
-            "_id": "352f8a1ea0494dcba2c3966995e2a8aa",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "445a83f6304b420dbb8de475123607de",
+            "created": "20220131T16:25:44.136800",
+            "lastupdate": "20220131T16:25:44.136800"
         },
-        "_id": "2ad62a52d5f249d2835eb4efc3bd55b8",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "_id": "bf6827f4dd8d4995a37c39321058bda4",
+        "created": "20220131T16:34:05.278948",
+        "lastupdate": "20220131T16:34:05.278948"
     },
     {
         "_clsname_": "PersistClasses.ProjectResponsePreparation",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
-        "responsedefinitionid": "c4cca95613784708893555f997deba23",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
+        "responsedefinitionid": "d3617d56b2ad43abb09e1175de52bc0c",
         "combinationweight": 0.0,
         "responsedefinition": {
             "_clsname_": "PersistClasses.ResponseDefinition",
@@ -1682,41 +1751,41 @@
             "disptype": "FLOAT",
             "abbreviation": "SURFQUAL",
             "name": "surface quality",
-            "_id": "c4cca95613784708893555f997deba23",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "d3617d56b2ad43abb09e1175de52bc0c",
+            "created": "20220131T16:25:44.133802",
+            "lastupdate": "20220131T16:25:44.133802"
         },
-        "_id": "d99374382e594f5db913785397e9ff55",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "_id": "bdebfcb616e1496c925e11a4e3255b29",
+        "created": "20220131T16:34:05.286035",
+        "lastupdate": "20220131T16:34:05.286035"
     },
     {
         "_clsname_": "PersistClasses.ProjectEnviroPreparation",
-        "projectid": "63b5442674e9448d9fb1d78acfb41bb0",
-        "envirodefinitionid": "bef764ba49a541249d39676661ad7b85",
+        "projectid": "b1541eee380d444a8f9ec6da8fa68eba",
+        "envirodefinitionid": "e37bb6034c394ca3a9e439677bc07531",
         "envirodefinition": {
             "_clsname_": "PersistClasses.EnviroDefinition",
-            "unitid": "1f1ee32a30354c989172a072a5af6fe5",
+            "unitid": "0eb8d634f2674708ba096fc270e974ff",
             "unit": {
                 "_clsname_": "PersistClasses.Unit",
                 "factortobase": 1.0,
                 "baseunit": "\u00b0C",
                 "abbreviation": "\u00b0C",
                 "name": "temperature Celsius",
-                "_id": "1f1ee32a30354c989172a072a5af6fe5",
-                "created": "20220130T12:02:36",
-                "lastupdate": "20220130T12:02:36"
+                "_id": "0eb8d634f2674708ba096fc270e974ff",
+                "created": "20220131T16:25:44.045617",
+                "lastupdate": "20220131T16:25:44.045617"
             },
             "isactive": true,
             "disptype": "FLOAT",
             "abbreviation": "CASETEMP",
             "name": "case temperature",
-            "_id": "bef764ba49a541249d39676661ad7b85",
-            "created": "20220130T12:02:36",
-            "lastupdate": "20220130T12:02:36"
+            "_id": "e37bb6034c394ca3a9e439677bc07531",
+            "created": "20220131T16:25:44.149222",
+            "lastupdate": "20220131T16:25:44.149222"
         },
-        "_id": "daa9d01d84344401bb32a30bec076206",
-        "created": "20220130T15:16:17",
-        "lastupdate": "20220130T15:16:17"
+        "_id": "506725494b96480eb4fe307c06579338",
+        "created": "20220131T16:34:05.340044",
+        "lastupdate": "20220131T16:34:05.340044"
     }
 ]

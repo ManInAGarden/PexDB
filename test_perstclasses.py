@@ -22,6 +22,22 @@ class TestAllCrud(TestBase):
         assert prin.name == prinC.name
         assert prin.abbreviation == prinC.abbreviation
 
+    def test_updating(self):
+        prin = self.Mck.create_printer(name="testprinter1", firmware="Chitu", yearofbuild=2020)
+        self.Spf.flush(prin)
+        newname = "changed name"
+        prin.name=newname
+        self.Spf.flush(prin)
+        prin_r = sqp.SQQuery(self.Spf, Printer).where(Printer.Id==prin._id).first_or_default(None)
+        assert prin_r is not None
+        assert prin_r.name == newname
+
+        newername = "name changed again"
+        prin_r.name = newername
+        self.Spf.flush(prin_r)
+        prin_r_r = sqp.SQQuery(self.Spf, Printer).where(Printer.Id==prin._id).first_or_default(None) #remmeber id has not changed
+        assert prin_r_r is not None
+        assert prin_r_r.name == newername
 
     def test_deep_cloning(self):
         fpmock = {
