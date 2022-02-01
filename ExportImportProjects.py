@@ -124,7 +124,7 @@ class ProjectImporter:
                 self._dbfact.rollback_transaction()
                 raise exc
 
-    def _do_correct_ids(self,dechook,  obj):
+    def _do_correct_ids(self, dechook,  obj):
         """ correct foreign keys which still contain the old-ids deliverd by the import"""
         membdict = obj._get_my_memberdict()
         for membname, membdecinfo in membdict.items(): #iterate to the classdict to find and handle any foreign key members
@@ -132,16 +132,18 @@ class ProjectImporter:
                 continue
             if membdecinfo._dectype is UUid:
                 chkid = getattr(obj, membname)
-                if chkid not in dechook._id_dict:
-                    raise Exception("Unhandled id found")
+                if chkid not in dechook._oldid_newid_dict:
+                    raise Exception("Unhandled id found, all ids should have been initially handled in this stage")
 
-                newid = dechook._id_dict[chkid]
+                newid = dechook._oldid_newid_dict[chkid]
                 if newid != chkid:
                     setattr(obj, membname, newid)
 
         self._dbfact.flush(obj) #updates only when values were actually changed
 
     def import_from_json(self, filename):
+        """ import from a json-file
+        """
         dechook = PexDecoderHook()
 
         with open(filename, mode="rt", encoding="UTF-8") as fp:
@@ -172,17 +174,23 @@ class ProjectImporter:
         """ flush the objects of the lowest level of reference when they are not already present in the db
         """
         importedid = obj._id
+
+        #do not the same import twice (remember: the import file has frequent doubles of the objects)
+        if dh._oldid_newid_dict[importedid] is not None:
+            return
+
         presobj = self._try_get_from_db(obj) #try to get a similar object from the db
         if presobj is not None:
-            dh._id_dict[importedid] = presobj._id
+            dh._oldid_newid_dict[importedid] = presobj._id
         else:
             self._persist_deeply(obj, dh)
             
     def _persist_deeply(self, obj, dh):
         importedid = obj._id
+
         self._dbfact.flushcopy(obj) #gets obj a new id, obj will be inserted into db
-        self._jsonimported.append(obj)
-        dh._id_dict[importedid] = obj._id
+        self._jsonimported.append(obj) #store for stage two of the import where objects will be corrected
+        dh._oldid_newid_dict[importedid] = obj._id
 
         membdict = obj._get_my_memberdict()
         for membname, membdecinfo in membdict.items(): 
@@ -223,14 +231,14 @@ class ProjectImporter:
 class PexDecoderHook:
 
     def __init__(self):
-        self._id_dict = {} #initialise a dict {<oldid>:<newid>}
+        self._oldid_newid_dict = {} #initialise a dict {<oldid>:<newid>} with None values during the import
 
     def _trfrm_uuid(self, val : str) -> UUID:
         if val is None or len(val)==0:
             return None
 
         id = UUID(val)
-        self._id_dict[id] = None
+        self._oldid_newid_dict[id] = None
 
         return id
 

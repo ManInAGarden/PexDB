@@ -46,6 +46,12 @@ class PexViewerMainFrame ( wx.Frame ):
 
 		self.file_menu.AppendSeparator()
 
+		self.m_expProjMIT = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Export current project"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.file_menu.Append( self.m_expProjMIT )
+
+		self.m_impProjMIT = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Import project"), wx.EmptyString, wx.ITEM_NORMAL )
+		self.file_menu.Append( self.m_impProjMIT )
+
 		self.m_reseedCatsMEIT = wx.MenuItem( self.file_menu, wx.ID_ANY, _(u"Reseed catalog data"), wx.EmptyString, wx.ITEM_NORMAL )
 		self.file_menu.Append( self.m_reseedCatsMEIT )
 
@@ -186,6 +192,8 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.openproject_menuItemOnMenuSelection, id = self.openproject_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.editproject_menuItemOnMenuSelection, id = self.editproject_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.newproj_menutitemOnMenuSelection, id = self.newproj_menutitem.GetId() )
+		self.Bind( wx.EVT_MENU, self.m_expProjMITOnMenuSelection, id = self.m_expProjMIT.GetId() )
+		self.Bind( wx.EVT_MENU, self.m_impProjMITOnMenuSelection, id = self.m_impProjMIT.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_reseedCatsMEITOnMenuSelection, id = self.m_reseedCatsMEIT.GetId() )
 		self.Bind( wx.EVT_MENU, self.quit_PexViewer, id = self.quit_menuitem.GetId() )
 		self.Bind( wx.EVT_MENU, self.create_new_experiment, id = self.newExperiment_menuitem.GetId() )
@@ -218,6 +226,12 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def newproj_menutitemOnMenuSelection( self, event ):
+		event.Skip()
+
+	def m_expProjMITOnMenuSelection( self, event ):
+		event.Skip()
+
+	def m_impProjMITOnMenuSelection( self, event ):
 		event.Skip()
 
 	def m_reseedCatsMEITOnMenuSelection( self, event ):
