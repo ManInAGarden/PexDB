@@ -70,13 +70,13 @@ class TestImport(TestBase):
         proj_dumm = Project(name="New project")
         jimpo = ProjectImporter(self.Spf, proj_dumm)
         filename = "testfiles/projectimport.json"
-        jimpo.import_from_json(filename)
+        proj = jimpo.import_from_json(filename)
 
         #now check if data are in the db and correctly referenced
-        projs = sqp.SQQuery(self.Spf, Project).where(Project.Name=="test_simple_project").as_list()
+        projs = sqp.SQQuery(self.Spf, Project).where(Project.Name=="test_import_project").as_list()
         assert projs is not None
-        assert len(projs)==1
-        proj = projs[0]
+        assert len(projs)>=1 #we have at least our new project with that name
+        
         exps = sqp.SQQuery(self.Spf, Experiment).where(Experiment.ProjectId==proj._id).as_list()
         assert exps is not None
         assert len(exps) == 4

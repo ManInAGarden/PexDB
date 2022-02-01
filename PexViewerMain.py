@@ -742,7 +742,18 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self._fact.flush(doc)
 
 	def m_impProjMITOnMenuSelection(self, event):
-		raise NotImplementedError()
+		"""	The user clicked import from json"""
+		try:
+			fname = wx.LoadFileSelector("import a as new project", ".json", parent=self)
+			if is_none_or_empty(fname):
+				return
+
+			impo = ProjectImporter(self._fact, self._currentproject)
+			impo.import_from_json(fname)
+			wx.MessageBox("A new project was imported")
+			
+		except Exception as exc:
+			wx.MessageBox("Unexpected error during import. Message was: {}".format(str(exc)))
 
 	def m_expProjMITOnMenuSelection(self, event):
 		"""	User clicked menuitem for json export of the current project

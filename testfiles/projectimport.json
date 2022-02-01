@@ -540,7 +540,7 @@
     },
     {
         "_clsname_": "PersistClasses.Project",
-        "name": "test_simple_project",
+        "name": "test_import_project",
         "status": "INIT",
         "isarchived": false,
         "description": null,

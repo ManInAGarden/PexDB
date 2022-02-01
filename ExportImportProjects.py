@@ -141,6 +141,11 @@ class ProjectImporter:
 
         self._dbfact.flush(obj) #updates only when values were actually changed
 
+    def find_first_project(self):
+        for obj in self._jsonimported:
+            if type(obj) is Project:
+                return obj
+                
     def import_from_json(self, filename):
         """ import from a json-file
         """
@@ -166,6 +171,8 @@ class ProjectImporter:
                 self._do_correct_ids(dechook, obj)
 
             self._dbfact.commit_transaction()
+            
+            return self.find_first_project()
         except Exception as exc:
             self._dbfact.rollback_transaction()
             raise exc
@@ -181,6 +188,10 @@ class ProjectImporter:
 
         presobj = self._try_get_from_db(obj) #try to get a similar object from the db
         if presobj is not None:
+            
+            if presobj._id == obj._id:
+                raise Exception("Importing already persistent data (identified by ids) is not supported.")
+
             dh._oldid_newid_dict[importedid] = presobj._id
         else:
             self._persist_deeply(obj, dh)
