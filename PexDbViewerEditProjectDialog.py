@@ -180,6 +180,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 			levelnum = newfact.defaultlevelnum)
 
 		self._fact.flush(newprep)
+		newprep.factorcombidefs = []
 		self._factorpreps.append(newprep)
 		self.fill_gui(self._project)
 
@@ -278,11 +279,13 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		event.Skip()
 
 	def m_addEnviroBUTOnButtonClick(self, event):
+		not_these_ids = list(map(lambda pr : pr.envirodefinitionid, self._enviropreps))
+		q = sqp.SQQuery(self._fact, EnviroDefinition).where((EnviroDefinition.IsActive==True) & sqp.NotIsIn(EnviroDefinition.Id, not_these_ids))
+
 		dial = PexDbViewerAddSubElementDialog(self, 
 			self._fact, 
-			EnviroDefinition, 
-			"environment definition",
-			list(map(lambda envp : envp.envirodefinitionid, self._enviropreps)))
+			q, 
+			"environment definition")
 		res = dial.ShowModal()
 
 		if res != wx.ID_OK:
