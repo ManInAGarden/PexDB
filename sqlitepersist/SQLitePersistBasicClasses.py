@@ -556,6 +556,9 @@ class PCatalog(PBase):
         return "{}.{}.{}.{}".format(self.type, self.langcode, self.code, self.value)
         
     def __eq__(self, other):
+        if other is None:
+            return False
+            
         return self.langcode==other.langcode and self.type==other.type and self.code == other.code
         
     @classmethod
@@ -598,7 +601,6 @@ def getvarname(decl: BaseVarType):
         for key, value in cldentry.items():
             if value._declaration._varcode == decl._varcode: 
                 return key
-
     return None
 
 def getsubedvarname(decl: BaseVarType):

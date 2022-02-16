@@ -313,7 +313,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def experimentDWLC_selchanged( self, event):
 		"""The user selected a row in the list of experiments"""
 
-		if self._expgui.has_changed():
+		if self._currentexperiment is not None and self._expgui.has_changed():
 			self.save_exp()
 
 		idx = self.m_experimentsDataViewListCtrl.GetSelectedRow()

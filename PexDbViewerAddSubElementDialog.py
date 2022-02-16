@@ -4,6 +4,7 @@ import wx
 import GeneratedGUI
 import sqlitepersist as sqp
 from sqlitepersist.SQLitePersistBasicClasses import PBase
+from PersistClasses import *
 
 # Implementing AddSubElementDialog
 class PexDbViewerAddSubElementDialog( GeneratedGUI.AddSubElementDialog ):
@@ -39,8 +40,17 @@ class PexDbViewerAddSubElementDialog( GeneratedGUI.AddSubElementDialog ):
 		for obj in self._objectlist:
 			idx = self.m_objectsLLCTR.InsertItem(self.m_objectsLLCTR.GetColumnCount(), obj.name)
 			self.m_objectsLLCTR.SetItemData(idx, ct)
-			self.m_objectsLLCTR.SetItem(idx, 1, obj.unit.abbreviation)
+			self.m_objectsLLCTR.SetItem(idx, 1, self._get_unit_str(obj.unit))
 			ct += 1
+
+
+	def _get_unit_str(self, uni : Unit) -> str:
+		if uni is None:
+			return "-unitless-"
+		elif type(uni) is Unit:
+			return uni.abbreviation
+		else:
+			raise Exception("argument type must be none or of type Unit")
 
 	def dook(self):
 		selidx = self.m_objectsLLCTR.GetFirstSelected()

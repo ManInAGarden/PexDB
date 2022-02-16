@@ -31,14 +31,17 @@ class SQQueryIterator():
         return dco
 
 class SQQuery():
-    
-
-    def __init__(self, fact : SQFactory, cls : BaseVarType):
+    def __init__(self, fact : SQFactory, cls : PBase): #BaseVarType
+        assert issubclass(cls, PBase)
         self._sqf = fact
         self._cls = cls
         self._whereop = None
         self._order = None
         self._selfunc = None
+
+        #Make sure classdict gets initialised for queried class now. Automatically
+        #recognizes when classdict has already beend initialised for the class
+        cls._setup_class_dict()
 
     def where(self, express = None):
         """Creates data to store the where part.

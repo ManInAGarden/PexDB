@@ -55,7 +55,10 @@ class SQQueryDictGenerator:
         if t is OperationStackElement:
             part = self.getquerydict(part)
         elif issubclass(t, BaseVarType):
+            oldpart = part
             part = getsubedvarname(part)
+            if part is None:
+                raise Exception("Varname not found for part of type {} with varcode {}".format(str(type(oldpart)), str(oldpart._varcode)))
         elif t is Val:
             part = part._value
         elif issubclass(t, SpecialWhereInfo):
