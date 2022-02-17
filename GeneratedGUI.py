@@ -207,6 +207,7 @@ class PexViewerMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.reseed_factors_menuItemOnMenuSelection, id = self.reseed_factors_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.edit_response_definitions, id = self.edit_response_definitions_menuItem.GetId() )
 		self.Bind( wx.EVT_MENU, self.m_linearRegrMEIOnMenuSelection, id = self.m_linearRegrMEI.GetId() )
+		self.Bind( wx.EVT_MENU, self.about_menuitemOnMenuSelection, id = self.about_menuitem.GetId() )
 		self.m_experimentsDataViewListCtrl.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.experimentDWLC_selchanged, id = wx.ID_ANY )
 		self.m_expDocsDVLCTR.Bind( wx.dataview.EVT_DATAVIEW_ITEM_EDITING_DONE, self.m_expDocsDVLCTROnDataViewListCtrlItemEditingDone, id = wx.ID_ANY )
 		self.m_newExpDocBU.Bind( wx.EVT_BUTTON, self.m_newExpDocBUOnButtonClick )
@@ -271,6 +272,9 @@ class PexViewerMainFrame ( wx.Frame ):
 		event.Skip()
 
 	def m_linearRegrMEIOnMenuSelection( self, event ):
+		event.Skip()
+
+	def about_menuitemOnMenuSelection( self, event ):
 		event.Skip()
 
 	def experimentDWLC_selchanged( self, event ):
@@ -1542,6 +1546,52 @@ class CreateFractDetail ( wx.Dialog ):
 		event.Skip()
 
 	def m_sdbSizer6OnOKButtonClick( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class AboutDialog
+###########################################################################
+
+class AboutDialog ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"About PexDB"), pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		gbSizer16 = wx.GridBagSizer( 0, 0 )
+		gbSizer16.SetFlexibleDirection( wx.BOTH )
+		gbSizer16.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_aboutTxtHTML = wx.html.HtmlWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.html.HW_SCROLLBAR_NEVER )
+		self.m_aboutTxtHTML.SetMinSize( wx.Size( 400,500 ) )
+
+		gbSizer16.Add( self.m_aboutTxtHTML, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
+
+		self.m_okBUT = wx.Button( self, wx.ID_ANY, _(u"OK"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		gbSizer16.Add( self.m_okBUT, wx.GBPosition( 1, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.ALIGN_RIGHT, 5 )
+
+
+		self.SetSizer( gbSizer16 )
+		self.Layout()
+		gbSizer16.Fit( self )
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.Bind( wx.EVT_INIT_DIALOG, self.AboutDialogOnInitDialog )
+		self.m_okBUT.Bind( wx.EVT_BUTTON, self.m_okBUTOnButtonClick )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def AboutDialogOnInitDialog( self, event ):
+		event.Skip()
+
+	def m_okBUTOnButtonClick( self, event ):
 		event.Skip()
 
 
