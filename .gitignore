@@ -6,3 +6,7 @@ PexDbTest.sqlite
 *.sqlite
 *.journal
 *.log
+build
+build/*
+dist
+dist/*
