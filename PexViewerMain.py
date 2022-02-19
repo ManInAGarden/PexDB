@@ -1,6 +1,8 @@
 from datetime import datetime
 from genericpath import isdir
 import os
+import sys
+import shutil
 import tempfile as tmpf
 import wx
 from wx.core import CENTRE, YES_NO, Bitmap, FileDialog, FileSelector, Image, MessageBox, NullBitmap
@@ -42,7 +44,46 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self._version = "0.9.0"
 
 	def init_prog(self):
-		self._configuration = ConfigReader("./PexDb.conf")
+		self._apppath = self._get_app_path()
+		cnfname = "PexDb.conf"
+		self._ensure_config(cnfname)
+		self._configuration = ConfigReader(os.path.join(self._apppath, cnfname))
+
+	def _ensure_config(self, cnfname):
+		"""make sure the config exists. if not try to create it from a distributed version
+		"""
+		tgtcnfpath = path.join(self._apppath, cnfname)
+		if path.exists(tgtcnfpath) and path.isfile(tgtcnfpath):
+			return
+
+		#try windows
+		distcnfpath = path.join(self._apppath, "PexDb######.conf")
+		done = False
+		osnames = ["WINDIST", "UBUNTUDIST", "OSXDIST"]
+		for osname in osnames:
+			done = self.trycopycnf(distcnfpath.replace("######", osname), tgtcnfpath)
+			if done:
+				break
+
+		if not done:
+			raise Exception("No configuration was found and also could not be created from the os-specific configs")
+
+	def trycopycnf(self, src, tgt):
+		if path.exists(src) and path.isfile(src):
+			shutil.move(src, tgt)
+			return True
+		else:
+			return False
+		
+		
+
+	def _get_app_path(self):
+		if getattr(sys, 'frozen', False):
+			return os.path.dirname(sys.executable)
+		elif __file__:
+			return os.path.dirname(__file__)
+		else:
+			raise Exception("Unsupported constellation when trying to get application path")
 
 	def init_archive(self):
 		tdir = tmpf.gettempdir()
@@ -66,8 +107,21 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self._docarchive = DocArchiver(apath) #use neew archive
 
 
+	def makesuredirexists(self, filename):
+		"""make sure the path for a given filename exists, so that the file maybe created in that place
+		"""
+		dname = path.dirname(filename)
+		if path.exists(dname):
+			if path.isdir(dname):
+				return
+			else:
+				raise Exception("Path {} existst but is no directory".format(dname))
+
+		os.makedirs(dname, exist_ok=True)
+
 	def init_db(self):
-		dbfilename = self._configuration.get_value("database", "filename")
+		dbfilename = self._configuration.get_value_interp("database", "filename")
+		self.makesuredirexists(dbfilename)
 		self._fact = sqp.SQFactory("PexDb", dbfilename)
 		doinits = self._configuration.get_value("database", "tryinits")
 		self._fact.set_db_dbglevel(self._configuration.get_value("database", "dbgfilename"),
@@ -228,31 +282,31 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 				createds.append(pclass)
 
 		if sqp.PCatalog in createds:
-			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/catalogs.json")
+			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/catalogs.json"))
 			sdr.create_seeddata()
 
 		if Unit in createds:
-			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/units.json")
+			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/units.json"))
 			sdr.create_seeddata()
 
 		if FactorDefinition in createds:
-			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/factordefinitions.json")
+			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath,  "PexSeeds/factordefinitions.json"))
 			sdr.create_seeddata()
 
 		if Printer in createds:
-			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/printers.json")
+			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/printers.json"))
 			sdr.create_seeddata()
 
 		if Extruder in createds:
-			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/extruders.json")
+			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/extruders.json"))
 			sdr.create_seeddata()
 
 		if ResponseDefinition in createds:
-			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/responsedefinitions.json")
+			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/responsedefinitions.json"))
 			sdr.create_seeddata()
 
 		if EnviroDefinition in createds:
-			sdr = sqp.SQPSeeder(self._fact, "./PexSeeds/envirodefinitions.json")
+			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/envirodefinitions.json"))
 			sdr.create_seeddata()
 
 		if Project in createds:
@@ -732,10 +786,13 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			MessageBox("Select a document entry first to open the attachment of that document")
 			return
 
-		seldoc = self._currentexperiment.docs[selidx]
-		if seldoc.filepath is not None and len(seldoc.filepath) > 0:
-			extrname = self._docarchive.extract_file(seldoc.filepath, self._extractionpath)
-			opn = ExtOpener(extrname).open(showshell=True)
+		try:
+			seldoc = self._currentexperiment.docs[selidx]
+			if seldoc.filepath is not None and len(seldoc.filepath) > 0:
+				extrname = self._docarchive.extract_file(seldoc.filepath, self._extractionpath)
+				opn = ExtOpener(extrname).open(showshell=True)
+		except Exception as exc:
+			MessageBox("Document cannot be opened. Details: {}".format(str(exc)))
 
 	def m_expDocsDVLCTROnDataViewListCtrlItemEditingDone(self, event):
 		edicol = event.Column

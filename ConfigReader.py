@@ -40,18 +40,18 @@ class ConfigReader():
         if type(val) is not str:
             return val
 
-        return self._interpret(val)
+        return os.path.expandvars(val)
 
 
-    def _interpret(self, val):
-        answ = val
-        hits = re.findall("%.+%", val)
-        for hit in hits:
-            hitenv = hit.removeprefix("%").removesuffix("%")
-            if hitenv not in os.environ:
-                raise Exception("Variable part <{}> not found in environment".format(hitenv))
+    # def _interpret(self, val):
+    #     answ = val
+    #     hits = re.findall("%.+%", val)
+    #     for hit in hits:
+    #         hitenv = hit.removeprefix("%").removesuffix("%")
+    #         if hitenv not in os.environ:
+    #             raise Exception("Variable part <{}> not found in environment".format(hitenv))
 
-            hitrepl = os.environ[hitenv]
-            answ = answ.replace(hit, hitrepl)
+    #         hitrepl = os.environ[hitenv]
+    #         answ = answ.replace(hit, hitrepl)
 
-        return answ
+    #     return answ

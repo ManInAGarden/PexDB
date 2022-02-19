@@ -58,7 +58,7 @@ class DocArchiver:
         """archive a single file
         fpath: full path to the file
 
-        returns: name of the archive file and extension of the archived file
+        returns: partial name (without the base path part) of the archive file and extension of the archived file
         """
         if not path.isfile(fpath):
             raise Exception("Given path <{}> does not point to a file".format(fpath))
@@ -73,17 +73,20 @@ class DocArchiver:
 
 
         dirn = rn.randint(0, self._numdirs-1)
-        dirname = self._basepath + "/" + self._subname(dirn)
+        subname = self._subname(dirn)
+        dirname = self._basepath + "/" + subname
 
         archname = uuid.uuid4().hex + ".zip"
         fullarchname = dirname + "/" + archname
+        partarchname = path.join(subname, archname)
         aname = path.basename(fpath)
         with zf.ZipFile(fullarchname, 'x', zf.ZIP_DEFLATED) as zip_f:
             zip_f.write(fpath, arcname=aname)
 
-        return fullarchname, extname
+        return partarchname, extname
 
-    def remove_file(self, fullarchname : str):
+    def remove_file(self, partarchname : str):
+        fullarchname = path.join(self._basepath, partarchname)
         if not path.exists(fullarchname):
             return
 
@@ -95,12 +98,13 @@ class DocArchiver:
 
         remove(fullarchname)
 
-    def extract_file(self, fullarchname : str, targpath : str) -> str:
+    def extract_file(self, partarchname : str, targpath : str) -> str:
         """extracts a file to the given target name
            return: filename of the extracted file"""
 
+        fullarchname = path.join(self._basepath, partarchname)
         if not path.exists(fullarchname):
-            raise Exception("archive file <{}> does not exist in archive")
+            raise Exception("archive file <{}> does not exist in archive".format(fullarchname))
 
         if not path.isfile(fullarchname):
             raise Exception("<{}> is not an archive file".format(fullarchname))
