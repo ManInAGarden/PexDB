@@ -41,7 +41,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self.init_db()
 		self.init_gui()
 
-		self._version = "0.9.0"
+		self._version = "0.9.1"
 
 	def init_prog(self):
 		self._apppath = self._get_app_path()
@@ -520,7 +520,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			MessageBox("Unexpected error: {}".format(str(exc)))
 
 	def about_menuitemOnMenuSelection(self, event):
-		dial = PexDbViewerAboutDialog(self)
+		dial = PexDbViewerAboutDialog(self, self._apppath)
 		dial.Show()
 
 
