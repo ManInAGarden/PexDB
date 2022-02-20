@@ -7,6 +7,7 @@ pyinstaller -w --noconfirm --name PexViewerWin ^
     --add-data ./PexDbWINDIST.conf;. ^
     --add-data ./PexSeeds;./PexSeeds ^
     --add-data ./ressources;./ressources ^
+    --icon ./ressources/application.ico ^
     PexViewerMain.py
 call conda deactivate
 pause

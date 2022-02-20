@@ -151,7 +151,14 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def displayprojinsb(self):
 		self.m_mainSBA.SetStatusText("Project: {0}".format(self._currentproject.name), 1)
 
+	def set_icon(self):
+		ifname = path.join(self._apppath, "ressources", "application.ico")
+		ico = wx.Icon(ifname)
+		self.SetIcon(ico)
+
 	def init_gui(self):
+		self.set_icon()
+
 		self._printers = self._get_all_printers()
 		self._extruders = self._get_all_extruders()
 
@@ -763,11 +770,14 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		if fname is None:
 			return
 
-		archipath, ext = self._docarchive.archive_file(fname)
-		selexpdoc.filepath = archipath
-		selexpdoc.attachmenttype = self.get_attach_type(ext)
-		self._fact.flush(selexpdoc)
-		self.refresh_exp_docs()
+		try:
+			archipath, ext = self._docarchive.archive_file(fname)
+			selexpdoc.filepath = archipath
+			selexpdoc.attachmenttype = self.get_attach_type(ext)
+			self._fact.flush(selexpdoc)
+			self.refresh_exp_docs()
+		except Exception as exc:
+			MessageBox("Unexpected error: {}".format(str(exc)))
 
 	def get_attach_type(self, ext):
 		tstr = ext.removeprefix(".")

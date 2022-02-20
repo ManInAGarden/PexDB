@@ -34,6 +34,9 @@ class PexDbViewerAboutDialog( GeneratedGUI.AboutDialog ):
 		htxt += self._modinfo("scikit-learn")
 		htxt += self._modinfo("wxPython")
 		htxt += "</table></p>"
+		htxt += "<p>Some of the ocons were taken from:<br>"
+		htxt += "https://icons8.com"
+		htxt += "</p>"
 		self.m_aboutTxtHTML.SetPage(htxt)
 
 	def m_okBUTOnButtonClick(self, event):

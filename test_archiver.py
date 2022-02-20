@@ -38,7 +38,7 @@ class TestArchiver(unittest.TestCase):
         archname, fext = archi.archive_file("./testfiles/QXP_HTAM_Filamentum_ABS_100_0_0001.jpg")
         assert archname is not None
         assert fext == ".jpg"
-        assert path.exists(archname)
+        assert path.exists(path.join(self._bpath, archname))
 
     def test_delete_doc(self):
         archi = DocArchiver(self._bpath)
@@ -47,9 +47,9 @@ class TestArchiver(unittest.TestCase):
         archname3, fext3 = archi.archive_file("./testfiles/QXP_HTAM_Filamentum_ABS_100_0_0001.jpg")
         archi.remove_file(archname1)
 
-        assert not path.exists(archname1)
-        assert path.exists(archname2)
-        assert path.exists(archname3)
+        assert not path.exists(archi.get_fullpath(archname1))
+        assert path.exists(archi.get_fullpath(archname2))
+        assert path.exists(archi.get_fullpath(archname3))
 
     def test_extract_doc(self):
         archi = DocArchiver(self._bpath)

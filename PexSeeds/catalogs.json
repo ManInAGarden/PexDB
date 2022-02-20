@@ -1,10 +1,14 @@
 { 
     "sqlitepersist.SQLitePersistBasicClasses.PCatalog": 
         [
-            {"type": "PICTURE_TYPE", "code":"JPG", "value":"jpg", "langcode":"GBR"},
-            {"type": "PICTURE_TYPE", "code":"JPEG", "value":"jpeg", "langcode":"GBR"},
-            {"type": "PICTURE_TYPE", "code":"BMP", "value":"bmp", "langcode":"GBR"},
-            {"type": "PICTURE_TYPE", "code":"PNG", "value":"png", "langcode":"GBR"},
+            {"type": "EXP_ATTACH_TYPE", "code":"JPG", "value":"jpg picture", "langcode":"GBR"},
+            {"type": "EXP_ATTACH_TYPE", "code":"JPEG", "value":"jpeg picture", "langcode":"GBR"},
+            {"type": "EXP_ATTACH_TYPE", "code":"BMP", "value":"bmp bitmap file", "langcode":"GBR"},
+            {"type": "EXP_ATTACH_TYPE", "code":"PNG", "value":"png bitmap file", "langcode":"GBR"},
+            {"type": "EXP_ATTACH_TYPE", "code":"DOCX", "value":"docx document file", "langcode":"GBR"},
+            {"type": "EXP_ATTACH_TYPE", "code":"ODS", "value":"ods document file", "langcode":"GBR"},
+            {"type": "EXP_ATTACH_TYPE", "code":"PDF", "value":"pdf portable document file", "langcode":"GBR"},
+            {"type": "EXP_ATTACH_TYPE", "code":"CSV", "value":"csv comma separated values", "langcode":"GBR"},
 
             {"type": "STATUS_PROJECT", "code":"INIT", "value":"initialised", "langcode":"GBR"},
             {"type": "STATUS_PROJECT", "code":"INIT", "value":"initialisiert", "langcode":"DEU"},

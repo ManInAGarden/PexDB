@@ -54,6 +54,11 @@ class DocArchiver:
     #type alias for return value
     ArchiveReturn = tuple[str, str]
 
+    def get_fullpath(self, partialpath : str) -> str:
+        """get the full path to the archived file from a given partial path
+        """
+        return path.join(self._basepath, partialpath)
+
     def archive_file(self, fpath) -> ArchiveReturn:
         """archive a single file
         fpath: full path to the file
@@ -86,7 +91,7 @@ class DocArchiver:
         return partarchname, extname
 
     def remove_file(self, partarchname : str):
-        fullarchname = path.join(self._basepath, partarchname)
+        fullarchname = self.get_fullpath(partarchname)
         if not path.exists(fullarchname):
             return
 
@@ -102,7 +107,7 @@ class DocArchiver:
         """extracts a file to the given target name
            return: filename of the extracted file"""
 
-        fullarchname = path.join(self._basepath, partarchname)
+        fullarchname = self.get_fullpath(partarchname)
         if not path.exists(fullarchname):
             raise Exception("archive file <{}> does not exist in archive".format(fullarchname))
 

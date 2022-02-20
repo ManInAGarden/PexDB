@@ -663,11 +663,11 @@ class SQFactory():
     def _readcatentryfromdb(self, catcls, cattype : str, lang : str, catcode : str):
         """read a single catlog entry from the database"""
         if lang != "*?NOLANG?*":
-            stmt = "SELECT * FROM {0} where code=? and langcode=?".format(catcls._getclstablename())
-            parat = (catcode, lang)
+            stmt = "SELECT * FROM {0} where type=? and code=? and langcode=?".format(catcls._getclstablename())
+            parat = (cattype, catcode, lang)
         else:
-            stmt = "SELECT * FROM {0} where code=?".format(catcls._getclstablename())
-            parat = (catcode,)
+            stmt = "SELECT * FROM {0} where type=? and code=?".format(catcls._getclstablename())
+            parat = (cattype, catcode)
         
         curs = self.conn.cursor()
         try:
