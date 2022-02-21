@@ -15,6 +15,14 @@ class ConfigReader():
         with open(self._filepath, 'r', encoding="utf8") as f:
             self._data = json.load(f)
         
+    def get_section(self, section : str):
+        """gets a complete section of configs as whatever it is in json (mostly a dict)
+        """
+        if not section in self._data:
+            raise Exception("section named <{0}> not found in configuration".format(section))
+
+        return self._data[section]
+
     def get_value(self, section : str, cname : str):
         """gets a value from the config out of a config named in cname located in a given section"""
 
@@ -41,17 +49,3 @@ class ConfigReader():
             return val
 
         return os.path.expandvars(val)
-
-
-    # def _interpret(self, val):
-    #     answ = val
-    #     hits = re.findall("%.+%", val)
-    #     for hit in hits:
-    #         hitenv = hit.removeprefix("%").removesuffix("%")
-    #         if hitenv not in os.environ:
-    #             raise Exception("Variable part <{}> not found in environment".format(hitenv))
-
-    #         hitrepl = os.environ[hitenv]
-    #         answ = answ.replace(hit, hitrepl)
-
-    #     return answ

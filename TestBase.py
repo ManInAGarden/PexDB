@@ -4,6 +4,7 @@ from  PersistClasses import *
 import MockerParts as mocking
 import json
 from Properties import Properties
+import logging
 
 class TestBase(unittest.TestCase):
 
@@ -31,7 +32,10 @@ class TestBase(unittest.TestCase):
         fact = sqp.SQFactory("PexDb", "PexDbTest.sqlite")
         fact.lang = "DEU"
         cls.Spf = fact
-        fact.set_db_dbglevel("./sqpdebug.log", "DATAFILL") # use "STMTS for statements only or NONE for no sqlite-debugging at all"
+        lhandler = logging.FileHandler(filename="unittest.log", mode="a")
+        logger = logging.Logger("unittstlogger", level="DEBUG")
+        logger.addHandler(lhandler)
+        fact.set_db_dbglevel(logger, "DATAFILL") # use "STMTS for statements only or NONE for no sqlite-debugging at all"
 
         for tablec in cls.PersTables:
             cls.Spf.try_createtable(tablec)

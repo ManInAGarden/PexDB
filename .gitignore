@@ -1,8 +1,7 @@
 utconfig.json
-mongopersist/__pycache__/*
-__pycache__/*
-PexDb.sqlite
-PexDbTest.sqlite
+sqlitepersist/__pycache__
+creators/__pycache__
+__pycache__
 *.sqlite
 *.journal
 *.log
@@ -10,3 +9,4 @@ build
 build/*
 dist
 dist/*
+*.pyc

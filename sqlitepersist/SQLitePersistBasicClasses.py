@@ -611,3 +611,8 @@ def getsubedvarname(decl: BaseVarType):
         return getvarname(decl)
     else:
         return getvarname(decl) + "." + getsubedvarname(decl._subdef)
+
+def is_none_or_empty(tstr : str) -> bool:
+    """checks a string for None or emptyness
+    returns True when tstr is None or a string which contains no characters at all"""
+    return tstr is None or len(tstr)==0

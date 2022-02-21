@@ -4,6 +4,8 @@ import os
 import sys
 import shutil
 import tempfile as tmpf
+import logging
+import logging.config
 import wx
 from wx.core import CENTRE, YES_NO, Bitmap, FileDialog, FileSelector, Image, MessageBox, NullBitmap
 import wx.propgrid as pg
@@ -26,9 +28,6 @@ from PersistClasses import *
 from ExportImportProjects import *
 from sqlitepersist.SQLitePersistBasicClasses import PCatalog
 
-def is_none_or_empty(tstr):
-	return tstr is None or len(tstr)==0
-
 # Implementing PexViewerMainFrame
 class PexViewerMain( gg.PexViewerMainFrame ):
 
@@ -36,18 +35,39 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def __init__(self, parent ):
 		#gg.PexViewerMainFrame.__init__( self, parent )
 		super().__init__(parent)
+		self._version = "0.9.1"
+
 		self.init_prog()
+		self.init_logging()
 		self.init_archive()
 		self.init_db()
 		self.init_gui()
 
-		self._version = "0.9.1"
-
 	def init_prog(self):
 		self._apppath = self._get_app_path()
 		cnfname = "PexDb.conf"
+
 		self._ensure_config(cnfname)
 		self._configuration = ConfigReader(os.path.join(self._apppath, cnfname))
+
+	def expand_dvalue(self, d : dict, name : str):
+		"""expand any value in the dict with the given key recurseively"""
+		for key, val in d.items():
+			valt = type(val)
+			if valt is str:
+				if type(key) is str and key==name:
+					newval = path.expandvars(val)
+					d[key] = newval #oh oh does this work?!?
+			elif valt is dict:
+				self.expand_dvalue(val, name)
+
+	def init_logging(self):
+		cdict = self._configuration.get_section("logging")
+		self.expand_dvalue(cdict, "filename")
+		logging.config.dictConfig(cdict)
+		self.logger = logging.getLogger("mainprog")
+		self.logger.info("Started PexViewer V%s", self._version)
+		
 
 	def _ensure_config(self, cnfname):
 		"""make sure the config exists. if not try to create it from a distributed version
@@ -92,12 +112,15 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			mkdir(extdir)
 
 		self._extractionpath = extdir
+		self.logger.info("Initialising archive temporary path %s", extdir)
 
 		apath = self._configuration.get_value_interp("archivestore","path")
+		self.logger.info("Initialising archive path %s", apath)
 		if os.path.exists(apath):
 			self._docarchive = DocArchiver(apath) #use existing archive
 			return
 
+		self.logger.info("Archive is empty - initialising archive store")
 		dnum = self._configuration.get_value("archivestore", "dirnum")
 		if dnum <= 0:
 			raise Exception("Configuration Error - dirnum must be a positive integer")
@@ -121,6 +144,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 	def init_db(self):
 		dbfilename = self._configuration.get_value_interp("database", "filename")
+		self.logger.info("Initialising database in db-file %s", dbfilename)
 		self.makesuredirexists(dbfilename)
 		self._fact = sqp.SQFactory("PexDb", dbfilename)
 		doinits = self._configuration.get_value("database", "tryinits")
@@ -263,6 +287,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		return experiments
 
 	def _initandseeddb(self):
+		self.logger.info("Creating tables not yet existing and seeding values to tables")
 		pclasses = [sqp.PCatalog, sqp.CommonInter,
 			Unit, 
 			Project,
@@ -289,34 +314,42 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 				createds.append(pclass)
 
 		if sqp.PCatalog in createds:
+			self.logger.info("Seeding catalogs")
 			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/catalogs.json"))
 			sdr.create_seeddata()
 
 		if Unit in createds:
+			self.logger.info("Seeding units")
 			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/units.json"))
 			sdr.create_seeddata()
 
 		if FactorDefinition in createds:
+			self.logger.info("Seeding factor definitions")
 			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath,  "PexSeeds/factordefinitions.json"))
 			sdr.create_seeddata()
 
 		if Printer in createds:
+			self.logger.info("Seeding printers")
 			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/printers.json"))
 			sdr.create_seeddata()
 
 		if Extruder in createds:
+			self.logger.info("Seeding extruders")
 			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/extruders.json"))
 			sdr.create_seeddata()
 
 		if ResponseDefinition in createds:
+			self.logger.info("Seeding response definitions")
 			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/responsedefinitions.json"))
 			sdr.create_seeddata()
 
 		if EnviroDefinition in createds:
+			self.logger.info("Seeding enviro definitions")
 			sdr = sqp.SQPSeeder(self._fact, os.path.join(self._apppath, "PexSeeds/envirodefinitions.json"))
 			sdr.create_seeddata()
 
 		if Project in createds:
+			self.logger.info("Seeding a single initial project")
 			newproj = Project(name="std", status=self._fact.getcat(ProjectStatusCat, "INIT"))
 			self._fact.flush(newproj)
 
@@ -345,6 +378,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def quit_PexViewer( self, event ):
 		"""The user selected the menu item "close PexDbViewer"
 		"""
+		self.logger.info("Quitting PexViewer")
 		self.cleanup_temp()
 		self.Close()
 		
@@ -556,11 +590,15 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 	def dupicate_experiment_menuitemOnMenuSelection( self, event ):
 		idx = self.m_experimentsDataViewListCtrl.GetSelectedRow()
-		if idx >= 0:
-			fexp = self._experiments[idx]
-			sexp = self.exp_deepcopy(fexp)
-			self._experiments.append(sexp)
-			self.refresh_dash()
+
+		try:
+			if idx >= 0:
+				fexp = self._experiments[idx]
+				sexp = self.exp_deepcopy(fexp)
+				self._experiments.append(sexp)
+				self.refresh_dash()
+		except Exception as exc:
+			MessageBox("Unexpected error: {}".format(str(exc)))
 
 	def m_edit_factors_menuitemOnMenuSelection(self, event):
 		"""user clicked on edit factors menu item"""
@@ -687,13 +725,16 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		res = wx.MessageBox("Are you sure to delete all experiments in the current project", "Delete all experiments", style=YES_NO|CENTRE)
 		if res!=wx.YES:
 			return
+		try:
+			exps_q = sqp.SQQuery(self._fact, Experiment).where(Experiment.ProjectId==self._currentproject._id)
+			for exp in exps_q:
+				self._fact.delete(exp) #we rely on cascaded deletes for factors and responses
 
-		exps_q = sqp.SQQuery(self._fact, Experiment).where(Experiment.ProjectId==self._currentproject._id)
-		for exp in exps_q:
-			self._fact.delete(exp) #we rely on cascaded deletes for factors and responses
-
-		self._experiments = self.get_experiments()
-		self.refresh_dash()
+			self._experiments = self.get_experiments()
+			self.refresh_dash()
+		except Exception as exc:
+			self.logger.error("Unexpected error: %s", str(exc))
+			wx.MessageBox("Unexpected error: {}".format(str(exc)))
 
 	def m_exportExperimentsCsvMEIOnMenuSelection(self, event):
 		"""export all experiemnts to a csv ment to be imported in Excel or LibreOffice or ..."""
@@ -709,9 +750,10 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 		try:
 			p2csv.export_to_csv(filename)
+			self.logger.info("Exported all experiments of current project to file names <%s>", filename)
 		except Exception as exc:
+			self.logger.error("A problem occured during export to csv. Original message: %s", str(exc))
 			wx.MessageBox("A problem occured during export to csv. Original message: {}".format(str(exc)))
-
 
 	def m_linearRegrMEIOnMenuSelection(self, event):
 		dial = PexDbViewerLinRegrDialog(self, self._fact, self._currentproject)
@@ -824,7 +866,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		"""	The user clicked import from json"""
 		try:
 			fname = wx.LoadFileSelector("import a as new project", ".json", parent=self)
-			if is_none_or_empty(fname):
+			if sqp.is_none_or_empty(fname):
 				return
 
 			impo = ProjectImporter(self._fact, self._currentproject)
@@ -839,7 +881,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		"""
 		try:
 			fname = wx.SaveFileSelector("PexDb project export", ".json", default_name=self._currentproject.name, parent=self)
-			if is_none_or_empty(fname):
+			if sqp.is_none_or_empty(fname):
 				return
 
 			expo = ProjectExporter(self._fact, self._currentproject)

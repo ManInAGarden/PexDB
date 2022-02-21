@@ -6,6 +6,7 @@ from sqlite3.dbapi2 import Error, OperationalError
 from typing import Type
 import uuid
 import datetime as dt
+import logging
 
 from sqlitepersist.SQLiteQueryDictGenerator import SQQueryDictGenerator
 
@@ -26,7 +27,8 @@ class SQFactory():
         self.conn.row_factory = sq3.Row
         self.lang = "GBR"
         self._catcache = {}
-        self._logger = SQPLogger("./doesntmatter", DbgStmtLevel.NONE) #switch off debugging by default
+        self._logger = logging.getLogger("root")
+        self._stmtlogger = SQPLogger("./doesntmatter", DbgStmtLevel.NONE) #switch off debugging by default
         self._transafterdels = []
         self._intrans = False
 
@@ -48,7 +50,7 @@ class SQFactory():
             curs.close()
 
         if loginfo is not None:
-            self._logger.log_stmt("TRANSACTION BEGIN {0}".format(loginfo))
+            self._stmtlogger.log_stmt("TRANSACTION BEGIN {0}".format(loginfo))
 
     def commit_transaction(self, loginfo : str = None):
         if not self._intrans:
@@ -66,7 +68,7 @@ class SQFactory():
         self._transafterdels.clear()
 
         if loginfo is not None:
-            self._logger.log_stmt("TRANSACTION COMMIT {0}".format(loginfo))
+            self._stmtlogger.log_stmt("TRANSACTION COMMIT {0}".format(loginfo))
 
     def rollback_transaction(self, loginfo : str = None):
         if not self._intrans:
@@ -80,7 +82,7 @@ class SQFactory():
             curs.close()
             
         if loginfo is not None:
-            self._logger.log_stmt("TRANSACTION ROLLBACK {0}".format(loginfo))
+            self._stmtlogger.log_stmt("TRANSACTION ROLLBACK {0}".format(loginfo))
 
     def _gettablename(self, pinst : PBase):
         return pinst.__class__._getclstablename()
@@ -90,14 +92,22 @@ class SQFactory():
             self.createtable(pclass)
             answ = True
         except Exception as exc:
-            self._logger.log_stmt(str(exc))
+            self._stmtlogger.log_stmt(str(exc))
             answ = False
         
         return answ
 
-    def set_db_dbglevel(self, filepath : str, levelstr : str):
-        if type(levelstr) is str:
-            lowlev = levelstr.lower()
+    def set_db_dbglevel(self, logger : logging.Logger, stmlevelstr : str):
+        """sets a special statement logger using a standard logger with a special stmt-level. Also sets
+            the standard logger to the named logger
+
+            logger : a standard logger (s. module logging in std python)
+            strmlevelstr : special level to use when db-statements get logged in the dbg-state of the named logger
+        """
+        self._logger = logger
+        self._logger.info("Setting db debug leveling to %s", stmlevelstr)
+        if type(stmlevelstr) is str:
+            lowlev = stmlevelstr.lower()
             if lowlev == "none":
                 level = DbgStmtLevel.NONE
             elif lowlev == "stmts":
@@ -105,10 +115,26 @@ class SQFactory():
             elif lowlev == "datafill":
                 level = DbgStmtLevel.DATAFILL
             else:
-                raise Exception("unknown debuglevel <{0}>".format(levelstr))
-            self._logger = SQPLogger(filepath, level)
+                raise Exception("unknown debuglevel <{0}>".format(stmlevelstr))
+            self._stmtlogger = SQPLogger(self._logger, level)
         else:
             raise Exception("unexpected parametertype for database debug level. Use str here")
+
+    # OLD delete me next time
+    # def set_db_dbglevel(self, filepath : str, levelstr : str):
+    #     if type(levelstr) is str:
+    #         lowlev = levelstr.lower()
+    #         if lowlev == "none":
+    #             level = DbgStmtLevel.NONE
+    #         elif lowlev == "stmts":
+    #             level = DbgStmtLevel.STMTS
+    #         elif lowlev == "datafill":
+    #             level = DbgStmtLevel.DATAFILL
+    #         else:
+    #             raise Exception("unknown debuglevel <{0}>".format(levelstr))
+    #         self._stmtlogger = SQPLogger(filepath, level)
+    #     else:
+    #         raise Exception("unexpected parametertype for database debug level. Use str here")
 
     def try_droptable(self, pinstclass):
         try:
@@ -171,10 +197,10 @@ class SQFactory():
         cursor = self.conn.cursor()
         try:
             exs = "CREATE TABLE {0} {1}".format(tablename, collst)
-            self._logger.log_stmt("EXEC: {0}", exs)
+            self._stmtlogger.log_stmt("EXEC: {0}", exs)
             cursor.execute(exs)
         except Exception as exc:
-            self._logger.log_stmt("ERROR: {0}", str(exc))
+            self._stmtlogger.log_stmt("ERROR: {0}", str(exc))
             raise exc
         finally:
             cursor.close()
@@ -185,10 +211,10 @@ class SQFactory():
         try:
             cursor = self.conn.cursor()
             exs = "DROP TABLE {0} ".format(tablename)
-            self._logger.log_stmt("EXEC: {0}", exs)
+            self._stmtlogger.log_stmt("EXEC: {0}", exs)
             cursor.execute(exs)
         except Exception as exc:
-            self._logger.log_stmt("ERROR: {0}", str(exc))
+            self._stmtlogger.log_stmt("ERROR: {0}", str(exc))
         finally:
             cursor.close()
 
@@ -262,7 +288,7 @@ class SQFactory():
         delcls = type(dco)
         tablename = delcls._getclstablename()
         stmt = "DELETE FROM {0} WHERE _id=?".format(tablename)
-        self._logger.log_stmt("EXEC: {0}", stmt)
+        self._stmtlogger.log_stmt("EXEC: {0}", stmt)
         curs.execute(stmt, (dco._id,))
         self._transafterdels.append(dco)
 
@@ -533,12 +559,12 @@ class SQFactory():
                 else:
                     stmt += ", " + order[0] + self._get_order_dir(order[1])
 
-        self._logger.log_stmt("EXEC: {0}", stmt)
+        self._stmtlogger.log_stmt("EXEC: {0}", stmt)
         curs = self.conn.cursor()
         try:
             answ = curs.execute(stmt)
         except OperationalError as oe:
-            self._logger.log_stmt("ERROR: {0}", str(oe))
+            self._stmtlogger.log_stmt("ERROR: {0}", str(oe))
             raise Exception(stmt + " " + str(oe))
         #finally:
         #    curs.close()
@@ -671,21 +697,21 @@ class SQFactory():
         
         curs = self.conn.cursor()
         try:
-            self._logger.log_stmt("EXEC: {0}", stmt)
+            self._stmtlogger.log_stmt("EXEC: {0}", stmt)
             rows = curs.execute(stmt, parat)
             ct = 0
             for row in rows:
                 answ = self._create_instance(catcls, row)
                 ct += 1
                 if ct > 1:
-                    self._logger.log_stmt("ERROR: Catalog Code <{0}> not unique", catcode)
+                    self._stmtlogger.log_stmt("ERROR: Catalog Code <{0}> not unique", catcode)
                     raise Exception("Catalog code <{0}> is not unique in catalog-type <{1}> for class {2} in language <{3}>".format(catcode, 
                             cattype,
                             str(catcls), 
                             lang))
 
             if ct == 0:
-                self._logger.log_stmt("ERROR: Catalog Code <{0}> not found", catcode)
+                self._stmtlogger.log_stmt("ERROR: Catalog Code <{0}> not found", catcode)
                 raise Exception("Catalog code <{0}> not found in catalog-type <{1}> for class {2} in language <{3}>".format(catcode, 
                             cattype,
                             str(catcls), 
@@ -760,23 +786,23 @@ class SQFactory():
                 inst._dbvaluescache[key] = cate
             elif declt is Blob:
                 dbdta = row[key]
-                self._logger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, "blobdata..."))
+                self._stmtlogger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, "blobdata..."))
                 try:
                     blobby = decl.to_innertype(dbdta)
                     setattr(inst, key, blobby)
                     inst._dbvaluescache[key] = blobby
                 except Exception as ex:
-                    self._logger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
+                    self._stmtlogger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
                     raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, "blobdata...", str(ex)))
             else:
                 dbdta = row[key]
-                self._logger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, dbdta))
+                self._stmtlogger.log_dtafill("DF: field: <{0}> contents: <{1}>".format(key, dbdta))
                 try:
                     inty = decl.to_innertype(dbdta)
                     setattr(inst, key, inty)
                     inst._dbvaluescache[key] = inty
                 except Exception as ex:
-                    self._logger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
+                    self._stmtlogger.log_dtafill("ERROR: <{0}> contents: <{1}> - Originalmeldung {2}".format(key, dbdta, str(ex)))
                     raise Exception("Unerwarteter Fehler beim Versuch das Feld {0} einer Instanz der Klasse {1} mit <{2}> zu füllen. Originalmeldung: {3}".format(key, decl, dbdta, str(ex)))
 
         for jemb in jembs:
@@ -823,7 +849,7 @@ class SQFactory():
         #we cannot use QQuery here because that would produce circular imports
         tablename = tgtcls._getclstablename()
         stmt = "SELECT * from {0} where {1}=?".format(tablename, jdef._foreignid)
-        self._logger.log_stmt("EXEC: {0}", stmt)
+        self._stmtlogger.log_stmt("EXEC: {0}", stmt)
         curs = self.conn.cursor()
         try:
             rows = curs.execute(stmt, (localid,)) #self._getoperand(localid)
@@ -870,7 +896,7 @@ class SQFactory():
             qdict = qdg.getquerydict(addw)
             stmt += " AND " +  self._create_where(qdict)
 
-        self._logger.log_stmt("EXEC: {0}", stmt)
+        self._stmtlogger.log_stmt("EXEC: {0}", stmt)
         curs = self.conn.cursor()
         try:
             rows = curs.execute(stmt, (localid,)) #self._getoperand(localid)
@@ -913,7 +939,7 @@ class SQFactory():
         tablename = tgtcls._getclstablename()
         tgtforeignfieldname = jdef.get_foreign_keyname()
         stmt = "SELECT * from {0} where {1}=?".format(tablename, tgtforeignfieldname)
-        self._logger.log_stmt("EXEC: {0}", stmt)
+        self._stmtlogger.log_stmt("EXEC: {0}", stmt)
         curs = self.conn.cursor()
         try:
             rows = curs.execute(stmt, (localid,)) #self._getoperand(localid)
