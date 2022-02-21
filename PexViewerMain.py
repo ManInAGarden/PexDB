@@ -148,7 +148,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		self.makesuredirexists(dbfilename)
 		self._fact = sqp.SQFactory("PexDb", dbfilename)
 		doinits = self._configuration.get_value("database", "tryinits")
-		self._fact.set_db_dbglevel(self._configuration.get_value("database", "dbgfilename"),
+		self._fact.set_db_dbglevel(self.logger,
 			self._configuration.get_value("database", "dbglevel"))
 		
 		if doinits:
@@ -706,7 +706,6 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			self._experiments = self.get_experiments()
 			self.refresh_dash()
 			wx.MessageBox("{} Experiments were created under the current project".format(dial.numexps))
-
 
 	def m_creaFractFactMEIOnMenuSelection(self, event):
 		dial = PexDbViewerCreateFractDetailDialog(self,
