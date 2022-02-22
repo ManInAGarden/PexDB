@@ -3,6 +3,7 @@ from email.message import Message
 from tkinter import messagebox
 from xml.dom import NotSupportedErr
 import wx
+import logging
 import GeneratedGUI
 from creators.CreaBasics import CreaSequenceEnum
 from creators.CreaFractFactorial import CreaFractFactorial
@@ -21,6 +22,8 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 		self._extruder = extruder
 		self._sequence = cr.CreaSequenceEnum.LINEAR
 		self._experi_cts = 0
+		self._logger = logging.getLogger("mainprog")
+		self._logger.debug("Dialog %s inited", self.__class__.__name__)
 
 	@property
 	def numexps(self):
@@ -48,6 +51,7 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 
 	def _get_factordefstr(self):
 		havesome = False
+		fstr = None
 		first = True
 		for fprep in self._factpreps:
 			if first:
@@ -85,15 +89,20 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 			html += "<p>"
 			html += factstr
 			html += "</p>"
-		else:
+		elif factstr is not None:
 			html += "No factor combinations are defined in the factor factor preparations of this project. "
 			html += "A full factorial scheme will be used to create the experiments."
+		else:
+			html += "No factor preperations where found for this project. "
+			html += "Creation of experiments will be IMPOSSIBLE under these circumstances."
+
 		html += "</body></html>"
 
 		self.m_combiInfoHTML.SetPage(html)
 
 	# Handlers for CreateFractDetail events.
 	def CreateFractDetailOnInitDialog( self, event ):
+		self._logger.debug("OnInitDialog for %s", self.__class__.__name__)
 		self._factpreps = list(sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._project._id))
 		self.fill_combipreps_gui()
 
@@ -132,6 +141,10 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 			plandt = self._get_datetime(self.m_datePicker1.GetValue())
 			reps = self.m_repetitionsSPCTRL.GetValue()
 			docentre = self.m_createCentreExpCKBX.GetValue()
+
+			self._logger.debug("Creating experiments according a fractional factorial scheme for project <%s>", 
+				self._project.name)
+
 			crea = CreaFractFactorial(self._fact,
 				self._project,
 				self._printer,
@@ -145,6 +158,7 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 
 			self.EndModal(wx.ID_OK)
 		except Exception as exc:
+			self._logger.error("Error during experiment creation. Original message: %s", str(exc))
 			wx.MessageBox("Error during experiment creation. Original message: {}".format(str(exc)))
 
 

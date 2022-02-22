@@ -32,6 +32,6 @@ class SQPLogger():
 
     def _logline(self, fs, *args):
         logstr = fs.format(*args) 
-        self._logger.debug(logstr)
+        self._logger.debug(logstr) #statememts will only be written when gloab delbug level is set at least to "DEBUG"
 
     

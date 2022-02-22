@@ -4,7 +4,7 @@ import wx
 import GeneratedGUI
 import creators as cr
 from PersistClasses import *
-
+import logging
 
 # Implementing CreateFullDetailsDialog
 class PexDbViewerCreateFullDetailsDialog( GeneratedGUI.CreateFullDetailsDialog ):
@@ -15,6 +15,8 @@ class PexDbViewerCreateFullDetailsDialog( GeneratedGUI.CreateFullDetailsDialog )
 		self._printer = printer
 		self._extruder = extruder
 		self._sequence = cr.CreaSequenceEnum.LINEAR
+		self._logger = logging.getLogger("mainprog")
+		self._logger.debug("Dialog %s inited", self.__class__.__name__)
 
 
 	def _get_sequence(self):
@@ -56,6 +58,7 @@ class PexDbViewerCreateFullDetailsDialog( GeneratedGUI.CreateFullDetailsDialog )
 		try:
 			self._do_create()
 		except Exception as exc:
+			self._logger.error("A problem occured during creation of the experiments. Original msg: %s", str(exc))
 			wx.MessageBox("A problem occured during creation of the experiments. Original msg: {}".format(str(exc)))
 			
 		self.EndModal(wx.ID_OK)

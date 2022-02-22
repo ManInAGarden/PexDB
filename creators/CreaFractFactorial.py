@@ -62,6 +62,9 @@ class CreaFractFactorial(_CreaSequential):
         """ from the combinations in self._combidefs and the prepared translations a string
             describing the combinations with only capital letters is produced and returned
         """
+        if self._factpreps is None or len(self._factpreps) <= 0:
+            raise Exception("No factor prepearations found while trying to create the combinations string!")
+
         first = True
         for fprep in self._factpreps:
             if first:

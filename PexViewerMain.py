@@ -364,15 +364,19 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		for root, dirs, files in os.walk(self._extractionpath):
 			for filename in files:
 				list_of_files.append(os.path.join(root,filename))
-
+		fct = 0
+		dct = 0
 		for filename in list_of_files:
 			if os.path.isfile(filename):
 				os.remove(filename)
+				fct += 1
 			elif os.path.isdir(filename):
 				os.rmdir(filename)
-
+				dct += 1
+				
 		#lastly remove the temp-dir used for temporary extraction
 		os.rmdir(self._extractionpath)
+		self.logger.info("Cleaned temporary %d files in %d directories", fct, dct+1)
 
 	# Handlers for PexViewerMainFrame events.
 	def quit_PexViewer( self, event ):
