@@ -52,7 +52,7 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 			ct += 1
 
 		self._currentactive = active #store this to enable toggling
-		#if we got any factors - select the fist one
+		#if we got any factors - select the first one
 		if ct > 0:
 			self.m_factorDefsLC.Select(0)
 
