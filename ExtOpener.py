@@ -12,7 +12,7 @@ class ExtOpener:
     def get_command(self):
         if 'windows' in ExtOpener.MYOSNAME:
             opener = 'start'
-        elif 'osx' in ExtOpener.OSNAME or 'darwin' in ExtOpener.OSNAME:
+        elif 'osx' in ExtOpener.MYOSNAME or 'darwin' in ExtOpener.MYOSNAME:
             opener = 'open'
         else:
             opener = 'xdg-open'

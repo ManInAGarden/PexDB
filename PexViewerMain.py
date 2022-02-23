@@ -37,11 +37,19 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		super().__init__(parent)
 		self._version = "0.9.1"
 
+		self.init_environ()
 		self.init_prog()
 		self.init_logging()
 		self.init_archive()
 		self.init_db()
 		self.init_gui()
+
+	def init_environ(self):
+		if sys.platform.startswith("linux"):
+			if "APPDATA" not in os.environ:
+				appdtap = path.expandvars("${HOME}/.AppData")
+				self.makesuredirexists(path.join(appdtap, "PexDb", "dummifile"))
+				os.environ["AppData"] = appdtap
 
 	def init_prog(self):
 		self._apppath = self._get_app_path()
