@@ -39,6 +39,7 @@ class PexDbViewerAboutDialog( GeneratedGUI.AboutDialog ):
 		htxt += "https://icons8.com"
 		htxt += "</p>"
 		self.m_aboutTxtHTML.SetPage(htxt)
+		self.Fit()
 
 	def read_deps(self):
 		depfname = path.join(self._apppath, "ressources", "dependencies.json")

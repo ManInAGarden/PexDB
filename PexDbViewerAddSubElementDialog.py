@@ -44,6 +44,8 @@ class PexDbViewerAddSubElementDialog( GeneratedGUI.AddSubElementDialog ):
 			self.m_objectsLLCTR.SetItem(idx, 1, self._get_unit_str(obj.unit))
 			ct += 1
 
+		self.Fit()
+
 
 	def _get_unit_str(self, uni : Unit) -> str:
 		if uni is None:

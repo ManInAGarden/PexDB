@@ -3,7 +3,9 @@
 from pandas.core.frame import DataFrame
 import wx
 import wx.propgrid as pg
+import logging
 import GeneratedGUI
+from GuiHelper import GuiHelper
 from PersistClasses import *
 from MultiReg import *
 import matplotlib
@@ -24,6 +26,7 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		self._factorforms = "{:." + str(self._float_factorpreci) + "f}" 
 		self._currenttargabbr = None
 		self._normalized = False
+		self._logger = logging.getLogger("mainprog")
 		self._do_init_dialog()
 
 
@@ -113,6 +116,7 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 			return
 
 		self.show_input()
+		self.Fit()
 		
 	def m_precisionCHOIOnChoice(self, event):
 		choi = self.m_precisionCHOI.GetSelection()
@@ -188,8 +192,11 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		self.m_inputDataDLCTRL.Refresh()
 
 	def doCalcBUTOnButtonClick(self, event):
-		self._coefs, self._interc = self._solver.solve_for_all()
-		self.m_summaryHTMLWIN.SetPage(self.htmlsummary(self._coefs, self._interc))
+		try:
+			self._coefs, self._interc = self._solver.solve_for_all()
+			self.m_summaryHTMLWIN.SetPage(self.htmlsummary(self._coefs, self._interc))
+		except Exception as exc:
+			GuiHelper.show_error("Unexpected error during solve. Original message {}", exc)
 
 	def m_linRegNBCKOnNotebookPageChanged(self, event):
 		if event.Selection == 1:

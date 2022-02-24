@@ -81,6 +81,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 			return
 
 		self.fill_gui(self._project)
+		self.Fit()
 		self._logger.debug("OnShow for class <%s> successfull", self.__class__.__name__)
 
 

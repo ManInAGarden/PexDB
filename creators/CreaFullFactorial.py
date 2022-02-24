@@ -8,49 +8,7 @@ from .CreaBasics import CreaSequenceEnum, _CreaSequential
 from pyDOE2 import *
 
 
-class RandHelper:
-    def __init__(self, results : list, num_of_reps : int):
-        self._results = results
-        self._num_of_reps = num_of_reps
 
-
-    def __iter__(self):
-        self._ranmem = []
-        i = 0
-        for res in self._results:
-            self._ranmem.append([])
-            for j in range(self._num_of_reps):
-                self._ranmem[i].append(res)
-
-            i += 1
-
-        return self
-
-    def __next__(self):
-        ll = len(self._ranmem)
-
-        if ll == 0:
-            raise StopIteration
-
-        if ll == 1:
-            l = 0
-        else:
-            l = random.randint(0, ll - 1)
-
-        lc = len(self._ranmem[l])
-        if lc <= 1:
-            c = 0
-        else:
-            c = random.randint(0, lc - 1)
-
-        print("getting l={}, c={}".format(l, c))
-        answ = self._ranmem[l][c]
-
-        self._ranmem[l].pop(c)
-        if len(self._ranmem[l])==0:
-            self._ranmem.pop(l)
-
-        return answ
 
 class CreaFullFactorial(_CreaSequential):
     """creates one experiment for every combination of factor levels defined in the given

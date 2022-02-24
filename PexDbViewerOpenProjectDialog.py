@@ -42,6 +42,7 @@ class PexDbViewerOpenProjectDialog( GeneratedGUI.OpenProjectDialog ):
 
 		self.m_sdbSizer2OK.Enable(False) #gets enabled when something is selected
 		self._get_n_show_projects()
+		self.Fit()
 
 
 

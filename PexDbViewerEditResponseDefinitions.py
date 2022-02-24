@@ -29,6 +29,7 @@ class PexDbViewerEditResponseDefinitions(GeneratedGUI.EditResponseDefinitions):
 
 		self._factgui = pgum.WxGuiMapperResultDefintion(self._fact, self.m_resultDtaPG)
 		self.get_dbdta2gui(True)
+		self.Fit()
 
 
 	def get_dbdta2gui(self, active = True):

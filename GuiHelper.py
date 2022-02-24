@@ -1,4 +1,5 @@
 import wx
+import logging
 
 class GuiHelper:
     """ class to help with ever repeating gui oprations"""
@@ -26,3 +27,17 @@ class GuiHelper:
             raise Exception("Index <{}> found in item data is out of range for list of length <{}>".format(lidx, len(lst)))
 
         return lst[lidx]
+
+    @classmethod
+    def show_error(cls, message, *args):
+        logger = logging.getLogger("mainprog")
+        if logger is not None:
+            logformstr = cls._get_loggerformstr(message)
+            logger.error(logformstr, *args)
+
+        wx.MessageBox(message.format(*args))
+
+    @classmethod
+    def _get_loggerformstr(cls, msg):
+        return msg.replace("{}", "%s")
+        

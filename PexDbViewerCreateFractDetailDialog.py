@@ -111,6 +111,7 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 			return
 
 		self.fill_combipreps_gui()
+		self.Fit()
 
 	def _get_sequence_enum(self) -> CreaSequenceEnum:
 		seqidx = self.m_sequenceCHOI.GetSelection()

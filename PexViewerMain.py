@@ -1,5 +1,6 @@
 from datetime import datetime
 from genericpath import isdir
+from msilib import sequence
 import os
 import sys
 import shutil
@@ -10,6 +11,7 @@ import wx
 from wx.core import CENTRE, YES_NO, Bitmap, FileDialog, FileSelector, Image, MessageBox, NullBitmap
 import wx.propgrid as pg
 from ExtOpener import ExtOpener
+from GuiHelper import GuiHelper
 from PexDbViewerAboutDialog import PexDbViewerAboutDialog
 from PexDbViewerCreateFractDetailDialog import PexDbViewerCreateFractDetailDialog
 from PexDbViewerLinRegrDialog import PexDbViewerLinRegrDialog
@@ -575,16 +577,20 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 
 	def exp_deepcopy(self, exp):
 		"""deep copy an experiment"""
+		
 		aexp = Experiment(description=exp.description,
 			carriedoutdt=exp.carriedoutdt, 
 			printerusedid=exp.printerusedid,
 			extruderusedid=exp.extruderusedid,
 			printerused=exp.printerused,
-			extruderused=exp.extruderused)
+			extruderused=exp.extruderused,
+			sequence=exp.sequence,
+			repnum=exp.repnum)
 		
 		self._fact.flush(aexp)
 		aexp.factors = []
 		aexp.responses = []
+		aexp.enviros = []
 
 		for factval in exp.factors:
 			nfact = FactorValue(experimentid=aexp._id,
@@ -601,6 +607,13 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 				value=respval.value)
 			aexp.responses.append(nresp)
 
+		for envval in exp.enviros:
+			nenv = EnviroValue(experimentid=aexp._id,
+				envirodefinitionid=envval.envirodefinitionid,
+				envirodefinition=envval.envirodefinition,
+				value=envval.value)
+			aexp.enviros.append(nenv)
+
 		return aexp #return the deeply cloned experiment
 
 	def dupicate_experiment_menuitemOnMenuSelection( self, event ):
@@ -613,7 +626,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 				self._experiments.append(sexp)
 				self.refresh_dash()
 		except Exception as exc:
-			MessageBox("Unexpected error: {}".format(str(exc)))
+			GuiHelper("Unexpected error: {}", exc)
 
 	def m_edit_factors_menuitemOnMenuSelection(self, event):
 		"""user clicked on edit factors menu item"""

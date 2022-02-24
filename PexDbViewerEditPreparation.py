@@ -60,6 +60,7 @@ class PexDbViewerEditPreparation( GeneratedGUI.EditPreparation ):
 		self.m_isNegatedCBX.SetValue(self._get_bool(self._prep.isnegated))
 
 		self.fill_combilist()
+		self.Fit()
 
 	# Handlers for EditPreparation events.
 	def OnOKButtonClick( self, event ):

@@ -1483,6 +1483,8 @@ class CreateFractDetail ( wx.Dialog ):
 		gbSizer8.Add( self.m_staticText37, wx.GBPosition( 4, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		self.m_combiInfoHTML = wx.html.HtmlWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.html.HW_SCROLLBAR_AUTO )
+		self.m_combiInfoHTML.SetMinSize( wx.Size( 200,200 ) )
+
 		gbSizer8.Add( self.m_combiInfoHTML, wx.GBPosition( 4, 1 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.EXPAND, 5 )
 
 		self.m_createCentreExpCKBX = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.CHK_2STATE )
@@ -1540,7 +1542,7 @@ class AboutDialog ( wx.Dialog ):
 		gbSizer16.SetFlexibleDirection( wx.BOTH )
 		gbSizer16.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-		self.m_aboutTxtHTML = wx.html.HtmlWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.html.HW_SCROLLBAR_NEVER )
+		self.m_aboutTxtHTML = wx.html.HtmlWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.html.HW_SCROLLBAR_AUTO )
 		self.m_aboutTxtHTML.SetMinSize( wx.Size( 400,500 ) )
 
 		gbSizer16.Add( self.m_aboutTxtHTML, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )

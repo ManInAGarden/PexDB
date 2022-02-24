@@ -28,6 +28,7 @@ class PexDbViewerEditFactorDefinitions(GeneratedGUI.EditFactorDefinitions):
 
 		self._factgui = pgum.WxGuiMapperFactorDefintion(self._fact, self.m_factorDtaPG)
 		self.get_dbdta2gui(True)
+		self.Fit()
 
 	def get_dbdta2gui(self, active = True):
 		self._factgui.emptyallitems()
