@@ -1,12 +1,15 @@
 ./sqlitepersist/__pycache__
 ./creators/__pycache__
 ./__pycache__
+__pycache__/*
 *.sqlite
 *.journal
 *.log
 ./build
+build/*
 ./build/*
-./dist
+./dist/*
+dist/*
 ./dist/*
 *.pyc
-creators/__pycache__/__init__.cpython-310.pyc
+*.pyd

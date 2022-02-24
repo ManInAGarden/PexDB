@@ -2,6 +2,7 @@
 
 import wx
 from wx.core import NOT_FOUND
+import logging
 import GeneratedGUI
 from GuiHelper import GuiHelper
 from PersistClasses import *
@@ -20,7 +21,8 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 	def __init__( self, parent, fact : sqp.SQFactory, proj : Project ):
 		GeneratedGUI.EditProjectDialog.__init__( self, parent )
-
+		self._logger = logging.getLogger("mainprog")
+		self._logger.debug("Init for class <%s>", self.__class__.__name__)
 		self._fact = fact
 		self._project = proj
 		self._factorpreps = []
@@ -34,6 +36,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		return inps.replace(" ", "_")
 
 	def EditProjectDialogOnInitDialog(self, event):
+		self._logger.debug("OnInit for class <%s>", self.__class__.__name__)
 		connf_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._project._id)
 		self._factorpreps = list(connf_q)
 		for fprep in self._factorpreps:
@@ -72,6 +75,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 
 	def EditProjectDialogOnShow( self, event ):
+		self._logger.debug("OnShow for class <%s>", self.__class__.__name__)
 		if event.Show is False:
 			return
 

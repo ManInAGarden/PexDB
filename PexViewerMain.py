@@ -102,8 +102,6 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 			return True
 		else:
 			return False
-		
-		
 
 	def _get_app_path(self):
 		if getattr(sys, 'frozen', False):
@@ -654,12 +652,13 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 		"""user selected "edit project" in menu.
 		we let him edit the current project"""
 
-		dial = PexDbViewerEditProjectDialog(self, self._fact, self._currentproject)
-		res = dial.ShowModal()
-		if res == wx.ID_CANCEL:
-			return
+		with PexDbViewerEditProjectDialog(self, self._fact, self._currentproject) as dial:
+			res = dial.ShowModal()
+			if res == wx.ID_CANCEL:
+				return
 		
-		self._currentproject = dial.project
+			self._currentproject = dial.project
+			
 		self._fact.flush(self._currentproject)
 		self.displayprojinsb()
 
