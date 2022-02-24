@@ -2,6 +2,7 @@
 
 import locale
 import wx
+import logging
 import GeneratedGUI
 from PersistClasses import ProjectResponsePreparation
 from Validators import FloatValidator
@@ -11,12 +12,14 @@ class PexDbViewerEditResponsePreparation( GeneratedGUI.EditResponsePreparation )
 	def __init__( self, parent, prep : ProjectResponsePreparation):
 		GeneratedGUI.EditResponsePreparation.__init__( self, parent )
 		self._respprep = prep
+		self._do_init_dialog()
+		self._logger = logging.getLogger("mainprog")
 
 	@property
 	def respprep(self):
 		return self._respprep
 
-	def EditResponsePreparationOnInitDialog(self, event):
+	def _do_init_dialog(self):
 		self.m_combiWeightTCTRL.SetValidator(FloatValidator((0.0, 1.0)))
 		valstr = ""
 		if self._respprep.combinationweight is not None:

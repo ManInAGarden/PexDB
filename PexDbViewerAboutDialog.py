@@ -11,9 +11,9 @@ class PexDbViewerAboutDialog( GeneratedGUI.AboutDialog ):
 		GeneratedGUI.AboutDialog.__init__(self, parent,)
 		self._progversion = parent._version
 		self._apppath = apppath
+		self._do_init_dialog()
 
-	# Handlers for AboutDialog events.
-	def AboutDialogOnInitDialog( self, event ):
+	def _do_init_dialog(self):
 		deps = self.read_deps()
 		htxt = "<html><body>"
 		htxt += "</body></html>"
@@ -47,6 +47,7 @@ class PexDbViewerAboutDialog( GeneratedGUI.AboutDialog ):
 
 		return jdi
 
+	#evt handler for OK BU Click
 	def m_okBUTOnButtonClick(self, event):
 		self.Close()
 

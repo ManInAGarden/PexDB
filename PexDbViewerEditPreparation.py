@@ -19,6 +19,7 @@ class PexDbViewerEditPreparation( GeneratedGUI.EditPreparation ):
 		self._p = project
 		self._f.fill_joins(self._prep, ProjectFactorPreparation.FactorCombiDefs)
 		self._oldprep = self._prep.clone()
+		self._do_init_dialog()
 		
 
 	@property
@@ -47,7 +48,7 @@ class PexDbViewerEditPreparation( GeneratedGUI.EditPreparation ):
 			self.m_factCombisLCTRL.SetItem(itm, 1, self._getstr(fdef.abbreviation))
 			ct += 1
 
-	def EditPreparationOnInitDialog(self, event):
+	def _do_init_dialog(self):
 		self.m_factCombisLCTRL.AppendColumn("Name")
 		self.m_factCombisLCTRL.AppendColumn("Abbreviation")
 

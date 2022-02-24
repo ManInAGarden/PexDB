@@ -14,7 +14,11 @@ class CreaSingle(_CreaBase):
         exexs = list(existingex_p)
         #we have a ordered list of existing sequence numbers here
 
-        newseq = exexs[-1]+1
+        if len(exexs) > 0:
+            newseq = exexs[-1]+1
+        else:
+            newseq = 1
+
         desc = "Exp #{}".format(newseq)
         exp = Experiment(sequence=newseq, 
             description=desc,
@@ -36,5 +40,6 @@ class CreaSingle(_CreaBase):
             exp.factors.append(factv)
 
         self.write_resps(exp)
+        self.write_enviros(exp)
 
         return (1, exp)

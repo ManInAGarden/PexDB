@@ -24,6 +24,7 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 		self._experi_cts = 0
 		self._logger = logging.getLogger("mainprog")
 		self._logger.debug("Dialog %s inited", self.__class__.__name__)
+		self._do_init_dialog()
 
 	@property
 	def numexps(self):
@@ -101,14 +102,15 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 		self.m_combiInfoHTML.SetPage(html)
 
 	# Handlers for CreateFractDetail events.
-	def CreateFractDetailOnInitDialog( self, event ):
-		self._logger.debug("OnInitDialog for %s", self.__class__.__name__)
+	def _do_init_dialog(self):
+		self._logger.debug("do_init_dialog for %s", self.__class__.__name__)
 		self._factpreps = list(sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._project._id))
-		self.fill_combipreps_gui()
 
 	def CreateFractDetailOnShow( self, event ):
 		if not event.Show:
 			return
+
+		self.fill_combipreps_gui()
 
 	def _get_sequence_enum(self) -> CreaSequenceEnum:
 		seqidx = self.m_sequenceCHOI.GetSelection()
@@ -122,16 +124,12 @@ class PexDbViewerCreateFractDetailDialog( GeneratedGUI.CreateFractDetail ):
 		else:
 			raise NotSupportedErr("Usupported choice index for sequence")
 		
-	def _get_datetime(self, wxdt : wx.DateTime):
-		# mostly stolen from here:
-		# https://www.blog.pythonlibrary.org/2014/08/27/wxpython-converting-wx-datetime-python-datetime/
-		
+	def _get_datetime(self, wxdt : wx.DateTime):		
 		if wxdt is None:
 			return None
 		assert isinstance(wxdt, wx.DateTime)
 		if wxdt.IsValid():
-			ymd = map(int, wx.FormatISODate().split('-'))
-			return datetime.date(*ymd)
+			return datetime(wxdt.year, wxdt.month+1, wxdt.day)
 		else:
 			return None
 

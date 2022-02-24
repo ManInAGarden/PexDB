@@ -29,7 +29,7 @@
         <property name="use_array_enum">0</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
-        <object class="Frame" expanded="1">
+        <object class="Frame" expanded="0">
             <property name="aui_managed">0</property>
             <property name="aui_manager_style">wxAUI_MGR_DEFAULT</property>
             <property name="bg"></property>
@@ -57,7 +57,7 @@
             <property name="window_name"></property>
             <property name="window_style">wxTAB_TRAVERSAL</property>
             <property name="xrc_skip_sizer">1</property>
-            <object class="wxMenuBar" expanded="1">
+            <object class="wxMenuBar" expanded="0">
                 <property name="bg"></property>
                 <property name="context_help"></property>
                 <property name="context_menu">1</property>
@@ -383,7 +383,7 @@
                         <event name="OnMenuSelection">m_linearRegrMEIOnMenuSelection</event>
                     </object>
                 </object>
-                <object class="wxMenu" expanded="1">
+                <object class="wxMenu" expanded="0">
                     <property name="label">Help</property>
                     <property name="name">help_menu</property>
                     <property name="permission">protected</property>
@@ -2149,7 +2149,7 @@
                 </object>
             </object>
         </object>
-        <object class="Dialog" expanded="0">
+        <object class="Dialog" expanded="1">
             <property name="aui_managed">0</property>
             <property name="aui_manager_style">wxAUI_MGR_DEFAULT</property>
             <property name="bg"></property>
@@ -2167,7 +2167,7 @@
             <property name="minimum_size"></property>
             <property name="name">EditProjectDialog</property>
             <property name="pos"></property>
-            <property name="size">852,846</property>
+            <property name="size">893,846</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass">; ; forward_declare</property>
             <property name="title">Edit project</property>
@@ -2176,7 +2176,6 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
-            <event name="OnInitDialog">EditProjectDialogOnInitDialog</event>
             <event name="OnShow">EditProjectDialogOnShow</event>
             <object class="wxGridBagSizer" expanded="0">
                 <property name="empty_cell_size"></property>
@@ -4387,7 +4386,6 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
-            <event name="OnInitDialog">AddSubElementDialogOnInitDialog</event>
             <event name="OnShow">AddSubElementDialogOnShow</event>
             <object class="wxGridBagSizer" expanded="0">
                 <property name="empty_cell_size"></property>
@@ -4583,7 +4581,6 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
-            <event name="OnInitDialog">EditPreparationOnInitDialog</event>
             <event name="OnShow">EditPreparationOnShow</event>
             <object class="wxGridBagSizer" expanded="0">
                 <property name="empty_cell_size"></property>
@@ -6236,7 +6233,6 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
-            <event name="OnInitDialog">LinRegrDialogOnInitDialog</event>
             <event name="OnShow">LinRegrDialogOnShow</event>
             <object class="wxGridBagSizer" expanded="0">
                 <property name="empty_cell_size"></property>
@@ -8122,7 +8118,6 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
-            <event name="OnInitDialog">EditResponsePreparationOnInitDialog</event>
             <object class="wxGridBagSizer" expanded="0">
                 <property name="empty_cell_size"></property>
                 <property name="flexible_direction">wxBOTH</property>
@@ -8316,7 +8311,6 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
-            <event name="OnInitDialog">CreateFractDetailOnInitDialog</event>
             <event name="OnShow">CreateFractDetailOnShow</event>
             <object class="wxGridBagSizer" expanded="0">
                 <property name="empty_cell_size"></property>
@@ -9086,7 +9080,6 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
-            <event name="OnInitDialog">AboutDialogOnInitDialog</event>
             <object class="wxGridBagSizer" expanded="1">
                 <property name="empty_cell_size"></property>
                 <property name="flexible_direction">wxBOTH</property>

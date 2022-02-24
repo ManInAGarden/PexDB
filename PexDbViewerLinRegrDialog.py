@@ -24,8 +24,10 @@ class PexDbViewerLinRegrDialog( GeneratedGUI.LinRegrDialog ):
 		self._factorforms = "{:." + str(self._float_factorpreci) + "f}" 
 		self._currenttargabbr = None
 		self._normalized = False
+		self._do_init_dialog()
 
-	def LinRegrDialogOnInitDialog( self, event ):
+
+	def _do_init_dialog(self):
 		self.m_projectNameSTXT.SetLabelText(self._p.name)
 		self.m_linRegNBCK.SetSelection(0)
 		self._solver = MultiReg(self._f, self._p, self._normalized)

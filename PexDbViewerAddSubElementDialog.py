@@ -16,12 +16,13 @@ class PexDbViewerAddSubElementDialog( GeneratedGUI.AddSubElementDialog ):
 		self._selected = None
 		self._objectlist = []
 		self._oname = objname
+		self._do_init_dialog()
 
 	@property
 	def selected(self):
 		return self._selected
 
-	def AddSubElementDialogOnInitDialog(self, event):
+	def _do_init_dialog(self):
 		tit = self.GetTitle()
 		self.SetTitle(tit.format(self._oname))
 		lheading = self.m_listHeadingSTXT.GetLabel()

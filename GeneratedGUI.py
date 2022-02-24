@@ -544,7 +544,7 @@ class EditResponseDefinitions ( wx.Dialog ):
 class EditProjectDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 852,846 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Edit project"), pos = wx.DefaultPosition, size = wx.Size( 893,846 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -725,7 +725,6 @@ class EditProjectDialog ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
-		self.Bind( wx.EVT_INIT_DIALOG, self.EditProjectDialogOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.EditProjectDialogOnShow )
 		self.m_prepsLCTRL.Bind( wx.EVT_LEFT_DCLICK, self.m_prepsLCTRLOnLeftDClick )
 		self.m_addEnviroBUT.Bind( wx.EVT_BUTTON, self.m_addEnviroBUTOnButtonClick )
@@ -745,9 +744,6 @@ class EditProjectDialog ( wx.Dialog ):
 
 
 	# Virtual event handlers, override them in your derived class
-	def EditProjectDialogOnInitDialog( self, event ):
-		event.Skip()
-
 	def EditProjectDialogOnShow( self, event ):
 		event.Skip()
 
@@ -913,7 +909,6 @@ class AddSubElementDialog ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
-		self.Bind( wx.EVT_INIT_DIALOG, self.AddSubElementDialogOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.AddSubElementDialogOnShow )
 		self.m_objectsLLCTR.Bind( wx.EVT_LEFT_DCLICK, self.m_objectsLLCTROnLeftDClick )
 		self.m_objectsLLCTR.Bind( wx.EVT_LIST_ITEM_DESELECTED, self.m_objectsLLCTROnListItemDeselected )
@@ -925,9 +920,6 @@ class AddSubElementDialog ( wx.Dialog ):
 
 
 	# Virtual event handlers, override them in your derived class
-	def AddSubElementDialogOnInitDialog( self, event ):
-		event.Skip()
-
 	def AddSubElementDialogOnShow( self, event ):
 		event.Skip()
 
@@ -1041,7 +1033,6 @@ class EditPreparation ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
-		self.Bind( wx.EVT_INIT_DIALOG, self.EditPreparationOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.EditPreparationOnShow )
 		self.m_addFactorBUT.Bind( wx.EVT_BUTTON, self.m_addFactorBUTOnButtonClick )
 		self.m_removeFactorBUT.Bind( wx.EVT_BUTTON, self.m_removeFactorBUTOnButtonClick )
@@ -1052,9 +1043,6 @@ class EditPreparation ( wx.Dialog ):
 
 
 	# Virtual event handlers, override them in your derived class
-	def EditPreparationOnInitDialog( self, event ):
-		event.Skip()
-
 	def EditPreparationOnShow( self, event ):
 		event.Skip()
 
@@ -1345,7 +1333,6 @@ class LinRegrDialog ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
-		self.Bind( wx.EVT_INIT_DIALOG, self.LinRegrDialogOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.LinRegrDialogOnShow )
 		self.m_linRegNBCK.Bind( wx.EVT_NOTEBOOK_PAGE_CHANGED, self.m_linRegNBCKOnNotebookPageChanged )
 		self.m_precisionCHOI.Bind( wx.EVT_CHOICE, self.m_precisionCHOIOnChoice )
@@ -1361,9 +1348,6 @@ class LinRegrDialog ( wx.Dialog ):
 
 
 	# Virtual event handlers, override them in your derived class
-	def LinRegrDialogOnInitDialog( self, event ):
-		event.Skip()
-
 	def LinRegrDialogOnShow( self, event ):
 		event.Skip()
 
@@ -1434,7 +1418,6 @@ class EditResponsePreparation ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
-		self.Bind( wx.EVT_INIT_DIALOG, self.EditResponsePreparationOnInitDialog )
 		self.m_sdbSizer8OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer8OnOKButtonClick )
 
 	def __del__( self ):
@@ -1442,9 +1425,6 @@ class EditResponsePreparation ( wx.Dialog ):
 
 
 	# Virtual event handlers, override them in your derived class
-	def EditResponsePreparationOnInitDialog( self, event ):
-		event.Skip()
-
 	def m_sdbSizer8OnOKButtonClick( self, event ):
 		event.Skip()
 
@@ -1530,7 +1510,6 @@ class CreateFractDetail ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
-		self.Bind( wx.EVT_INIT_DIALOG, self.CreateFractDetailOnInitDialog )
 		self.Bind( wx.EVT_SHOW, self.CreateFractDetailOnShow )
 		self.m_sdbSizer6OK.Bind( wx.EVT_BUTTON, self.m_sdbSizer6OnOKButtonClick )
 
@@ -1539,9 +1518,6 @@ class CreateFractDetail ( wx.Dialog ):
 
 
 	# Virtual event handlers, override them in your derived class
-	def CreateFractDetailOnInitDialog( self, event ):
-		event.Skip()
-
 	def CreateFractDetailOnShow( self, event ):
 		event.Skip()
 
@@ -1580,7 +1556,6 @@ class AboutDialog ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
-		self.Bind( wx.EVT_INIT_DIALOG, self.AboutDialogOnInitDialog )
 		self.m_okBUT.Bind( wx.EVT_BUTTON, self.m_okBUTOnButtonClick )
 
 	def __del__( self ):
@@ -1588,9 +1563,6 @@ class AboutDialog ( wx.Dialog ):
 
 
 	# Virtual event handlers, override them in your derived class
-	def AboutDialogOnInitDialog( self, event ):
-		event.Skip()
-
 	def m_okBUTOnButtonClick( self, event ):
 		event.Skip()
 

@@ -35,7 +35,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def __init__(self, parent ):
 		#gg.PexViewerMainFrame.__init__( self, parent )
 		super().__init__(parent)
-		self._version = "0.9.1"
+		self._version = "0.9.2"
 
 		self.init_environ()
 		self.init_prog()
@@ -395,16 +395,21 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 	def create_new_experiment( self, event ):
 		"""The user selected the menuitem "create a single new experiment"
 		"""
-		if self._currentproject is None:
-			raise Exception("We have no current project! Experiment cannot be created!")
 
-		creator = cr.CreaSingle(self._fact, self._currentproject, self._prefprinter, self._prefextruder)
-		ct, exp = creator.create()
+		try:
+			if self._currentproject is None:
+				raise Exception("We have no current project! Experiment cannot be created!")
 
-		if ct==1 and exp is not None:
-			self._experiments.append(exp)
+			creator = cr.CreaSingle(self._fact, self._currentproject, self._prefprinter, self._prefextruder)
+			ct, exp = creator.create()
 
-		self.refresh_dash()
+			if ct==1 and exp is not None:
+				self._experiments.append(exp)
+
+			self.refresh_dash()
+		except Exception as exc:
+			MessageBox("Unexpected error while trying to create a single experiment. Original message: {}".format(str(exc)))
+			self.logger.error("Unexpected error while trying to create a single experiment. Original message: %s",exc)
 
 
 	def save_exp(self):
@@ -658,7 +663,7 @@ class PexViewerMain( gg.PexViewerMainFrame ):
 				return
 		
 			self._currentproject = dial.project
-			
+
 		self._fact.flush(self._currentproject)
 		self.displayprojinsb()
 
