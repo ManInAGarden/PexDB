@@ -25,9 +25,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		self._logger.debug("Init for class <%s>", self.__class__.__name__)
 		self._fact = fact
 		self._project = proj
-		self._factorpreps = []
-		self._responsepreps = []
-		self._enviropreps = []
+		self.do_dialog_init()
 
 	def replace_spaces(self, inps : str) -> str:
 		if inps is None:
@@ -35,8 +33,8 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 
 		return inps.replace(" ", "_")
 
-	def EditProjectDialogOnInitDialog(self, event):
-		self._logger.debug("OnInit for class <%s>", self.__class__.__name__)
+	def do_dialog_init(self):
+		self._logger.debug("do_dialog_init for class <%s>", self.__class__.__name__)
 		connf_q = sqp.SQQuery(self._fact, ProjectFactorPreparation).where(ProjectFactorPreparation.ProjectId==self._project._id)
 		self._factorpreps = list(connf_q)
 		for fprep in self._factorpreps:
@@ -72,7 +70,7 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		choicevals = list(map(lambda ps : ps.value, self._pstatcat))
 		self.m_projectstatusCOB.SetItems(choicevals)
 		self.m_projectstatusCOB.SetSelection(sel)
-		self._logger.debug("OnInit for class <%s> successful", self.__class__.__name__)
+		self._logger.debug("do_dialog_init for class <%s> successful", self.__class__.__name__)
 
 		return True
 
