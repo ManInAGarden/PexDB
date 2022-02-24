@@ -2,6 +2,7 @@
 
 import wx
 import GeneratedGUI
+from GuiHelper import GuiHelper
 import creators as cr
 from PersistClasses import *
 import logging
@@ -58,8 +59,7 @@ class PexDbViewerCreateFullDetailsDialog( GeneratedGUI.CreateFullDetailsDialog )
 		try:
 			self._do_create()
 		except Exception as exc:
-			self._logger.error("A problem occured during creation of the experiments. Original msg: %s", str(exc))
-			wx.MessageBox("A problem occured during creation of the experiments. Original msg: {}".format(str(exc)))
+			GuiHelper.show_error("A problem occured during creation of the experiments. Original msg: {}", exc)
 			
 		self.EndModal(wx.ID_OK)
 
