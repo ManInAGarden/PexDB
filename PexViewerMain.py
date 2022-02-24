@@ -1,6 +1,5 @@
 from datetime import datetime
 from genericpath import isdir
-from msilib import sequence
 import os
 import sys
 import shutil
