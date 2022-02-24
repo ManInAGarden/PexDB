@@ -72,14 +72,19 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		choicevals = list(map(lambda ps : ps.value, self._pstatcat))
 		self.m_projectstatusCOB.SetItems(choicevals)
 		self.m_projectstatusCOB.SetSelection(sel)
+		self._logger.debug("OnInit for class <%s> successful", self.__class__.__name__)
+
+		return True
 
 
 	def EditProjectDialogOnShow( self, event ):
-		self._logger.debug("OnShow for class <%s>", self.__class__.__name__)
+		self._logger.debug("OnShow for class <%s> with Show=<%s>", self.__class__.__name__, str(event.Show))
 		if event.Show is False:
 			return
 
 		self.fill_gui(self._project)
+		self._logger.debug("OnShow for class <%s> successfull", self.__class__.__name__)
+
 
 	def get_txtval(self, text, default=""):
 		if text is None:
