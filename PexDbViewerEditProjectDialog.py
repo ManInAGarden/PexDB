@@ -171,8 +171,9 @@ class PexDbViewerEditProjectDialog( GeneratedGUI.EditProjectDialog ):
 		not_these_ids = list(map(lambda pr : pr.factordefinitionid, self._factorpreps))
 		dial = PexDbViewerAddSubElementDialog(self, 
 			self._fact,
-			sqp.SQQuery(self._fact, FactorDefinition).where((FactorDefinition.IsActive==True) & sqp.NotIsIn(FactorDefinition.Id, not_these_ids)).order_by(FactorDefinition.Name),
-			"factor definition")
+			sqp.SQQuery(self._fact, 
+				FactorDefinition).where((FactorDefinition.IsActive==True) & sqp.NotIsIn(FactorDefinition.Id, not_these_ids)).order_by(FactorDefinition.Name),
+				"factor definition")
 
 		res = dial.ShowModal()
 		if res == wx.ID_CANCEL:
