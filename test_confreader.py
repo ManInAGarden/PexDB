@@ -40,5 +40,3 @@ class TestConfigReader(unittest.TestCase):
         assert val2 is not None
         assert type(val2) is str
         assert "%" not in val2
-
-
