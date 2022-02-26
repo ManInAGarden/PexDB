@@ -4,7 +4,6 @@ import random as rn
 import uuid
 import zipfile as zf
 
-
 class DocArchiver:
     """class for handling archivation of documents in a filestore aka directory"""
 
