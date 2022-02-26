@@ -13,8 +13,4 @@
             {"abbreviation" : "WALLLINEWIDTH", "name": "wall line width",  "defaultmin":0.32, "defaultmax":0.48, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"WALL_LINE_WIDTH", "disptype":"FLOAT"},
             {"abbreviation" : "TOBOLINEWIDTH", "name": "top/bottom line width",  "defaultmin":0.32, "defaultmax":0.48, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"INFILL_LINE_WIDTH", "disptype":"FLOAT"},
             {"abbreviation" : "INFILLLINEWIDTH", "name": "infill line width",  "defaultmin":0.32, "defaultmax":0.48, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"SKIN_LINE_WIDTH", "disptype":"FLOAT"}
-
-
-        ]
-  
-}
+        ]}
