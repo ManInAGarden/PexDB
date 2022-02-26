@@ -8,7 +8,13 @@
             {"abbreviation" : "MATBEDTEMP", "name": "bed temperature", "defaultmin":0.0, "defaultmax":110.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:temperature Celsius:_id}", "curaname":"MATERIAL_BED_TEMPERATURE", "disptype":"FLOAT"},
             {"abbreviation" : "MATFLOW", "name": "material flow", "defaultmin":80.0, "defaultmax":110.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"MATERIAL_FLOW", "disptype":"FLOAT"},
             {"abbreviation" : "MATFLOWLAY0", "name": "top level material flow",  "defaultmin":80.0, "defaultmax":110.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"MATERIAL_FLOW_LAYER_0", "disptype":"FLOAT"},
-            {"abbreviation" : "FANSPEED", "name": "fan speed",  "defaultmin":0.0, "defaultmax":100.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"COOL_FAN_SPEED", "disptype":"FLOAT"}
+            {"abbreviation" : "FANSPEED", "name": "fan speed",  "defaultmin":0.0, "defaultmax":100.0, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:percent:_id}", "curaname":"COOL_FAN_SPEED", "disptype":"FLOAT"},
+            {"abbreviation" : "LINEWIDTH", "name": "line width",  "defaultmin":0.32, "defaultmax":0.48, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"LINE_WIDTH", "disptype":"FLOAT"},
+            {"abbreviation" : "WALLLINEWIDTH", "name": "wall line width",  "defaultmin":0.32, "defaultmax":0.48, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"WALL_LINE_WIDTH", "disptype":"FLOAT"},
+            {"abbreviation" : "TOBOLINEWIDTH", "name": "top/bottom line width",  "defaultmin":0.32, "defaultmax":0.48, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"INFILL_LINE_WIDTH", "disptype":"FLOAT"},
+            {"abbreviation" : "INFILLLINEWIDTH", "name": "infill line width",  "defaultmin":0.32, "defaultmax":0.48, "defaultlevelnum":2, "unitid":"${PersistClasses.Unit.name:millimeter:_id}", "curaname":"SKIN_LINE_WIDTH", "disptype":"FLOAT"}
+
+
         ]
   
 }

@@ -34,6 +34,12 @@
             
             {"type" : "SLICERNAME_CURA", "code":"LAYER_HEIGHT", "value":"layer_height", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"LAYER_HEIGHT_0", "value":"layer_height_0", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"LINE_WIDTH", "value":"line_width", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"WALL_LINE_WIDTH", "value":"wall_line_width", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"WALL_LINE_WIDTH_0", "value":"wall_line_width_0", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"WALL_LINE_WIDTH_X", "value":"wall_line_width_x", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"SKIN_LINE_WIDTH", "value":"skin_line_width", "langcode":"ENU"},
+            {"type" : "SLICERNAME_CURA", "code":"INFILL_LINE_WIDTH", "value":"infill_line_width", "langcode":"ENU"},
             
             {"type" : "SLICERNAME_CURA", "code":"MATERIAL_BED_TEMPERATURE", "value":"material_bed_temperature", "langcode":"ENU"},
             {"type" : "SLICERNAME_CURA", "code":"MATERIAL_BED_TEMPERATURE_LAYER_0", "value":"material_bed_temperature_layer_0", "langcode":"ENU"},
