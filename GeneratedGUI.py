@@ -791,7 +791,7 @@ class EditProjectDialog ( wx.Dialog ):
 class OpenProjectDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Open project"), pos = wx.DefaultPosition, size = wx.Size( 345,279 ), style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Open project"), pos = wx.DefaultPosition, size = wx.Size( 528,312 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -805,6 +805,8 @@ class OpenProjectDialog ( wx.Dialog ):
 		gbSizer4.Add( self.m_staticText4, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 		self.m_projectsLCTRL = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT )
+		self.m_projectsLCTRL.SetMinSize( wx.Size( 300,150 ) )
+
 		gbSizer4.Add( self.m_projectsLCTRL, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 		self.m_checkBox2 = wx.CheckBox( self, wx.ID_ANY, _(u"Archived projects"), wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -817,7 +819,7 @@ class OpenProjectDialog ( wx.Dialog ):
 		m_sdbSizer2.AddButton( self.m_sdbSizer2Cancel )
 		m_sdbSizer2.Realize();
 
-		gbSizer4.Add( m_sdbSizer2, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 5 )
+		gbSizer4.Add( m_sdbSizer2, wx.GBPosition( 2, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 
 		gbSizer4.AddGrowableCol( 0 )
@@ -882,7 +884,7 @@ class AddSubElementDialog ( wx.Dialog ):
 
 		gbSizer5.Add( self.m_listHeadingSTXT, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
-		self.m_objectsLLCTR = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT )
+		self.m_objectsLLCTR = wx.ListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT|wx.LC_SORT_ASCENDING )
 		self.m_objectsLLCTR.SetMinSize( wx.Size( 200,-1 ) )
 
 		gbSizer5.Add( self.m_objectsLLCTR, wx.GBPosition( 1, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
@@ -894,7 +896,7 @@ class AddSubElementDialog ( wx.Dialog ):
 		m_sdbSizer3.AddButton( self.m_sdbSizer3Cancel )
 		m_sdbSizer3.Realize();
 
-		gbSizer5.Add( m_sdbSizer3, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.EXPAND, 5 )
+		gbSizer5.Add( m_sdbSizer3, wx.GBPosition( 3, 0 ), wx.GBSpan( 1, 2 ), wx.ALL|wx.EXPAND, 5 )
 
 
 		gbSizer5.AddGrowableCol( 0 )

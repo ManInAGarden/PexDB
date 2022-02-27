@@ -13,15 +13,22 @@ class PexDbViewerOpenProjectDialog( GeneratedGUI.OpenProjectDialog ):
 		self._fact = fact
 		self._currentproj = currentproj
 		self._listed_projects = []
+		self._do_init_dialog()
 
 	@property
 	def chosenproject(self):
 		return self._chosenproject
 		
+	def _do_init_dialog(self):
+		self.m_projectsLCTRL.ClearAll()
+		self.m_projectsLCTRL.InsertColumn(0, 'name', width = 100) 
+		self.m_projectsLCTRL.InsertColumn(1, 'state', 100) 
+		self.m_projectsLCTRL.InsertColumn(2, 'archived', wx.LIST_FORMAT_RIGHT, 100)
+
 	# Handlers for OpenProjectDialog events.
 	def m_checkBox2OnCheckBox( self, event ):
-		# TODO: Implement m_checkBox2OnCheckBox
-		pass
+		archived = self.m_checkBox2.GetValue()
+		self._get_n_show_projects(archived)
 
 	def dook(self):
 		selidx = self.m_projectsLCTRL.GetFirstSelected()
@@ -44,17 +51,11 @@ class PexDbViewerOpenProjectDialog( GeneratedGUI.OpenProjectDialog ):
 		self._get_n_show_projects()
 		self.Fit()
 
-
-
 	def _get_n_show_projects(self, archived=False):
-		proj_q = sqp.SQQuery(self._fact, Project).where(Project.IsArchived==archived)
+		proj_q = sqp.SQQuery(self._fact, Project).where(Project.IsArchived==archived).order_by(sqp.OrderInfo(Project.Created, sqp.OrderDirection.DESCENDING))
 
 		self._listed_projects.clear()
-		self.m_projectsLCTRL.ClearAll()
-		self.m_projectsLCTRL.InsertColumn(0, 'name', width = 100) 
-		self.m_projectsLCTRL.InsertColumn(1, 'state', 100) 
-		self.m_projectsLCTRL.InsertColumn(2, 'archived', wx.LIST_FORMAT_RIGHT, 100)
-		
+		self.m_projectsLCTRL.DeleteAllItems()
 		for proj in proj_q:
 			self._listed_projects.append(proj)
 			idx = self.m_projectsLCTRL.InsertItem(self.m_projectsLCTRL.GetItemCount(), proj.name)
@@ -64,7 +65,6 @@ class PexDbViewerOpenProjectDialog( GeneratedGUI.OpenProjectDialog ):
 
 	def m_projectsLCTRLOnLeftDClick(self, event):
 		self.dook()
-
 
 	def m_projectsLCTRLOnListItemDeselected(self, event):
 		self.m_sdbSizer2OK.Enable(False)
