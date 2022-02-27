@@ -13,3 +13,4 @@ dist/*
 ./dist/*
 *.pyc
 *.pyd
+PexDbTest.sqlite
